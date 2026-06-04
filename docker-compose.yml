@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: devknowledge
+      POSTGRES_USER: devknowledge
+      POSTGRES_PASSWORD: devknowledge
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: ./backend
+    depends_on:
+      - postgres
+    env_file: .env.local
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/src:/app/src
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3001
+
+volumes:
+  pgdata:
