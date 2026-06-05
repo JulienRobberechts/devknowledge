@@ -35,7 +35,7 @@ export class VoyageEmbeddingAdapter implements EmbeddingPort {
   private readonly model = "voyage-3-lite";
   private readonly apiUrl = "https://api.voyageai.com/v1/embeddings";
 
-  constructor(apiKey: string = config.embeddings.apiKey) {
+  constructor(apiKey: string = config.embeddings.voyage.apiKey) {
     this.apiKey = apiKey;
   }
 

@@ -8,8 +8,8 @@ export class AnthropicLLMAdapter implements LLMPort {
   private readonly maxTokens: number;
 
   constructor(
-    apiKey: string = config.llm.apiKey,
-    maxTokens = config.llm.maxTokens,
+    apiKey: string = config.llm.anthropic.apiKey,
+    maxTokens = config.llm.anthropic.maxTokens,
   ) {
     this.client = new Anthropic({ apiKey });
     this.maxTokens = maxTokens;
