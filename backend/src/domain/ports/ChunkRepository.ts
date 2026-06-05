@@ -13,5 +13,6 @@ export interface ChunkRepository {
     limit: number,
     minScore: number,
   ): Promise<ChunkSearchResult[]>;
+  findByDocumentId(documentId: string): Promise<Chunk[]>;
   deleteByDocumentId(documentId: string): Promise<void>;
 }

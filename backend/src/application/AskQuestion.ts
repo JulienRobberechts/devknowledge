@@ -33,6 +33,7 @@ export class AskQuestion {
     conversationId: string,
     userContent: string,
     onToken: (token: string) => void,
+    signal?: AbortSignal,
   ): Promise<Message> {
     const conversation = await this.conversationRepo.findById(conversationId);
     const history = conversation?.messages ?? [];
@@ -70,7 +71,7 @@ export class AskQuestion {
 
     let assistantContent: string;
     try {
-      assistantContent = await this.llmAdapter.stream(prompt, onToken);
+      assistantContent = await this.llmAdapter.stream(prompt, onToken, signal);
     } catch {
       const errorMessage: Message = {
         id: randomUUID(),

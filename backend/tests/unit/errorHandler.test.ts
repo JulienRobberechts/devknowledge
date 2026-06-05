@@ -1,0 +1,58 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { Request, Response, NextFunction } from "express";
+import { ZodError, ZodIssueCode } from "zod";
+
+vi.mock("../../src/config", () => ({
+  default: { api: { key: "key" }, server: { nodeEnv: "development" } },
+}));
+
+import { errorHandler } from "../../src/api/middleware/errorHandler";
+
+function makeRes() {
+  const res = {
+    status: vi.fn().mockReturnThis(),
+    json: vi.fn().mockReturnThis(),
+  };
+  return res as unknown as Response;
+}
+
+const fakeReq = {} as Request;
+const fakeNext = vi.fn() as NextFunction;
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+describe("errorHandler", () => {
+  it("returns 400 with field details for ZodError", () => {
+    const zodErr = new ZodError([
+      {
+        code: ZodIssueCode.too_small,
+        minimum: 1,
+        type: "string",
+        inclusive: true,
+        message: "Required",
+        path: ["title"],
+      },
+    ]);
+    const res = makeRes();
+    errorHandler(zodErr, fakeReq, res, fakeNext);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ error: "Validation error" }),
+    );
+  });
+
+  it("returns 500 for generic errors", () => {
+    const res = makeRes();
+    errorHandler(new Error("boom"), fakeReq, res, fakeNext);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ error: "Internal server error" });
+  });
+
+  it("returns 500 for non-Error values", () => {
+    const res = makeRes();
+    errorHandler("string error", fakeReq, res, fakeNext);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+});

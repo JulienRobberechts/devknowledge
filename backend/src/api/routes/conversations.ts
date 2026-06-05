@@ -116,7 +116,11 @@ export function conversationsRouter(
         res.write("event: ping\ndata: {}\n\n");
       }, PING_INTERVAL_MS);
 
-      const cleanup = () => clearInterval(ping);
+      const controller = new AbortController();
+      const cleanup = () => {
+        clearInterval(ping);
+        controller.abort();
+      };
       req.on("close", cleanup);
 
       try {
@@ -126,6 +130,7 @@ export function conversationsRouter(
           (token: string) => {
             res.write(`event: delta\ndata: ${JSON.stringify({ token })}\n\n`);
           },
+          controller.signal,
         );
 
         res.write(

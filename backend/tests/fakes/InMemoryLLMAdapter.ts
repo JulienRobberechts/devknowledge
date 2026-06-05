@@ -14,6 +14,7 @@ export class InMemoryLLMAdapter implements LLMPort {
   async stream(
     _prompt: string,
     onToken: (token: string) => void,
+    _signal?: AbortSignal,
   ): Promise<string> {
     const tokens = this.response.split(" ");
     for (const token of tokens) {

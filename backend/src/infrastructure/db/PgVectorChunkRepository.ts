@@ -56,6 +56,23 @@ export class PgVectorChunkRepository implements ChunkRepository {
     }));
   }
 
+  async findByDocumentId(documentId: string): Promise<Chunk[]> {
+    const result = await pool.query(
+      `SELECT id, document_id, content, metadata
+       FROM chunks
+       WHERE document_id = $1
+       ORDER BY (metadata->>'position')::int`,
+      [documentId],
+    );
+    return result.rows.map((row) => ({
+      id: row.id as string,
+      documentId: row.document_id as string,
+      content: row.content as string,
+      embedding: [],
+      metadata: row.metadata as Chunk["metadata"],
+    }));
+  }
+
   async deleteByDocumentId(documentId: string): Promise<void> {
     await pool.query("DELETE FROM chunks WHERE document_id = $1", [documentId]);
   }

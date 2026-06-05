@@ -18,6 +18,7 @@ export class AnthropicLLMAdapter implements LLMPort {
   async stream(
     prompt: string,
     onToken: (token: string) => void,
+    signal?: AbortSignal,
   ): Promise<string> {
     let fullContent = "";
 
@@ -27,7 +28,12 @@ export class AnthropicLLMAdapter implements LLMPort {
       messages: [{ role: "user", content: prompt }],
     });
 
+    if (signal) {
+      signal.addEventListener("abort", () => stream.abort(), { once: true });
+    }
+
     for await (const chunk of stream) {
+      if (signal?.aborted) break;
       if (
         chunk.type === "content_block_delta" &&
         chunk.delta.type === "text_delta"

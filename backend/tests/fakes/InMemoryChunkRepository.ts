@@ -44,6 +44,12 @@ export class InMemoryChunkRepository implements ChunkRepository {
     return results.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
+  async findByDocumentId(documentId: string): Promise<Chunk[]> {
+    return Array.from(this.chunks.values())
+      .filter((c) => c.documentId === documentId)
+      .sort((a, b) => a.metadata.position - b.metadata.position);
+  }
+
   async deleteByDocumentId(documentId: string): Promise<void> {
     for (const [id, chunk] of this.chunks.entries()) {
       if (chunk.documentId === documentId) {

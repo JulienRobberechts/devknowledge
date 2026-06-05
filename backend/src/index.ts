@@ -2,8 +2,25 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import { z } from "zod";
 
 dotenv.config({ path: path.join(__dirname, "../../.env.local") });
+
+const envSchema = z.object({
+  DATABASE_URL: z.string().min(1),
+  ANTHROPIC_API_KEY: z.string().min(1),
+  VOYAGE_API_KEY: z.string().min(1),
+  API_KEY: z.string().min(1),
+});
+
+const envResult = envSchema.safeParse(process.env);
+if (!envResult.success) {
+  const missing = envResult.error.errors
+    .map((e) => e.path.join("."))
+    .join(", ");
+  console.error(`Missing required environment variables: ${missing}`);
+  process.exit(1);
+}
 
 import config from "./config";
 import { apiKeyAuth } from "./api/middleware/apiKeyAuth";

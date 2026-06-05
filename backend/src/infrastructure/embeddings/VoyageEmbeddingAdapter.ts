@@ -30,6 +30,9 @@ async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
   throw lastError;
 }
 
+const BATCH_SIZE = 20;
+const BATCH_DELAY_MS = 200;
+
 export class VoyageEmbeddingAdapter implements EmbeddingPort {
   private readonly apiKey: string;
   private readonly model = "voyage-3-lite";
@@ -45,6 +48,19 @@ export class VoyageEmbeddingAdapter implements EmbeddingPort {
   }
 
   async embedMany(texts: string[]): Promise<number[][]> {
+    const results: number[][] = [];
+    for (let i = 0; i < texts.length; i += BATCH_SIZE) {
+      if (i > 0) {
+        await sleep(BATCH_DELAY_MS);
+      }
+      const batch = texts.slice(i, i + BATCH_SIZE);
+      const batchResults = await this.embedBatch(batch);
+      results.push(...batchResults);
+    }
+    return results;
+  }
+
+  private async embedBatch(texts: string[]): Promise<number[][]> {
     return withRetry(async () => {
       const response = await fetch(this.apiUrl, {
         method: "POST",

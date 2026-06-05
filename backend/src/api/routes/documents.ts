@@ -98,6 +98,29 @@ export function documentsRouter(
     },
   );
 
+  router.get(
+    "/:id/chunks",
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const doc = await documentRepo.findById(req.params.id);
+        if (!doc) {
+          res.status(404).json({ error: "Document not found" });
+          return;
+        }
+        const chunks = await chunkRepo.findByDocumentId(req.params.id);
+        res.json(
+          chunks.map((chunk) => ({
+            position: chunk.metadata.position,
+            contentLength: chunk.content.length,
+            preview: chunk.content.slice(0, 100),
+          })),
+        );
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
   router.delete(
     "/:id",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
