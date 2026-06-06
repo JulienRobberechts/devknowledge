@@ -61,6 +61,12 @@ docker compose --env-file .env.local up --build
 
 L'API sera disponible sur `http://localhost:3205`, le frontend sur `http://localhost:5173`.
 
+## Lecture des logs
+
+docker compose --env-file .env.local logs -f api
+
+
+
 ## Vérification
 
 ```bash
