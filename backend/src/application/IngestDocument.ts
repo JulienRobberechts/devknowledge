@@ -59,7 +59,7 @@ export class IngestDocument {
 
       for (let i = 0; i < contents.length; i += BATCH_SIZE) {
         const batch = contents.slice(i, i + BATCH_SIZE);
-        const batchEmbeddings = await this.embeddingAdapter.embedMany(batch);
+        const batchEmbeddings = await this.embeddingAdapter.embedMany(batch, "document");
         embeddings.push(...batchEmbeddings);
       }
 

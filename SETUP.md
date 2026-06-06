@@ -63,7 +63,7 @@ L'API sera disponible sur `http://localhost:3205`, le frontend sur `http://local
 
 ## Lecture des logs
 
-docker compose --env-file .env.local logs -f api
+docker compose --env-file .env.local logs -f api > log-2.ans 2>&1
 
 
 

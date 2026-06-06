@@ -1,4 +1,7 @@
-import { EmbeddingPort } from "../../domain/ports/EmbeddingPort";
+import {
+  EmbeddingInputType,
+  EmbeddingPort,
+} from "../../domain/ports/EmbeddingPort";
 import config from "../../config";
 import { Logger } from "../logger/Logger";
 
@@ -40,8 +43,6 @@ export class VoyageEmbeddingAdapter implements EmbeddingPort {
   private readonly apiKey: string;
 
   // See https://docs.voyageai.com/docs/embeddings
-  // voyage-3-lite : 512
-
   private readonly model = "voyage-4-lite";
   private readonly apiUrl = "https://api.voyageai.com/v1/embeddings";
 
@@ -49,25 +50,31 @@ export class VoyageEmbeddingAdapter implements EmbeddingPort {
     this.apiKey = apiKey;
   }
 
-  async embed(text: string): Promise<number[]> {
-    const results = await this.embedMany([text]);
+  async embed(text: string, inputType?: EmbeddingInputType): Promise<number[]> {
+    const results = await this.embedMany([text], inputType);
     return results[0];
   }
 
-  async embedMany(texts: string[]): Promise<number[][]> {
+  async embedMany(
+    texts: string[],
+    inputType?: EmbeddingInputType,
+  ): Promise<number[][]> {
     const results: number[][] = [];
     for (let i = 0; i < texts.length; i += BATCH_SIZE) {
       if (i > 0) {
         await sleep(BATCH_DELAY_MS);
       }
       const batch = texts.slice(i, i + BATCH_SIZE);
-      const batchResults = await this.embedBatch(batch);
+      const batchResults = await this.embedBatch(batch, inputType);
       results.push(...batchResults);
     }
     return results;
   }
 
-  private async embedBatch(texts: string[]): Promise<number[][]> {
+  private async embedBatch(
+    texts: string[],
+    inputType?: EmbeddingInputType,
+  ): Promise<number[][]> {
     return withRetry(async () => {
       logger.info("Voyage API request", {
         model: this.model,
@@ -76,14 +83,17 @@ export class VoyageEmbeddingAdapter implements EmbeddingPort {
       });
       const start = Date.now();
 
-      // should we use input_type in body? seems to be optional and defaults to None
       const response = await fetch(this.apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${this.apiKey}`,
         },
-        body: JSON.stringify({ model: this.model, input: texts }),
+        body: JSON.stringify({
+          model: this.model,
+          input: texts,
+          ...(inputType !== undefined && { input_type: inputType }),
+        }),
       });
 
       if (!response.ok) {
@@ -97,7 +107,6 @@ export class VoyageEmbeddingAdapter implements EmbeddingPort {
         model: this.model,
         inputCount: texts.length,
         texts: texts,
-        response: data,
         durationMs: Date.now() - start,
       });
       return data.data
