@@ -9,9 +9,25 @@ import { SearchKnowledge } from "../../src/application/SearchKnowledge";
 import { InMemoryChunkRepository } from "../fakes/InMemoryChunkRepository";
 import { InMemoryDocumentRepository } from "../fakes/InMemoryDocumentRepository";
 
-const CHUNK_SIZE = 40;
-const CHUNK_OVERLAP = 5;
-const MIN_SCORE = 0.0;
+// OK
+// const CHUNK_SIZE = 40;
+// const CHUNK_OVERLAP = 5;
+// const MIN_SCORE = 0.0;
+
+// const CHUNK_SIZE = 50; // 
+// const CHUNK_OVERLAP = 20; // (40% de CHUNK_SIZE)
+// const MIN_SCORE = 0.3; // 
+
+// OK
+const CHUNK_SIZE = 100;
+const CHUNK_OVERLAP = 40;
+const MIN_SCORE = 0.3;
+
+// KO
+// const CHUNK_SIZE = 100;
+// const CHUNK_OVERLAP = 50;
+// const MIN_SCORE = 0.75;
+
 
 const VOYAGE_API_KEY = process.env.VOYAGE_API_KEY;
 const DOCUMENT_PATH = path.resolve(
