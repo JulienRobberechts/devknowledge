@@ -1,0 +1,20 @@
+// orient-express.md | SentenceChunkingStrategy | size=100 overlap=30
+export default [
+  // Chunk 1
+  "L'Orient-Express est un train de luxe créé par la Compagnie internationale des wagons-lits (CIWL) qui, depuis 1883, assure la liaison entre Paris et Vienne puis Venise, à partir de 1919, puis Constantinople, officiellement renommé Istanbul en 1930[1], desservant plusieurs capitales de nations européennes. Dans les années 1920, avec des artistes-décorateurs comme René Prou ou bien René Lalique, le style « Orient-Express » atteignit son apogée.",
+
+  // Chunk 2 (overlap : répète la dernière phrase du chunk 1)
+  "Dans les années 1920, avec des artistes-décorateurs comme René Prou ou bien René Lalique, le style « Orient-Express » atteignit son apogée. C'est après plusieurs changements d'itinéraire, deux guerres et enfin par l'abaissement continu de son prestige pendant la guerre froide, que le service quotidien Direct-Orient-Express vers Istanbul et Athènes cessa en 1977, vaincu par la faiblesse de sa vitesse commerciale (à peine 55 km/h vers la fin) due aux interminables arrêts douaniers dans les pays communistes traversés, ainsi qu'à l'état obsolète de leurs réseaux, et malmené par la concurrence grandissante de l'aviation de masse.",
+
+  // Chunk 3
+  "Depuis 1982, un nouveau train de luxe régulier, assuré par une compagnie privée, le Venise-Simplon-Orient-Express, a pris le relais sur le trajet Boulogne-sur-Mer (désormais Calais) – Paris – Venise, via Innsbruck ou Vienne, avec parfois un prolongement vers Istanbul. La marque Orient-Express est cependant restée propriété de la SNCF[2], toute compagnie privée devant utiliser une appellation à ajout (comme le Venise-Simplon-Orient-Express). Le Paris-Vienne a roulé sous l'appellation Orient-Express jusqu'en 2009, date depuis laquelle son exploitation par la SNCF est suspendue.",
+
+  // Chunk 4 (overlap : répète la dernière phrase du chunk 3)
+  "Le Paris-Vienne a roulé sous l'appellation Orient-Express jusqu'en 2009, date depuis laquelle son exploitation par la SNCF est suspendue. La SNCF a racheté au groupe Accor les sept voitures du Pullman-Orient-Express[3], restaurées par la Compagnie internationale des wagons-lits, afin de les incorporer dans les convois de la société Train-Expo ou de les proposer à la location par des entreprises ou des particuliers. Du fait de la crise économique, leur utilisation dans la circulation de dîners-voyages, assurée précédemment, n'est pas jugée viable pour le moment.",
+
+  // Chunk 5 (overlap : répète la dernière phrase du chunk 4)
+  "Du fait de la crise économique, leur utilisation dans la circulation de dîners-voyages, assurée précédemment, n'est pas jugée viable pour le moment. C'est une partie de ces voitures d'époque qui est parquée en 2014 le long de l'Institut du monde arabe, dans le cadre de l'exposition Il était une fois l'Orient-Express.\n\nEn 2016, un événement vient renverser la situation : la découverte par l'historien de la SNCF Arthur Mettetal d'une rame ayant composé le Nostalgie-Istanbul-Orient-Express (v. infra) remisée sur une voie à la frontière de la Pologne et de la Biélorussie.",
+
+  // Chunk 6
+  "Des négociations sont engagées par la SNCF sous la houlette de son directeur, Guillaume Pepy, pour son acquisition[4]. Démarche fructueuse aboutissant à l'achat de seize voitures Orient-Express emmenées deux ans plus tard dans les Ateliers de Construction du Centre (ACC M) à Clermont-Ferrand.\n\nVingt-trois voitures du train mythique appartenant désormais à la SNCF, le projet d'un nouveau train Orient-Express est relancé en partenariat avec le groupe Accor qui acquiert, en complément, la propriété de l'ensemble des droits sur le nom.",
+];
