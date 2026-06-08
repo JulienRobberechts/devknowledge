@@ -100,69 +100,106 @@ railway login
 ### 2. Créer le projet et la base PostgreSQL
 
 ```bash
-railway init
-railway add --plugin postgresql
+railway init # Then Type the name of your project
+
+railway link # Then Select the project
+
+railway add --database postgres
 ```
 
 Vérifier que pgvector est disponible :
 
 ```bash
-railway run psql $DATABASE_URL -c "SELECT * FROM pg_available_extensions WHERE name = 'vector';"
+# Installer le client PostgreSQL si absent
+sudo apt install -y postgresql-client
+
+export DATABASE_PUBLIC_URL=$(railway run printenv DATABASE_PUBLIC_URL)
+psql "$DATABASE_PUBLIC_URL" -c "SELECT * FROM pg_available_extensions WHERE name = 'vector';"
 ```
 
 Si absent, activer depuis le dashboard Railway : **PostgreSQL → Variables → `PGVECTOR_ENABLED=true`**.
 
-### 3. Variables d'environnement (dashboard Railway)
+### 3. Créer le service API
 
-**Service API (`devknowledge-api`) :**
-
-| Variable | Valeur |
-|---|---|
-| `DATABASE_URL` | Auto-injectée par Railway |
-| `ANTHROPIC_API_KEY` | Clé API Anthropic |
-| `VOYAGE_API_KEY` | Clé API Voyage AI |
-| `API_KEY` | Clé d'auth prod (choisir une valeur sécurisée) |
-| `NODE_ENV` | `production` |
-| `PORT` | `3001` |
-| `LOG_LEVEL` | `info` |
-| `CHUNKING_STRATEGY` | `sentence` |
-| `CHUNK_SIZE_TOKENS` | `512` |
-| `CHUNK_OVERLAP_TOKENS` | `128` |
-| `RETRIEVAL_LIMIT` | `8` |
-| `RETRIEVAL_MIN_SCORE` | `0.75` |
-| `LLM_MAX_TOKENS` | `1024` |
-| `LLM_TEMPERATURE` | `0.1` |
-
-**Service Frontend (`devknowledge-frontend`) :**
-
-| Variable | Valeur |
-|---|---|
-| `BACKEND_URL` | URL publique du service API (ex: `https://devknowledge-api.up.railway.app`) |
-| `VITE_API_KEY` | Même valeur que `API_KEY` ci-dessus (build-arg Docker) |
-
-### 4. Déployer les services
+`railway up` ne crée pas automatiquement un service — il faut d'abord le créer explicitement :
 
 ```bash
+railway add --service devknowledge-api
+```
+
+La CLI demande de saisir les variables :
+
+```env
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+ANTHROPIC_API_KEY=<>
+VOYAGE_API_KEY=<>
+API_KEY=<>
+PORT=3205
+NODE_ENV=production
+LOG_LEVEL=debug
+CHUNKING_STRATEGY=sentence
+CHUNK_SIZE_TOKENS=512
+CHUNK_OVERLAP_TOKENS=128
+RETRIEVAL_LIMIT=8
+RETRIEVAL_MIN_SCORE=0.10
+LLM_MAX_TOKENS=1024
+LLM_TEMPERATURE=0.1
+```
+
+> `${{Postgres.DATABASE_URL}}` est une variable de référence Railway — elle injecte automatiquement l'URL du service PostgreSQL créé à l'étape 2.
+
+### 4. Premier déploiement de l'API
+
+```bash
+cd devknowledge/backend
 railway up --service devknowledge-api
+```
+
+### 5. Créer et déployer le frontend
+
+`railway up` ne crée pas automatiquement un service — il faut d'abord le créer explicitement :
+
+```bash
+railway add --service devknowledge-frontend
+```
+
+Variables à saisir :
+
+```env
+BACKEND_URL=https://${{devknowledge-api.RAILWAY_PUBLIC_DOMAIN}}
+VITE_API_KEY=<même valeur que API_KEY>
+```
+
+> `${{devknowledge-api.RAILWAY_PUBLIC_DOMAIN}}` est une variable de référence Railway — elle injecte automatiquement le domaine public du service API.
+> `VITE_API_KEY` est une variable **build-time** (Docker `ARG`) : elle est intégrée dans le bundle JS à la compilation, pas à l'exécution.
+
+Puis déployer :
+
+```bash
+cd devknowledge/frontend
 railway up --service devknowledge-frontend
 ```
 
-### 5. Lancer les migrations en production
+### 6. Lancer les migrations en production
+
+`railway run` s'exécute en local : `DATABASE_URL` pointe vers le réseau privé Railway (`*.railway.internal`), inaccessible hors du réseau Railway. Il faut overrider avec `DATABASE_PUBLIC_URL` :
 
 ```bash
-railway run --service devknowledge-api npm run migrate:prod
+cd devknowledge/backend
+npm run build
+railway run --service devknowledge-api sh -c 'DATABASE_URL=$DATABASE_PUBLIC_URL node dist/infrastructure/db/migrate.js'
 ```
 
 Vérifier :
 
 ```bash
-railway run --service devknowledge-api node -e \
-  "const {Pool}=require('pg');const p=new Pool({connectionString:process.env.DATABASE_URL});p.query('SELECT COUNT(*) FROM documents').then(r=>console.log(r.rows[0])).finally(()=>p.end())"
+railway run --service devknowledge-api sh -c \
+  'DATABASE_URL=$DATABASE_PUBLIC_URL node -e "const {Pool}=require(\"pg\");const p=new Pool({connectionString:process.env.DATABASE_URL});p.query(\"SELECT COUNT(*) FROM documents\").then(r=>console.log(r.rows[0])).finally(()=>p.end())"'
 ```
 
 Doit retourner `{ count: '0' }` (table vide mais présente).
 
-### 6. Test de fumée
+### 7. Test de fumée
 
 1. Ouvrir l'URL publique du frontend Railway
 2. Uploader un PDF
