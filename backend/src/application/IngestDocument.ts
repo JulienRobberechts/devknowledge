@@ -26,8 +26,8 @@ export class IngestDocument {
     private readonly chunkingStrategy: IChunkingStrategy,
     config: IngestConfig = {},
   ) {
-    this.chunkSize = config.chunkSize ?? 400;
-    this.chunkOverlap = config.chunkOverlap ?? 50;
+    this.chunkSize = config.chunkSize ?? 512;
+    this.chunkOverlap = config.chunkOverlap ?? 128;
   }
 
   async execute(documentId: string): Promise<void> {
