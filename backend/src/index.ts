@@ -4,6 +4,19 @@ import dotenv from "dotenv";
 import path from "path";
 import { z } from "zod";
 
+process.on("uncaughtException", (err) => {
+  console.error("[uncaughtException]", err);
+  process.exit(1);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("[unhandledRejection]", reason);
+  process.exit(1);
+});
+process.on("SIGTERM", () => {
+  console.log("[SIGTERM] received — Railway is stopping the container");
+  process.exit(0);
+});
+
 dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 const envSchema = z.object({
