@@ -1,4 +1,4 @@
-# DevKnowledge — RAG Backend
+# Argos — RAG Backend
 
 A Retrieval-Augmented Generation API for querying internal knowledge bases.
 

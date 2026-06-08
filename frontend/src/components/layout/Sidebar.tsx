@@ -30,7 +30,7 @@ export default function Sidebar() {
     <div className="flex flex-col h-full p-3">
       <div className="mb-4">
         <Link to="/documents" className="font-bold text-lg text-gray-800">
-          DevKnowledge
+          Argos
         </Link>
       </div>
       <button
