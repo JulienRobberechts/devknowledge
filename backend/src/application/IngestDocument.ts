@@ -45,7 +45,11 @@ export class IngestDocument {
     await this.documentRepo.updateStatus(documentId, "processing");
 
     try {
-      const { text } = await this.fileParser.parse(document.filePath ?? "");
+      const { text: rawText } = await this.fileParser.parse(
+        document.filePath ?? "",
+      );
+      // PostgreSQL UTF8 rejects null bytes — strip them
+      const text = rawText.replace(/\x00/g, "");
       const chunkResults = this.chunkingStrategy.chunk(text, {
         chunkSize: this.chunkSize,
         chunkOverlap: this.chunkOverlap,
