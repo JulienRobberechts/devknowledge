@@ -121,6 +121,11 @@ export default function SettingsPage() {
               info="API used for response generation. Configurable via environment variables."
             />
             <Row
+              label="Model"
+              value={config.llm.model}
+              info="LLM model used for response generation. Overridable via LLM_MODEL environment variable."
+            />
+            <Row
               label="Max tokens"
               value={config.llm.maxTokens}
               info="Maximum number of tokens the LLM can generate in a response. Increasing this allows longer answers."
@@ -137,6 +142,11 @@ export default function SettingsPage() {
               label="Provider"
               value={config.embeddings.provider}
               info="API used for vectorizing documents and queries."
+            />
+            <Row
+              label="Model"
+              value={config.embeddings.model}
+              info="Embedding model used for vectorizing documents and queries. Overridable via EMBEDDING_MODEL environment variable."
             />
           </Section>
         </>

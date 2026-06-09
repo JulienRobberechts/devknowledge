@@ -14,6 +14,7 @@ const config = {
   llm: {
     anthropic: {
       apiKey: process.env.ANTHROPIC_API_KEY ?? "",
+      model: process.env.LLM_MODEL ?? "claude-haiku-4-5-20251001",
       maxTokens: parseInt(process.env.LLM_MAX_TOKENS ?? "1024", 10),
       temperature: parseFloat(process.env.LLM_TEMPERATURE ?? "0.1"),
     },
@@ -21,6 +22,7 @@ const config = {
   embeddings: {
     voyage: {
       apiKey: process.env.VOYAGE_API_KEY ?? "",
+      model: process.env.EMBEDDING_MODEL ?? "voyage-4-lite",
     },
   },
   api: {

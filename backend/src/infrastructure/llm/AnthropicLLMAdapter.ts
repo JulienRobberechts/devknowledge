@@ -7,7 +7,7 @@ const logger = new Logger("AnthropicLLMAdapter");
 
 export class AnthropicLLMAdapter implements LLMPort {
   private readonly client: Anthropic;
-  private readonly model = "claude-haiku-4-5-20251001";
+  private readonly model = config.llm.anthropic.model;
   private readonly maxTokens: number;
 
   constructor(

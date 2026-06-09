@@ -16,11 +16,13 @@ export function configRouter(): Router {
       },
       llm: {
         provider: "anthropic",
+        model: config.llm.anthropic.model,
         maxTokens: config.llm.anthropic.maxTokens,
         temperature: config.llm.anthropic.temperature,
       },
       embeddings: {
         provider: "voyage",
+        model: config.embeddings.voyage.model,
       },
     });
   });
