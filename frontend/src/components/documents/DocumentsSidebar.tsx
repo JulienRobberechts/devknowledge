@@ -2,6 +2,7 @@ import { useNavigate, useMatch } from "react-router-dom";
 import { FileText } from "lucide-react";
 import { useDocuments } from "../../hooks/useDocuments";
 import DocumentStatusBadge from "./DocumentStatusBadge";
+import DocumentTypeIcon from "./DocumentTypeIcon";
 import DocumentUpload from "./DocumentUpload";
 import PageHeader from "../ui/PageHeader";
 
@@ -36,6 +37,7 @@ export default function DocumentsSidebar() {
             }`}
           >
             <div className="flex items-center gap-2 min-w-0 flex-1">
+              <DocumentTypeIcon sourceType={doc.sourceType} />
               <span className="truncate">{doc.title}</span>
               <DocumentStatusBadge status={doc.status} />
             </div>

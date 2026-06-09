@@ -38,6 +38,7 @@ function PdfViewer({ id }: { id: string }) {
   const { data: pdfData, isLoading } = useQuery({
     queryKey: ["documents", id, "raw"],
     queryFn: () => api.getDocumentRaw(id),
+    gcTime: 0,
   });
 
   return (

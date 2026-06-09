@@ -37,12 +37,7 @@ export function documentsRouter(
         }
 
         const body = createDocumentSchema.parse(req.body);
-        const title =
-          body.title ??
-          path.basename(
-            req.file.originalname,
-            path.extname(req.file.originalname),
-          );
+        const title = body.title ?? path.basename(req.file.originalname);
         const sourceType = sourceTypeFromMime(
           req.file.mimetype,
           req.file.originalname,

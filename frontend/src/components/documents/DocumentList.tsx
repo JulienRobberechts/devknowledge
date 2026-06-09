@@ -1,5 +1,6 @@
 import { useDeleteDocument, useDocuments } from "../../hooks/useDocuments";
 import DocumentStatusBadge from "./DocumentStatusBadge";
+import DocumentTypeIcon from "./DocumentTypeIcon";
 
 export default function DocumentList() {
   const { data: documents, isLoading } = useDocuments();
@@ -25,6 +26,7 @@ export default function DocumentList() {
           className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200"
         >
           <div className="flex items-center gap-3 min-w-0">
+            <DocumentTypeIcon sourceType={doc.sourceType} />
             <span className="text-sm font-medium text-gray-800 truncate">
               {doc.title}
             </span>
