@@ -221,7 +221,11 @@ railway run --service argos-api sh -c \
 
 Doit retourner `{ count: '0' }` (table vide mais présente).
 
-### 8. Test de fumée
+### 8. Test de fumée (premier déploiement)
+
+> Cette section documente le premier déploiement complet. Pour les redéploiements suivants, voir [Redéploiement](#redéploiement).
+
+### 9. Test de fumée
 
 1. Obtenir l'URL du frontend :
    ```bash
@@ -231,3 +235,56 @@ Doit retourner `{ count: '0' }` (table vide mais présente).
 2. Uploader un PDF
 3. Poser une question sur son contenu
 4. Vérifier la réponse streamée
+
+---
+
+## Redéploiement
+
+Pour pousser des modifications sur un projet Railway **déjà configuré** (pas de création de service ni de variables à renseigner).
+
+### Prérequis
+
+```bash
+railway link   # si le terminal n'est pas encore lié au projet
+```
+
+### API
+
+```bash
+cd devknowledge/backend
+railway up --service argos-api
+```
+
+### Frontend
+
+```bash
+cd devknowledge/frontend
+railway up --service argos-frontend
+```
+
+### Migrations (si le schéma a changé)
+
+À exécuter après le redéploiement de l'API :
+
+```bash
+cd devknowledge/backend
+npm run build
+railway run --service argos-api sh -c 'DATABASE_URL=$DATABASE_PUBLIC_URL node dist/infrastructure/db/migrate.js'
+```
+
+### Tout redéployer d'un coup
+
+```bash
+cd devknowledge/backend && railway up --service argos-api && \
+cd ../frontend && railway up --service argos-frontend
+```
+
+### Vérification rapide
+
+```bash
+# Logs de l'API (Ctrl+C pour quitter)
+railway logs --service argos-api
+
+# URL du frontend
+railway domain -s argos-frontend --json
+```
