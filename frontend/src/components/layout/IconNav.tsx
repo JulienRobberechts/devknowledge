@@ -1,14 +1,8 @@
 import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  FileText,
-  MessageSquare,
-  Settings,
-  FlaskConical,
-} from "lucide-react";
+import { FileText, MessageSquare, Settings, FlaskConical } from "lucide-react";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Accueil" },
+  { to: "/", icon: null, label: "Argos" },
   { to: "/documents", icon: FileText, label: "Documents" },
   { to: "/conversations", icon: MessageSquare, label: "Conversations" },
   { to: "/technical", icon: FlaskConical, label: "Technique" },
@@ -18,9 +12,6 @@ const navItems = [
 export default function IconNav() {
   return (
     <nav className="flex flex-col items-center py-4 gap-1 w-14 shrink-0 bg-slate-900 h-full">
-      <div className="mb-4 text-white font-bold text-xs tracking-widest select-none">
-        A
-      </div>
       {navItems.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}
@@ -35,7 +26,13 @@ export default function IconNav() {
             }`
           }
         >
-          <Icon size={20} />
+          {Icon ? (
+            <Icon size={20} />
+          ) : (
+            <span className="text-[10px] font-bold tracking-widest">
+              {label}
+            </span>
+          )}
         </NavLink>
       ))}
     </nav>
