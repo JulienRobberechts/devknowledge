@@ -4,14 +4,14 @@ import {
   MessageSquare,
   Settings,
   FlaskConical,
-  BrainCircuit,
+  SquareCheck,
 } from "lucide-react";
 
 const navItems = [
   { to: "/", icon: null, label: "Argos" },
   { to: "/documents", icon: FileText, label: "Documents" },
   { to: "/conversations", icon: MessageSquare, label: "Conversations" },
-  { to: "/quiz", icon: BrainCircuit, label: "Quiz" },
+  { to: "/quiz", icon: SquareCheck, label: "Quiz" },
   { to: "/technical", icon: FlaskConical, label: "Technical" },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];
