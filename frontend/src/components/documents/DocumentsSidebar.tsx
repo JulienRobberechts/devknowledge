@@ -1,6 +1,6 @@
 import { useNavigate, useMatch } from "react-router-dom";
 import { FileText } from "lucide-react";
-import { useDocuments, useDeleteDocument } from "../../hooks/useDocuments";
+import { useDocuments } from "../../hooks/useDocuments";
 import DocumentStatusBadge from "./DocumentStatusBadge";
 import DocumentUpload from "./DocumentUpload";
 import PageHeader from "../ui/PageHeader";
@@ -11,21 +11,6 @@ export default function DocumentsSidebar() {
   const activeId = match?.params.id;
 
   const { data: documents } = useDocuments();
-  const deleteDocument = useDeleteDocument();
-
-  async function handleDelete(e: React.MouseEvent, id: string) {
-    e.preventDefault();
-    e.stopPropagation();
-    await deleteDocument.mutateAsync(id);
-    if (activeId === id) {
-      const remaining = documents?.filter((d) => d.id !== id);
-      if (remaining && remaining.length > 0) {
-        navigate(`/documents/${remaining[0].id}`);
-      } else {
-        navigate("/documents");
-      }
-    }
-  }
 
   return (
     <div className="flex flex-col h-full p-4">
@@ -54,12 +39,6 @@ export default function DocumentsSidebar() {
               <span className="truncate">{doc.title}</span>
               <DocumentStatusBadge status={doc.status} />
             </div>
-            <button
-              onClick={(e) => void handleDelete(e, doc.id)}
-              className="hidden group-hover:block ml-2 text-gray-400 hover:text-red-500 shrink-0"
-            >
-              ×
-            </button>
           </div>
         ))}
         {!documents?.length && (
