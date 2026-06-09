@@ -26,7 +26,7 @@ function DocumentsPage() {
       <PageHeader
         icon={<FileText className="text-green-600" size={28} />}
         title="Documents"
-        info="Gérez les documents indexés dans la base de connaissance. Chaque document est découpé en chunks, vectorisé et stocké pour la recherche sémantique."
+        info="Manage documents indexed in the knowledge base. Each document is split into chunks, vectorized and stored for semantic search."
       />
       <div className="space-y-6">
         <DocumentUpload />
@@ -56,7 +56,7 @@ function ConversationsPage() {
       <PageHeader
         icon={<MessageSquare className="text-blue-500" size={28} />}
         title="Conversations"
-        info="Posez des questions sur vos documents. Le système recherche les passages pertinents et génère une réponse contextuelle."
+        info="Ask questions about your documents. The system retrieves relevant passages and generates a contextual answer."
       />
     </div>
   );

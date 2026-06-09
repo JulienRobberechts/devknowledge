@@ -18,7 +18,7 @@ export default function PageHeader({ icon, title, info }: PageHeaderProps) {
         <button
           onClick={() => setOpen((v) => !v)}
           className="text-gray-300 hover:text-blue-500 transition-colors"
-          aria-label={`Explication : ${title}`}
+          aria-label={`About: ${title}`}
         >
           <Info size={16} />
         </button>

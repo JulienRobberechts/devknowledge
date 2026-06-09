@@ -22,7 +22,7 @@ function Row({
           <button
             onClick={() => setOpen((v) => !v)}
             className="text-gray-300 hover:text-blue-500 transition-colors"
-            aria-label={`Explication : ${label}`}
+            aria-label={`About: ${label}`}
           >
             <Info size={13} />
           </button>
@@ -64,81 +64,79 @@ export default function SettingsPage() {
     <div className="p-8 max-w-xl">
       <PageHeader
         icon={<Settings className="text-gray-600" size={28} />}
-        title="Paramètres"
-        info="Configuration du système Argos. Ces valeurs sont définies côté serveur via les variables d'environnement et affichées ici en lecture seule."
+        title="Settings"
+        info="Argos system configuration. These values are set server-side via environment variables and displayed here as read-only."
       />
 
-      {isLoading && <p className="text-gray-400 text-sm">Chargement…</p>}
+      {isLoading && <p className="text-gray-400 text-sm">Loading…</p>}
       {isError && (
-        <p className="text-red-500 text-sm">
-          Erreur de chargement de la configuration.
-        </p>
+        <p className="text-red-500 text-sm">Failed to load configuration.</p>
       )}
 
       {config && (
         <>
-          <Section title="Général">
+          <Section title="General">
             <Row
               label="Log level"
               value={config.logLevel}
-              info="Verbosité des logs serveur. Valeurs possibles : debug, info, warn, error."
+              info="Server log verbosity. Possible values: debug, info, warn, error."
             />
           </Section>
 
-          <Section title="RAG — Découpage">
+          <Section title="RAG — Chunking">
             <Row
-              label="Stratégie"
+              label="Strategy"
               value={config.rag.chunkingStrategy}
-              info="Méthode de découpage des documents. « sentence » respecte les frontières de phrases ; « recursive » découpe par blocs de taille fixe."
+              info="Document splitting method. 'sentence' respects sentence boundaries; 'recursive' splits into fixed-size blocks."
             />
             <Row
-              label="Taille chunk (tokens)"
+              label="Chunk size (tokens)"
               value={config.rag.chunkSize}
-              info="Nombre maximum de tokens par chunk. Un chunk plus grand contient plus de contexte mais peut diluer la pertinence lors du retrieval."
+              info="Maximum number of tokens per chunk. A larger chunk provides more context but may dilute relevance during retrieval."
             />
             <Row
-              label="Chevauchement (tokens)"
+              label="Overlap (tokens)"
               value={config.rag.chunkOverlap}
-              info="Nombre de tokens partagés entre deux chunks consécutifs. Évite de couper une idée à cheval sur deux chunks."
+              info="Number of tokens shared between consecutive chunks. Prevents ideas from being cut across two chunks."
             />
           </Section>
 
           <Section title="RAG — Retrieval">
             <Row
-              label="Limite de résultats"
+              label="Result limit"
               value={config.rag.retrievalLimit}
-              info="Nombre maximum de chunks renvoyés par la recherche vectorielle et injectés dans le contexte du LLM."
+              info="Maximum number of chunks returned by vector search and injected into the LLM context."
             />
             <Row
-              label="Score minimum"
+              label="Minimum score"
               value={config.rag.retrievalMinScore}
-              info="Seuil de similarité cosinus (0–1) en-dessous duquel un chunk est ignoré. Un score élevé filtre les résultats peu pertinents."
+              info="Cosine similarity threshold (0–1) below which a chunk is ignored. A high score filters out less relevant results."
             />
           </Section>
 
           <Section title="LLM">
             <Row
-              label="Fournisseur"
+              label="Provider"
               value={config.llm.provider}
-              info="API utilisée pour la génération de réponses. Configurable via les variables d'environnement."
+              info="API used for response generation. Configurable via environment variables."
             />
             <Row
               label="Max tokens"
               value={config.llm.maxTokens}
-              info="Nombre maximum de tokens que le LLM peut générer en réponse. Augmenter cette valeur permet des réponses plus longues."
+              info="Maximum number of tokens the LLM can generate in a response. Increasing this allows longer answers."
             />
             <Row
-              label="Température"
+              label="Temperature"
               value={config.llm.temperature}
-              info="Contrôle la créativité des réponses (0 = déterministe, 1 = très créatif). Une valeur basse est recommandée pour des réponses factuelles."
+              info="Controls response creativity (0 = deterministic, 1 = very creative). A low value is recommended for factual answers."
             />
           </Section>
 
           <Section title="Embeddings">
             <Row
-              label="Fournisseur"
+              label="Provider"
               value={config.embeddings.provider}
-              info="API utilisée pour la vectorisation des documents et des requêtes."
+              info="API used for vectorizing documents and queries."
             />
           </Section>
         </>

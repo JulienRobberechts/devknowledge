@@ -56,7 +56,7 @@ function EditableTitle({ id, title }: { id: string; title: string }) {
     <h1
       className="text-2xl font-bold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
       onClick={() => setEditing(true)}
-      title="Cliquer pour modifier le titre"
+      title="Click to edit title"
     >
       {title}
     </h1>
@@ -136,7 +136,7 @@ export default function ChatInterface() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={createConversation.isPending}
-              placeholder="Posez votre question…"
+              placeholder="Ask your question…"
               rows={1}
               className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
             />
@@ -145,7 +145,7 @@ export default function ChatInterface() {
               disabled={createConversation.isPending || !input.trim()}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
             >
-              Envoyer
+              Send
             </button>
           </form>
         </div>
@@ -156,7 +156,7 @@ export default function ChatInterface() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
-        Chargement…
+        Loading…
       </div>
     );
   }
@@ -164,7 +164,7 @@ export default function ChatInterface() {
   if (!conversation) {
     return (
       <div className="flex items-center justify-center h-full text-gray-500">
-        Conversation introuvable
+        Conversation not found
       </div>
     );
   }
@@ -182,7 +182,7 @@ export default function ChatInterface() {
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         disabled={stream.isStreaming}
-        placeholder="Posez votre question…"
+        placeholder="Ask your question…"
         rows={1}
         className="flex-1 resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
       />
@@ -191,7 +191,7 @@ export default function ChatInterface() {
         disabled={stream.isStreaming || !input.trim()}
         className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
       >
-        Envoyer
+        Send
       </button>
     </form>
   );

@@ -33,13 +33,13 @@ export default function Sidebar() {
       <PageHeader
         icon={<MessageSquare className="text-blue-500" size={28} />}
         title="Conversations"
-        info="Posez des questions sur vos documents. Le système recherche les passages pertinents et génère une réponse contextuelle."
+        info="Ask questions about your documents. The system retrieves relevant passages and generates a contextual answer."
       />
       <button
         onClick={() => navigate("/conversations/new")}
         className="w-full mb-4 px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
       >
-        + Nouvelle conversation
+        + New conversation
       </button>
       <nav className="flex flex-col gap-1 overflow-y-auto flex-1">
         {conversations?.map((conv) => (

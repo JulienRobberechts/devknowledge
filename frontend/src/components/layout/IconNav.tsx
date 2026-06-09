@@ -5,8 +5,8 @@ const navItems = [
   { to: "/", icon: null, label: "Argos" },
   { to: "/documents", icon: FileText, label: "Documents" },
   { to: "/conversations", icon: MessageSquare, label: "Conversations" },
-  { to: "/technical", icon: FlaskConical, label: "Technique" },
-  { to: "/settings", icon: Settings, label: "Paramètres" },
+  { to: "/technical", icon: FlaskConical, label: "Technical" },
+  { to: "/settings", icon: Settings, label: "Settings" },
 ];
 
 export default function IconNav() {

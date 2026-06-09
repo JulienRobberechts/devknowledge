@@ -84,25 +84,25 @@ function DocumentStatusBar({ documents }: { documents: Document[] }) {
         {ready > 0 && (
           <span className="flex items-center gap-1">
             <CheckCircle size={11} className="text-green-500" />
-            {ready} prêt{ready > 1 ? "s" : ""}
+            {ready} ready
           </span>
         )}
         {processing > 0 && (
           <span className="flex items-center gap-1">
             <Loader2 size={11} className="text-blue-500 animate-spin" />
-            {processing} en cours
+            {processing} processing
           </span>
         )}
         {pending > 0 && (
           <span className="flex items-center gap-1">
             <Clock size={11} className="text-yellow-500" />
-            {pending} en attente
+            {pending} pending
           </span>
         )}
         {error > 0 && (
           <span className="flex items-center gap-1">
             <AlertCircle size={11} className="text-red-500" />
-            {error} erreur{error > 1 ? "s" : ""}
+            {error} error{error > 1 ? "s" : ""}
           </span>
         )}
       </div>
@@ -200,10 +200,10 @@ function RagConfigCard({
   };
 }) {
   const items = [
-    { label: "Taille des chunks", value: `${config.chunkSize} tokens` },
-    { label: "Chevauchement", value: `${config.chunkOverlap} tokens` },
-    { label: "Résultats récupérés", value: config.retrievalLimit },
-    { label: "Score minimum", value: config.retrievalMinScore.toFixed(2) },
+    { label: "Chunk size", value: `${config.chunkSize} tokens` },
+    { label: "Overlap", value: `${config.chunkOverlap} tokens` },
+    { label: "Results retrieved", value: config.retrievalLimit },
+    { label: "Minimum score", value: config.retrievalMinScore.toFixed(2) },
   ];
 
   return (
@@ -235,17 +235,17 @@ export default function DashboardPage() {
       <PageHeader
         icon={<LayoutDashboard className="text-blue-600" size={28} />}
         title="Argos"
-        info="Vue d'ensemble de la base de connaissance : documents indexés, conversations récentes et état du système RAG."
+        info="Overview of the knowledge base: indexed documents, recent conversations and RAG system status."
       />
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="Documents indexés"
+          label="Indexed documents"
           value={docsLoading ? "…" : readyDocs}
           icon={<FileText size={20} className="text-green-600" />}
           color="bg-green-50"
-          sub={docsLoading ? undefined : `sur ${documents.length} total`}
+          sub={docsLoading ? undefined : `of ${documents.length} total`}
         />
         <StatCard
           label="Conversations"
@@ -254,14 +254,14 @@ export default function DashboardPage() {
           color="bg-blue-50"
         />
         <StatCard
-          label="Messages échangés"
+          label="Messages exchanged"
           value={convsLoading ? "…" : totalMessages}
           icon={<TrendingUp size={20} className="text-purple-600" />}
           color="bg-purple-50"
         />
         <StatCard
-          label="Pipeline RAG"
-          value={configLoading ? "…" : "Actif"}
+          label="RAG Pipeline"
+          value={configLoading ? "…" : "Active"}
           icon={<Zap size={20} className="text-orange-500" />}
           color="bg-orange-50"
           sub={config ? config.rag.chunkingStrategy : undefined}
@@ -276,28 +276,28 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <Database size={16} className="text-green-500" />
               <h2 className="font-semibold text-gray-700 text-sm">
-                Documents récents
+                Recent documents
               </h2>
             </div>
             <Link
               to="/documents"
               className="text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1"
             >
-              Voir tout <ArrowRight size={12} />
+              View all <ArrowRight size={12} />
             </Link>
           </div>
 
           {docsLoading ? (
-            <p className="text-sm text-gray-400">Chargement…</p>
+            <p className="text-sm text-gray-400">Loading…</p>
           ) : documents.length === 0 ? (
             <div className="text-center py-6">
               <FileText size={32} className="text-gray-200 mx-auto mb-2" />
-              <p className="text-sm text-gray-400">Aucun document</p>
+              <p className="text-sm text-gray-400">No documents</p>
               <Link
                 to="/documents"
                 className="mt-2 inline-block text-xs text-blue-500 hover:underline"
               >
-                Importer un document →
+                Import a document →
               </Link>
             </div>
           ) : (
@@ -314,28 +314,28 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <MessageSquare size={16} className="text-blue-500" />
               <h2 className="font-semibold text-gray-700 text-sm">
-                Conversations récentes
+                Recent conversations
               </h2>
             </div>
             <Link
               to="/conversations"
               className="text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1"
             >
-              Voir tout <ArrowRight size={12} />
+              View all <ArrowRight size={12} />
             </Link>
           </div>
 
           {convsLoading ? (
-            <p className="text-sm text-gray-400">Chargement…</p>
+            <p className="text-sm text-gray-400">Loading…</p>
           ) : conversations.length === 0 ? (
             <div className="text-center py-6">
               <MessageSquare size={32} className="text-gray-200 mx-auto mb-2" />
-              <p className="text-sm text-gray-400">Aucune conversation</p>
+              <p className="text-sm text-gray-400">No conversations</p>
               <Link
                 to="/conversations/new"
                 className="mt-2 inline-block text-xs text-blue-500 hover:underline"
               >
-                Démarrer une conversation →
+                Start a conversation →
               </Link>
             </div>
           ) : (
@@ -351,14 +351,14 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <Zap size={16} className="text-orange-400" />
               <h2 className="font-semibold text-gray-700 text-sm">
-                Configuration RAG active
+                Active RAG configuration
               </h2>
             </div>
             <Link
               to="/settings"
               className="text-xs text-blue-500 hover:text-blue-700 flex items-center gap-1"
             >
-              Modifier <ArrowRight size={12} />
+              Edit <ArrowRight size={12} />
             </Link>
           </div>
           <RagConfigCard config={config.rag} />
