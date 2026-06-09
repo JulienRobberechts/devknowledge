@@ -83,10 +83,15 @@ function DebugPanel({ source }: { source: SourceCitation }) {
       <Row label="Document ID">
         <IdCell value={source.documentId} />
       </Row>
-      <Row label="Excerpt">
-        <span className="text-[11px] font-mono text-slate-500 tabular-nums">
+      <Row label="Content">
+        <span className="text-[11px] font-mono text-slate-400 tabular-nums">
           {source.excerpt.length} chars
         </span>
+        <div className="overflow-x-auto mt-1">
+          <p className="text-[11px] font-mono text-slate-600 leading-relaxed whitespace-pre">
+            {source.excerpt}
+          </p>
+        </div>
       </Row>
     </div>
   );
