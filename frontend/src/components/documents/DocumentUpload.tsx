@@ -1,8 +1,13 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useUploadDocument } from "../../hooks/useDocuments";
+import type { Document } from "../../types/domain";
 
-export default function DocumentUpload() {
+export default function DocumentUpload({
+  onUploaded,
+}: {
+  onUploaded?: (doc: Document) => void;
+} = {}) {
   const uploadDocument = useUploadDocument();
   const [uploading, setUploading] = useState(false);
 
@@ -12,13 +17,14 @@ export default function DocumentUpload() {
       setUploading(true);
       try {
         for (const file of acceptedFiles) {
-          await uploadDocument.mutateAsync({ file });
+          const doc = await uploadDocument.mutateAsync({ file });
+          onUploaded?.(doc);
         }
       } finally {
         setUploading(false);
       }
     },
-    [uploadDocument],
+    [uploadDocument, onUploaded],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

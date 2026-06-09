@@ -3,6 +3,7 @@ import { useState, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import IconNav from "./IconNav";
 import Sidebar from "./Sidebar";
+import DocumentsSidebar from "../documents/DocumentsSidebar";
 
 const MIN_WIDTH = 200;
 const DEFAULT_WIDTH = 288;
@@ -12,6 +13,10 @@ export default function AppLayout() {
   const matchConversations = useMatch("/conversations");
   const matchConversationId = useMatch("/conversations/:id");
   const onConversations = matchConversations ?? matchConversationId;
+
+  const matchDocuments = useMatch("/documents");
+  const matchDocumentId = useMatch("/documents/:id");
+  const onDocuments = matchDocuments ?? matchDocumentId;
 
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
   const [collapsed, setCollapsed] = useState(false);
@@ -45,10 +50,16 @@ export default function AppLayout() {
     document.addEventListener("mouseup", onMouseUp);
   }, []);
 
+  const sidebarContent = onConversations ? (
+    <Sidebar />
+  ) : onDocuments ? (
+    <DocumentsSidebar />
+  ) : null;
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <IconNav />
-      {onConversations && (
+      {sidebarContent && (
         <>
           <div
             className="border-r border-gray-200 overflow-hidden bg-white shrink-0"
@@ -61,7 +72,7 @@ export default function AppLayout() {
               style={{ width: sidebarWidth, minWidth: MIN_WIDTH }}
               className="h-full overflow-y-auto"
             >
-              <Sidebar />
+              {sidebarContent}
             </div>
           </div>
           <div className="relative shrink-0 w-2 flex items-start">

@@ -9,29 +9,21 @@ import {
 import { useEffect, useRef } from "react";
 import AppLayout from "./components/layout/AppLayout";
 import ChatInterface from "./components/chat/ChatInterface";
-import DocumentList from "./components/documents/DocumentList";
+import DocumentDetail from "./components/documents/DocumentDetail";
 import DocumentUpload from "./components/documents/DocumentUpload";
 import DashboardPage from "./components/pages/DashboardPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import TechnicalPage from "./components/pages/TechnicalPage";
-import PageHeader from "./components/ui/PageHeader";
 import { useConversations } from "./hooks/useConversation";
-import { FileText, MessageSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react";
+import PageHeader from "./components/ui/PageHeader";
 
 const queryClient = new QueryClient();
 
-function DocumentsPage() {
+function DocumentsEmptyPage() {
   return (
-    <div className="p-8">
-      <PageHeader
-        icon={<FileText className="text-green-600" size={28} />}
-        title="Documents"
-        info="Manage documents indexed in the knowledge base. Each document is split into chunks, vectorized and stored for semantic search."
-      />
-      <div className="space-y-6">
-        <DocumentUpload />
-        <DocumentList />
-      </div>
+    <div className="p-8 max-w-lg">
+      <DocumentUpload />
     </div>
   );
 }
@@ -69,7 +61,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<DashboardPage />} />
-            <Route path="documents" element={<DocumentsPage />} />
+            <Route path="documents" element={<DocumentsEmptyPage />} />
+            <Route path="documents/:id" element={<DocumentDetail />} />
             <Route path="conversations" element={<ConversationsPage />} />
             <Route path="conversations/new" element={<ChatInterface />} />
             <Route path="conversations/:id" element={<ChatInterface />} />
