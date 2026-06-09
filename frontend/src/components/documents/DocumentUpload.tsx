@@ -1,12 +1,11 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useUploadDocument } from "../../hooks/useDocuments";
-import type { Document } from "../../types/domain";
 
 export default function DocumentUpload({
   onUploaded,
 }: {
-  onUploaded?: (doc: Document) => void;
+  onUploaded?: (doc: { id: string; status: string }) => void;
 } = {}) {
   const uploadDocument = useUploadDocument();
   const [uploading, setUploading] = useState(false);

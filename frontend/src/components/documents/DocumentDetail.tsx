@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import ReactMarkdown from "react-markdown";
 import { api } from "../../services/api";
 import { useDeleteDocument, useDocumentChunks } from "../../hooks/useDocuments";
 import DocumentStatusBadge from "./DocumentStatusBadge";
@@ -26,6 +28,13 @@ export default function DocumentDetail() {
   );
   const charCount = chunks?.reduce((sum, c) => sum + c.contentLength, 0);
   const chunkCount = chunks?.length;
+
+  const [showContent, setShowContent] = useState(false);
+  const { data: contentData, isLoading: contentLoading } = useQuery({
+    queryKey: ["documents", id, "content"],
+    queryFn: () => api.getDocumentContent(id!),
+    enabled: !!id && showContent && doc?.status === "ready",
+  });
 
   if (isLoading) {
     return <div className="p-8 text-sm text-gray-500">Loading document...</div>;
@@ -101,6 +110,27 @@ export default function DocumentDetail() {
           </dd>
         </div>
       </dl>
+
+      {doc.status === "ready" && doc.sourceType === "markdown" && (
+        <div className="mt-8 pt-6 border-t border-gray-100">
+          <button
+            onClick={() => setShowContent((v) => !v)}
+            className="mb-4 px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50"
+          >
+            {showContent ? "Hide content" : "View document"}
+          </button>
+          {showContent && (
+            <div className="rounded-md border border-gray-200 bg-white p-6 prose prose-sm max-w-none">
+              {contentLoading && (
+                <p className="text-sm text-gray-400">Loading…</p>
+              )}
+              {contentData && (
+                <ReactMarkdown>{contentData.content}</ReactMarkdown>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="mt-8 pt-6 border-t border-gray-100">
         <button

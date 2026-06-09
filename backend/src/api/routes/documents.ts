@@ -121,6 +121,28 @@ export function documentsRouter(
     },
   );
 
+  router.get(
+    "/:id/content",
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        const doc = await documentRepo.findById(req.params.id);
+        if (!doc) {
+          res.status(404).json({ error: "Document not found" });
+          return;
+        }
+        const chunks = await chunkRepo.findByDocumentId(req.params.id);
+        if (chunks.length === 0) {
+          res.status(404).json({ error: "Content not available" });
+          return;
+        }
+        const content = chunks.map((c) => c.content).join("\n\n");
+        res.json({ content, sourceType: doc.sourceType });
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
   router.delete(
     "/:id",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {

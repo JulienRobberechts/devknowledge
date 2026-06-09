@@ -36,6 +36,10 @@ export const api = {
       body: fd,
     });
   },
+  getDocumentContent: (id: string) =>
+    request<{ content: string; sourceType: string }>(
+      `/documents/${id}/content`,
+    ),
   getDocumentChunks: (id: string) =>
     request<{ position: number; contentLength: number; preview: string }[]>(
       `/documents/${id}/chunks`,

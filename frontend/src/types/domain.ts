@@ -52,10 +52,12 @@ export interface AppConfig {
   };
   llm: {
     provider: string;
+    model: string;
     maxTokens: number;
     temperature: number;
   };
   embeddings: {
     provider: string;
+    model: string;
   };
 }
