@@ -18,7 +18,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 const sourceTypeLabel: Record<string, string> = {
   pdf: "PDF",
   markdown: "Markdown",
-  text: "Texte",
+  text: "Text",
 };
 
 function PdfViewer({ id }: { id: string }) {
@@ -47,7 +47,7 @@ function PdfViewer({ id }: { id: string }) {
       ref={containerRef}
       className="h-full overflow-y-auto bg-gray-50 p-6 flex flex-col items-center"
     >
-      {isLoading && <p className="text-sm text-gray-400 mt-8">Chargement…</p>}
+      {isLoading && <p className="text-sm text-gray-400 mt-8">Loading…</p>}
       {pdfData && (
         <Document
           file={pdfData}
@@ -72,7 +72,7 @@ function TextViewer({ id }: { id: string }) {
 
   return (
     <div className="h-full overflow-y-auto bg-gray-50 p-8">
-      {isLoading && <p className="text-sm text-gray-400">Chargement…</p>}
+      {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
       {data && (
         <pre className="max-w-3xl mx-auto text-sm text-gray-800 font-mono whitespace-pre-wrap break-words leading-relaxed bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
           {data.content}
@@ -90,7 +90,7 @@ function MarkdownViewer({ id }: { id: string }) {
 
   return (
     <div className="h-full overflow-y-auto bg-gray-50 p-8">
-      {isLoading && <p className="text-sm text-gray-400">Chargement…</p>}
+      {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
       {data && (
         <div className="prose prose-sm max-w-3xl mx-auto bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
           <ReactMarkdown>{data.content}</ReactMarkdown>
@@ -142,14 +142,14 @@ export default function DocumentDetail() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-sm text-gray-400">Chargement…</p>
+        <p className="text-sm text-gray-400">Loading…</p>
       </div>
     );
   }
   if (!doc) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-sm text-gray-400">Document introuvable.</p>
+        <p className="text-sm text-gray-400">Document not found.</p>
       </div>
     );
   }
@@ -191,26 +191,26 @@ export default function DocumentDetail() {
           {/* Delete action */}
           {confirmDelete ? (
             <div className="flex items-center gap-2 shrink-0 ml-4">
-              <span className="text-xs text-gray-500">Supprimer ?</span>
+              <span className="text-xs text-gray-500">Delete?</span>
               <button
                 onClick={() => void handleDelete()}
                 disabled={deleteDocument.isPending}
                 className="px-2.5 py-1 text-xs font-medium text-white bg-red-500 rounded-md hover:bg-red-600 disabled:opacity-50 transition-colors"
               >
-                {deleteDocument.isPending ? "…" : "Confirmer"}
+                {deleteDocument.isPending ? "…" : "Confirm"}
               </button>
               <button
                 onClick={() => setConfirmDelete(false)}
                 className="px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
               >
-                Annuler
+                Cancel
               </button>
             </div>
           ) : (
             <button
               onClick={() => setConfirmDelete(true)}
               className="shrink-0 ml-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
-              title="Supprimer le document"
+              title="Delete document"
             >
               <TrashIcon />
             </button>
@@ -239,7 +239,7 @@ export default function DocumentDetail() {
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            Détails
+            Details
           </button>
         </div>
       </div>
@@ -261,7 +261,7 @@ export default function DocumentDetail() {
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="bg-white border border-gray-200 rounded-lg p-4">
                   <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
-                    Caractères
+                    Characters
                   </p>
                   <p className="text-xl font-semibold text-gray-900">
                     {charCount !== undefined ? charCount.toLocaleString() : "—"}
@@ -282,7 +282,7 @@ export default function DocumentDetail() {
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
               <div className="px-4 py-2.5 border-b border-gray-100 bg-gray-50">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  Informations
+                  Information
                 </h3>
               </div>
               <dl>
@@ -296,7 +296,7 @@ export default function DocumentDetail() {
                 </div>
                 <div className="flex items-center px-4 py-3 border-b border-gray-100 last:border-0">
                   <dt className="w-28 text-xs font-medium text-gray-500 shrink-0">
-                    Statut
+                    Status
                   </dt>
                   <dd>
                     <DocumentStatusBadge status={doc.status} />
@@ -304,7 +304,7 @@ export default function DocumentDetail() {
                 </div>
                 <div className="flex items-start px-4 py-3 border-b border-gray-100 last:border-0">
                   <dt className="w-28 text-xs font-medium text-gray-500 shrink-0 mt-0.5">
-                    Identifiant
+                    ID
                   </dt>
                   <dd className="text-xs text-gray-500 font-mono break-all">
                     {doc.id}
@@ -312,10 +312,10 @@ export default function DocumentDetail() {
                 </div>
                 <div className="flex items-center px-4 py-3 last:border-0">
                   <dt className="w-28 text-xs font-medium text-gray-500 shrink-0">
-                    Ajouté le
+                    Added on
                   </dt>
                   <dd className="text-xs text-gray-800">
-                    {new Date(doc.createdAt).toLocaleDateString("fr-FR", {
+                    {new Date(doc.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
