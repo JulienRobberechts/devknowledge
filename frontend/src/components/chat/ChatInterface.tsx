@@ -6,9 +6,11 @@ import {
   useUpdateConversationTitle,
 } from "../../hooks/useConversation";
 import { useSSEStream } from "../../hooks/useSSEStream";
+import { useConfig } from "../../hooks/useConfig";
 import MessageList from "./MessageList";
 import { useState, useRef, useEffect } from "react";
-import { ArrowUp, Pencil } from "lucide-react";
+import { ArrowUp, Pencil, Settings2 } from "lucide-react";
+import type { ConversationParams } from "../../types/domain";
 
 function EditableTitle({ id, title }: { id: string; title: string }) {
   const [editing, setEditing] = useState(false);
@@ -121,6 +123,92 @@ function InputForm({
   );
 }
 
+function ParamsPanel({
+  params,
+  onChange,
+}: {
+  params: Partial<ConversationParams>;
+  onChange: (p: Partial<ConversationParams>) => void;
+}) {
+  function field(
+    label: string,
+    key: keyof ConversationParams,
+    type: "number" | "boolean",
+    opts?: { min?: number; max?: number; step?: number },
+  ) {
+    const value = params[key];
+    if (type === "boolean") {
+      return (
+        <label key={key} className="flex items-center justify-between">
+          <span className="text-xs text-gray-500">{label}</span>
+          <input
+            type="checkbox"
+            checked={value as boolean}
+            onChange={(e) => onChange({ ...params, [key]: e.target.checked })}
+            className="accent-indigo-600"
+          />
+        </label>
+      );
+    }
+    return (
+      <label key={key} className="flex items-center justify-between gap-4">
+        <span className="text-xs text-gray-500 shrink-0">{label}</span>
+        <input
+          type="number"
+          value={value as number}
+          min={opts?.min}
+          max={opts?.max}
+          step={opts?.step ?? 1}
+          onChange={(e) =>
+            onChange({ ...params, [key]: parseFloat(e.target.value) })
+          }
+          className="w-24 text-xs text-right border border-gray-200 rounded px-2 py-0.5 outline-none focus:border-indigo-400"
+        />
+      </label>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-2 w-full max-w-2xl">
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+        Conversation parameters
+      </p>
+      {field("Retrieval limit", "retrievalLimit", "number", {
+        min: 1,
+        max: 20,
+      })}
+      {field("Min similarity score", "retrievalMinScore", "number", {
+        min: 0,
+        max: 1,
+        step: 0.05,
+      })}
+      {field("Reranking", "rerankEnabled", "boolean")}
+      {params.rerankEnabled &&
+        field(
+          "Rerank candidate multiplier",
+          "rerankCandidateMultiplier",
+          "number",
+          { min: 1, max: 10 },
+        )}
+      <label className="flex items-center justify-between gap-4">
+        <span className="text-xs text-gray-500 shrink-0">LLM model</span>
+        <input
+          type="text"
+          value={(params.llmModel as string) ?? ""}
+          onChange={(e) => onChange({ ...params, llmModel: e.target.value })}
+          className="w-48 text-xs text-right border border-gray-200 rounded px-2 py-0.5 outline-none focus:border-indigo-400"
+        />
+      </label>
+      {field("Temperature", "llmTemperature", "number", {
+        min: 0,
+        max: 1,
+        step: 0.05,
+      })}
+      {field("Max tokens", "llmMaxTokens", "number", { min: 64, max: 8192 })}
+    </div>
+  );
+}
+
 export default function ChatInterface() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -128,9 +216,28 @@ export default function ChatInterface() {
   const queryClient = useQueryClient();
   const createConversation = useCreateConversation();
   const { data: conversation, isLoading } = useConversation(id ?? null);
+  const { data: appConfig } = useConfig();
   const [input, setInput] = useState("");
+  const [showParams, setShowParams] = useState(false);
+  const [pendingParams, setPendingParams] = useState<
+    Partial<ConversationParams>
+  >({});
   const stream = useSSEStream(id ?? "");
   const pendingSentRef = useRef(false);
+
+  useEffect(() => {
+    if (appConfig && Object.keys(pendingParams).length === 0) {
+      setPendingParams({
+        retrievalLimit: appConfig.rag.retrievalLimit,
+        retrievalMinScore: appConfig.rag.retrievalMinScore,
+        rerankEnabled: appConfig.rag.reranking,
+        rerankCandidateMultiplier: 3,
+        llmModel: appConfig.llm.model,
+        llmTemperature: appConfig.llm.temperature,
+        llmMaxTokens: appConfig.llm.maxTokens,
+      });
+    }
+  }, [appConfig]);
 
   useEffect(() => {
     const pending = (location.state as { pendingMessage?: string } | null)
@@ -144,7 +251,7 @@ export default function ChatInterface() {
   }, [id]);
 
   async function submitNew(content: string) {
-    const conv = await createConversation.mutateAsync();
+    const conv = await createConversation.mutateAsync(pendingParams);
     navigate(`/conversations/${conv.id}`, {
       replace: true,
       state: { pendingMessage: content },
@@ -171,24 +278,42 @@ export default function ChatInterface() {
       conversation.messages.length === 0 &&
       !stream.isStreaming);
 
+  const emptyState = (disabled: boolean) => (
+    <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4">
+      <p className="text-gray-400 text-sm">
+        Ask anything about your knowledge base
+      </p>
+      <div className="w-full max-w-2xl flex flex-col gap-3">
+        <div className="flex justify-end">
+          <button
+            onClick={() => setShowParams((v) => !v)}
+            className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg border transition-colors ${
+              showParams
+                ? "border-indigo-300 bg-indigo-50 text-indigo-600"
+                : "border-gray-200 bg-white text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            <Settings2 className="w-3.5 h-3.5" />
+            Parameters
+          </button>
+        </div>
+        {showParams && (
+          <ParamsPanel params={pendingParams} onChange={setPendingParams} />
+        )}
+        <InputForm
+          input={input}
+          setInput={setInput}
+          onSubmit={submit}
+          disabled={disabled}
+        />
+      </div>
+    </div>
+  );
+
   if (!id) {
     return (
       <div className="flex flex-col h-screen bg-gray-50">
-        <div className="flex-1 flex flex-col items-center justify-center px-4 gap-6">
-          <div className="text-center">
-            <p className="text-gray-400 text-sm">
-              Ask anything about your knowledge base
-            </p>
-          </div>
-          <div className="w-full max-w-2xl">
-            <InputForm
-              input={input}
-              setInput={setInput}
-              onSubmit={submit}
-              disabled={createConversation.isPending}
-            />
-          </div>
-        </div>
+        {emptyState(createConversation.isPending)}
       </div>
     );
   }
@@ -215,19 +340,7 @@ export default function ChatInterface() {
         <EditableTitle id={conversation.id} title={conversation.title} />
       </div>
       {isEmpty ? (
-        <div className="flex-1 flex flex-col items-center justify-center px-4 gap-6">
-          <p className="text-gray-400 text-sm">
-            Ask anything about your knowledge base
-          </p>
-          <div className="w-full max-w-2xl">
-            <InputForm
-              input={input}
-              setInput={setInput}
-              onSubmit={submit}
-              disabled={stream.isStreaming}
-            />
-          </div>
-        </div>
+        emptyState(stream.isStreaming)
       ) : (
         <>
           <div className="flex-1 overflow-y-auto">

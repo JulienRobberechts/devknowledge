@@ -7,11 +7,22 @@ import pool from "../../src/infrastructure/db/pool";
 
 const repo = new PgConversationRepository();
 
+const DEFAULT_PARAMS = {
+  retrievalLimit: 8,
+  retrievalMinScore: 0.75,
+  rerankEnabled: false,
+  rerankCandidateMultiplier: 3,
+  llmModel: "claude-haiku-4-5-20251001",
+  llmTemperature: 0.1,
+  llmMaxTokens: 1024,
+};
+
 function makeConversation(overrides?: Partial<Conversation>): Conversation {
   return {
     id: randomUUID(),
     title: "Test Conversation",
     messages: [],
+    params: DEFAULT_PARAMS,
     createdAt: new Date(),
     ...overrides,
   };

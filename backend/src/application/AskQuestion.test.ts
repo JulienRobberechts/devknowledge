@@ -14,6 +14,15 @@ function makeConversation(overrides?: Partial<Conversation>): Conversation {
     title: "Test",
     messages: [],
     createdAt: new Date(),
+    params: {
+      retrievalLimit: 8,
+      retrievalMinScore: 0.75,
+      rerankEnabled: false,
+      rerankCandidateMultiplier: 3,
+      llmModel: "claude-haiku-4-5-20251001",
+      llmTemperature: 0.1,
+      llmMaxTokens: 1024,
+    },
     ...overrides,
   };
 }
@@ -89,6 +98,7 @@ describe("AskQuestion", () => {
       "What is RAG?",
       expect.any(Number),
       expect.any(Number),
+      expect.any(Object),
     );
   });
 

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../services/api";
+import type { ConversationParams } from "../types/domain";
 
 export function useConversations() {
   return useQuery({
@@ -20,7 +21,8 @@ export function useCreateConversation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => api.createConversation(),
+    mutationFn: (params?: Partial<ConversationParams>) =>
+      api.createConversation(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },

@@ -12,14 +12,7 @@ const NO_INFO_RESPONSE =
   "I don't have enough information to answer this question based on the available knowledge base.";
 const ERROR_RESPONSE = "An error occurred while generating the response.";
 
-interface AskQuestionConfig {
-  retrievalLimit?: number;
-  retrievalMinScore?: number;
-}
-
 export class AskQuestion {
-  private readonly retrievalLimit: number;
-  private readonly retrievalMinScore: number;
   private readonly logger = new Logger("AskQuestion");
 
   constructor(
@@ -27,11 +20,7 @@ export class AskQuestion {
     private readonly llmAdapter: LLMPort,
     private readonly conversationRepo: ConversationRepository,
     private readonly documentRepo: DocumentRepository,
-    config: AskQuestionConfig = {},
-  ) {
-    this.retrievalLimit = config.retrievalLimit ?? 8;
-    this.retrievalMinScore = config.retrievalMinScore ?? 0.75;
-  }
+  ) {}
 
   async execute(
     conversationId: string,
@@ -57,10 +46,17 @@ export class AskQuestion {
       question: userContent,
     });
 
+    const params = conversation?.params;
     const searchResults = await this.searchKnowledge.execute(
       userContent,
-      this.retrievalLimit,
-      this.retrievalMinScore,
+      params?.retrievalLimit,
+      params?.retrievalMinScore,
+      params
+        ? {
+            enabled: params.rerankEnabled,
+            candidateMultiplier: params.rerankCandidateMultiplier,
+          }
+        : undefined,
     );
 
     this.logger.info("Retrieval complete", {
@@ -88,7 +84,11 @@ export class AskQuestion {
 
     let assistantContent: string;
     try {
-      assistantContent = await this.llmAdapter.stream(prompt, onToken, signal);
+      assistantContent = await this.llmAdapter.stream(prompt, onToken, signal, {
+        model: params?.llmModel,
+        temperature: params?.llmTemperature,
+        maxTokens: params?.llmMaxTokens,
+      });
       this.logger.info("LLM response complete", { conversationId });
     } catch (err) {
       this.logger.error(

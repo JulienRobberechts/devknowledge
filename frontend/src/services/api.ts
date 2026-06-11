@@ -1,6 +1,7 @@
 import type {
   AppConfig,
   Conversation,
+  ConversationParams,
   Document,
   DocumentSummary,
   QuizQuestion,
@@ -64,11 +65,11 @@ export const api = {
   getConversations: () => request<Conversation[]>("/conversations"),
   getConversation: (id: string) =>
     request<Conversation>(`/conversations/${id}`),
-  createConversation: (title?: string) =>
+  createConversation: (params?: Partial<ConversationParams>, title?: string) =>
     request<Conversation>("/conversations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: title ?? "New conversation" }),
+      body: JSON.stringify({ title: title ?? "New conversation", params }),
     }),
   deleteConversation: (id: string) =>
     request<void>(`/conversations/${id}`, { method: "DELETE" }),

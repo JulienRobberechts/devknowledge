@@ -50,7 +50,7 @@ describe("AnthropicLLMAdapter", () => {
     mockStream.mockReturnValue(
       makeAsyncIter([makeTextChunk("hello "), makeTextChunk("world")]),
     );
-    const adapter = new AnthropicLLMAdapter("key", 512);
+    const adapter = new AnthropicLLMAdapter("key");
     const tokens: string[] = [];
     const result = await adapter.stream("prompt", (t) => tokens.push(t));
     expect(tokens).toEqual(["hello ", "world"]);
@@ -65,7 +65,7 @@ describe("AnthropicLLMAdapter", () => {
         { type: "message_stop" },
       ]),
     );
-    const adapter = new AnthropicLLMAdapter("key", 512);
+    const adapter = new AnthropicLLMAdapter("key");
     const tokens: string[] = [];
     await adapter.stream("prompt", (t) => tokens.push(t));
     expect(tokens).toEqual(["text"]);
@@ -77,7 +77,7 @@ describe("AnthropicLLMAdapter", () => {
     mockStream.mockReturnValue(
       makeAsyncIter([makeTextChunk("a"), makeTextChunk("b")]),
     );
-    const adapter = new AnthropicLLMAdapter("key", 512);
+    const adapter = new AnthropicLLMAdapter("key");
     const tokens: string[] = [];
     const result = await adapter.stream(
       "prompt",
@@ -91,7 +91,7 @@ describe("AnthropicLLMAdapter", () => {
   it("calls abort when signal fires after stream starts", async () => {
     const controller = new AbortController();
     mockStream.mockReturnValue(makeAsyncIter([], mockAbort));
-    const adapter = new AnthropicLLMAdapter("key", 512);
+    const adapter = new AnthropicLLMAdapter("key");
     await adapter.stream("prompt", vi.fn(), controller.signal);
     controller.abort();
     expect(mockAbort).toHaveBeenCalled();

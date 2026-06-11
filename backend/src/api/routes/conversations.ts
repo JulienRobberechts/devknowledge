@@ -3,9 +3,21 @@ import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { ConversationRepository } from "../../domain/ports/ConversationRepository";
 import { AskQuestion } from "../../application/AskQuestion";
+import config from "../../config";
+
+const conversationParamsSchema = z.object({
+  retrievalLimit: z.number().int().min(1).max(20).optional(),
+  retrievalMinScore: z.number().min(0).max(1).optional(),
+  rerankEnabled: z.boolean().optional(),
+  rerankCandidateMultiplier: z.number().int().min(1).max(10).optional(),
+  llmModel: z.string().min(1).optional(),
+  llmTemperature: z.number().min(0).max(1).optional(),
+  llmMaxTokens: z.number().int().min(64).max(8192).optional(),
+});
 
 const createConversationSchema = z.object({
   title: z.string().min(1).default("New conversation"),
+  params: conversationParamsSchema.optional(),
 });
 
 const updateTitleSchema = z.object({
@@ -29,9 +41,22 @@ export function conversationsRouter(
     async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const body = createConversationSchema.parse(_req.body);
+        const p = body.params ?? {};
         const conversation = {
           id: randomUUID(),
           title: body.title,
+          params: {
+            retrievalLimit: p.retrievalLimit ?? config.rag.retrievalLimit,
+            retrievalMinScore:
+              p.retrievalMinScore ?? config.rag.retrievalMinScore,
+            rerankEnabled: p.rerankEnabled ?? config.rerank.enabled,
+            rerankCandidateMultiplier:
+              p.rerankCandidateMultiplier ?? config.rerank.candidateMultiplier,
+            llmModel: p.llmModel ?? config.llm.anthropic.model,
+            llmTemperature:
+              p.llmTemperature ?? config.llm.anthropic.temperature,
+            llmMaxTokens: p.llmMaxTokens ?? config.llm.anthropic.maxTokens,
+          },
           messages: [],
           createdAt: new Date(),
         };

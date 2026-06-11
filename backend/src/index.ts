@@ -85,10 +85,6 @@ const askQuestion = new AskQuestion(
   llmAdapter,
   conversationRepo,
   documentRepo,
-  {
-    retrievalLimit: config.rag.retrievalLimit,
-    retrievalMinScore: config.rag.retrievalMinScore,
-  },
 );
 const generateQuiz = new GenerateQuiz(chunkRepo, llmAdapter);
 const summaryRepo = new PgDocumentSummaryRepository();

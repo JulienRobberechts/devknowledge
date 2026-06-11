@@ -1,11 +1,29 @@
-import { Conversation } from "../../domain/entities/Conversation";
+import {
+  Conversation,
+  ConversationParams,
+} from "../../domain/entities/Conversation";
 import {
   Message,
   MessageRole,
   SourceCitation,
 } from "../../domain/entities/Message";
 import { ConversationRepository } from "../../domain/ports/ConversationRepository";
+import config from "../../config";
 import pool from "./pool";
+
+function toParams(raw: unknown): ConversationParams {
+  const p = (raw ?? {}) as Partial<ConversationParams>;
+  return {
+    retrievalLimit: p.retrievalLimit ?? config.rag.retrievalLimit,
+    retrievalMinScore: p.retrievalMinScore ?? config.rag.retrievalMinScore,
+    rerankEnabled: p.rerankEnabled ?? config.rerank.enabled,
+    rerankCandidateMultiplier:
+      p.rerankCandidateMultiplier ?? config.rerank.candidateMultiplier,
+    llmModel: p.llmModel ?? config.llm.anthropic.model,
+    llmTemperature: p.llmTemperature ?? config.llm.anthropic.temperature,
+    llmMaxTokens: p.llmMaxTokens ?? config.llm.anthropic.maxTokens,
+  };
+}
 
 function toMessage(row: Record<string, unknown>): Message {
   return {
@@ -39,10 +57,15 @@ async function fetchMessages(
 export class PgConversationRepository implements ConversationRepository {
   async save(conversation: Conversation): Promise<void> {
     await pool.query(
-      `INSERT INTO conversations (id, title, created_at)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title`,
-      [conversation.id, conversation.title, conversation.createdAt],
+      `INSERT INTO conversations (id, title, params, created_at)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, params = EXCLUDED.params`,
+      [
+        conversation.id,
+        conversation.title,
+        JSON.stringify(conversation.params),
+        conversation.createdAt,
+      ],
     );
   }
 
@@ -57,6 +80,7 @@ export class PgConversationRepository implements ConversationRepository {
     return {
       id: row.id as string,
       title: row.title as string,
+      params: toParams(row.params),
       createdAt: new Date(row.created_at as string),
       messages: messagesByConv.get(id) ?? [],
     };
@@ -72,6 +96,7 @@ export class PgConversationRepository implements ConversationRepository {
     return result.rows.map((row) => ({
       id: row.id as string,
       title: row.title as string,
+      params: toParams(row.params),
       createdAt: new Date(row.created_at as string),
       messages: messagesByConv.get(row.id as string) ?? [],
     }));
