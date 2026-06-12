@@ -4,7 +4,7 @@ const mockStream = vi.fn();
 const mockAbort = vi.fn();
 
 vi.mock("@anthropic-ai/sdk", () => ({
-  default: vi.fn().mockImplementation(function () {
+  default: vi.fn().mockImplementation(function (this: Record<string, unknown>) {
     this.messages = { stream: mockStream };
   }),
 }));

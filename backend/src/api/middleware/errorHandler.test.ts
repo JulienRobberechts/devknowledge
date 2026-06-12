@@ -29,7 +29,7 @@ describe("errorHandler", () => {
       {
         code: ZodIssueCode.too_small,
         minimum: 1,
-        type: "string",
+        origin: "string",
         inclusive: true,
         message: "Required",
         path: ["title"],
