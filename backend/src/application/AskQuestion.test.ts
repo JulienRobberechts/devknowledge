@@ -102,6 +102,7 @@ describe("AskQuestion", () => {
       expect.any(Number),
       expect.any(Number),
       expect.any(Object),
+      expect.anything(),
     );
   });
 
