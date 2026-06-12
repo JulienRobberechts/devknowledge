@@ -49,20 +49,23 @@ export default function DashboardPage() {
           <img
             src="/logo-argos.jpg"
             alt="Argos"
-            className="w-28 h-28 rounded-2xl shadow-2xl shrink-0 border-2 border-sky-400/30"
+            className="h-20 w-auto rounded-2xl shadow-2xl shrink-0 border-2 border-sky-400/30"
             style={{ boxShadow: "0 0 40px rgba(34,211,238,0.25)" }}
           />
           <div>
             <h1
-              className="text-4xl font-extrabold tracking-tight"
               style={{
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 600,
+                fontSize: "2.75rem",
+                letterSpacing: "0.18em",
                 background:
                   "linear-gradient(90deg, var(--argos-bright) 0%, var(--argos-glow) 50%, #fff 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Argos
+              ARGOS
             </h1>
             <p className="mt-1 text-sky-300 text-sm font-medium tracking-wide">
               Knowledge Intelligence Platform

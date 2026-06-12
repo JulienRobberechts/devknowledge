@@ -30,7 +30,7 @@ export default function IconNav() {
           <img
             src="/logo-argos.jpg"
             alt="Argos"
-            className={`w-9 h-9 rounded-lg object-cover transition-all ${
+            className={`w-10 h-auto rounded-lg transition-all ${
               isActive
                 ? "ring-2 ring-cyan-400 shadow-lg"
                 : "opacity-80 hover:opacity-100"
