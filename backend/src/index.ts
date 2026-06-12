@@ -53,7 +53,7 @@ import { createChunkingStrategy } from "./domain/services/ChunkingStrategy";
 import { IngestDocument } from "./application/IngestDocument";
 import { SearchKnowledge } from "./application/SearchKnowledge";
 import { AskQuestion } from "./application/AskQuestion";
-import { CheckContextualKnowledge } from "./application/CheckContextualKnowledge";
+import { CheckContextualKnowledge } from "./application/responseChecks/CheckContextualKnowledge";
 import { VoyageRerankAdapter } from "./infrastructure/reranking/VoyageRerankAdapter";
 import { GenerateQuiz } from "./application/GenerateQuiz";
 import { SummarizeDocument } from "./application/SummarizeDocument";

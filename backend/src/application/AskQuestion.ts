@@ -5,7 +5,7 @@ import { ConversationRepository } from "../domain/ports/ConversationRepository";
 import { DocumentRepository } from "../domain/ports/DocumentRepository";
 import { LLMPort } from "../domain/ports/LLMPort";
 import { Logger } from "../infrastructure/logger/Logger";
-import { CheckContextualKnowledge } from "./CheckContextualKnowledge";
+import { CheckContextualKnowledge } from "./responseChecks/CheckContextualKnowledge";
 import { SearchKnowledge } from "./SearchKnowledge";
 
 const SLIDING_WINDOW_EXCHANGES = 4;
