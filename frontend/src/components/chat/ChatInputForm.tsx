@@ -27,7 +27,7 @@ export default function ChatInputForm({
         e.preventDefault();
         onSubmit();
       }}
-      className="relative flex items-end gap-2 rounded-2xl border border-gray-200 bg-white shadow-sm px-4 py-3 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all"
+      className="relative flex items-end gap-2 rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-3 focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-100 transition-all"
     >
       <textarea
         ref={textareaRef}
@@ -42,12 +42,12 @@ export default function ChatInputForm({
         disabled={disabled}
         placeholder="Ask a question…"
         rows={1}
-        className="flex-1 resize-none bg-transparent text-sm text-gray-800 placeholder:text-gray-400 outline-none min-h-[24px] max-h-[200px] leading-relaxed disabled:opacity-50"
+        className="flex-1 resize-none bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none min-h-[24px] max-h-[200px] leading-relaxed disabled:opacity-50"
       />
       <button
         type="submit"
         disabled={disabled || !input.trim()}
-        className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-[#1f2937] text-white hover:bg-[#374151] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <ArrowUp className="w-4 h-4" />
       </button>

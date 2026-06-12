@@ -21,7 +21,7 @@ const pages = [
 
 export default function TechnicalNav() {
   return (
-    <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-xl">
+    <div className="flex gap-1 mb-6 bg-slate-100 p-1 rounded-xl">
       {pages.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}
@@ -30,8 +30,8 @@ export default function TechnicalNav() {
           className={({ isActive }) =>
             `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
               isActive
-                ? "bg-white text-purple-700 shadow-sm"
-                : "text-gray-600 hover:text-gray-900 hover:bg-white/60"
+                ? "bg-white text-[#92400e] shadow-sm border border-amber-100"
+                : "text-slate-500 hover:text-slate-800 hover:bg-white/60"
             }`
           }
         >

@@ -30,7 +30,7 @@ export default function TechnicalPage() {
   return (
     <div className="p-8 max-w-4xl">
       <PageHeader
-        icon={<FlaskConical className="text-purple-600" size={28} />}
+        icon={<FlaskConical className="text-[#d97706]" size={28} />}
         title="How RAG Works — Technical Deep Dive"
         info="Everything you need to understand Retrieval-Augmented Generation and how this project implements it, from document ingestion to streaming answers."
       />

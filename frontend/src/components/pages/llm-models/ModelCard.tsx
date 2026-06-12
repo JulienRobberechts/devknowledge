@@ -22,10 +22,10 @@ export function TierBadge({ tier }: { tier: ModelSpec["tier"] }) {
 export default function ModelCard({ model }: { model: ModelSpec }) {
   const borderColor =
     model.tier === "flagship"
-      ? "border-purple-200"
+      ? "border-amber-300"
       : model.tier === "performance"
-        ? "border-blue-200"
-        : "border-green-200";
+        ? "border-slate-300"
+        : "border-slate-200";
 
   return (
     <div className={`bg-white border ${borderColor} rounded-xl p-5 shadow-sm`}>
@@ -85,12 +85,12 @@ export default function ModelCard({ model }: { model: ModelSpec }) {
 
       <div className="flex gap-2 mb-3">
         {model.adaptiveThinking && (
-          <span className="text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200 rounded px-1.5 py-0.5 font-medium">
+          <span className="text-[10px] bg-amber-50 text-[#92400e] border border-amber-200 rounded px-1.5 py-0.5 font-medium">
             Adaptive thinking
           </span>
         )}
         {model.extendedThinking && (
-          <span className="text-[10px] bg-violet-50 text-violet-700 border border-violet-200 rounded px-1.5 py-0.5 font-medium">
+          <span className="text-[10px] bg-stone-100 text-stone-700 border border-stone-200 rounded px-1.5 py-0.5 font-medium">
             Extended thinking
           </span>
         )}

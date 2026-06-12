@@ -48,7 +48,7 @@ export function DocumentStatusBar({ documents }: { documents: Document[] }) {
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-1 h-2 rounded-full overflow-hidden bg-gray-100">
+      <div className="flex gap-1 h-2 rounded-full overflow-hidden bg-slate-100">
         {ready > 0 && (
           <div
             className="bg-green-400 transition-all"
@@ -57,13 +57,13 @@ export function DocumentStatusBar({ documents }: { documents: Document[] }) {
         )}
         {processing > 0 && (
           <div
-            className="bg-blue-400 animate-pulse"
+            className="bg-[#d97706] animate-pulse"
             style={{ width: `${(processing / total) * 100}%` }}
           />
         )}
         {pending > 0 && (
           <div
-            className="bg-yellow-300"
+            className="bg-[#fcd34d]"
             style={{ width: `${(pending / total) * 100}%` }}
           />
         )}
@@ -74,7 +74,7 @@ export function DocumentStatusBar({ documents }: { documents: Document[] }) {
           />
         )}
       </div>
-      <div className="flex gap-4 text-xs text-gray-500">
+      <div className="flex gap-4 text-xs text-slate-500">
         {ready > 0 && (
           <span className="flex items-center gap-1">
             <CheckCircle size={11} className="text-green-500" />
@@ -83,13 +83,13 @@ export function DocumentStatusBar({ documents }: { documents: Document[] }) {
         )}
         {processing > 0 && (
           <span className="flex items-center gap-1">
-            <Loader2 size={11} className="text-blue-500 animate-spin" />
+            <Loader2 size={11} className="text-[#d97706] animate-spin" />
             {processing} processing
           </span>
         )}
         {pending > 0 && (
           <span className="flex items-center gap-1">
-            <Clock size={11} className="text-yellow-500" />
+            <Clock size={11} className="text-[#fcd34d]" />
             {pending} pending
           </span>
         )}
@@ -115,9 +115,9 @@ export function RecentDocuments({ documents }: { documents: Document[] }) {
   const statusIcon = {
     ready: <CheckCircle size={14} className="text-green-500 shrink-0" />,
     processing: (
-      <Loader2 size={14} className="text-blue-500 animate-spin shrink-0" />
+      <Loader2 size={14} className="text-[#d97706] animate-spin shrink-0" />
     ),
-    pending: <Clock size={14} className="text-yellow-500 shrink-0" />,
+    pending: <Clock size={14} className="text-[#fcd34d] shrink-0" />,
     error: <AlertCircle size={14} className="text-red-500 shrink-0" />,
   };
   const typeLabel: Record<string, string> = {
@@ -127,11 +127,11 @@ export function RecentDocuments({ documents }: { documents: Document[] }) {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {recent.map((doc) => (
         <div
           key={doc.id}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-sky-50 transition-colors"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-amber-50 transition-colors"
         >
           {statusIcon[doc.status]}
           <span className="flex-1 text-sm text-slate-700 truncate">
@@ -159,17 +159,20 @@ export function RecentConversations({
     .slice(0, 5);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {recent.map((conv) => {
         const msgCount = conv.messages?.length ?? 0;
         return (
           <Link
             key={conv.id}
             to={`/conversations/${conv.id}`}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-sky-50 transition-colors group"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-amber-50 transition-colors group"
           >
-            <MessageSquare size={14} className="text-cyan-500 shrink-0" />
-            <span className="flex-1 text-sm text-slate-700 truncate group-hover:text-sky-700">
+            <MessageSquare
+              size={14}
+              className="text-[#d97706] shrink-0 opacity-70"
+            />
+            <span className="flex-1 text-sm text-slate-700 truncate group-hover:text-[#92400e]">
               {conv.title}
             </span>
             <span className="text-xs text-slate-400">
@@ -206,16 +209,16 @@ export function RagConfigCard({
         {items.map(({ label, value }) => (
           <div
             key={label}
-            className="bg-sky-50 border border-sky-100 rounded-lg px-3 py-2"
+            className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2"
           >
             <p className="text-xs text-slate-500">{label}</p>
             <p className="text-sm font-semibold text-slate-800">{value}</p>
           </div>
         ))}
       </div>
-      <div className="flex items-center gap-2 px-3 py-2 bg-sky-50 border border-sky-100 rounded-lg">
+      <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-100 rounded-lg">
         <span
-          className={`inline-block w-2 h-2 rounded-full ${config.reranking.enabled ? "bg-sky-400" : "bg-slate-300"}`}
+          className={`inline-block w-2 h-2 rounded-full ${config.reranking.enabled ? "bg-[#d97706]" : "bg-slate-300"}`}
         />
         <span className="text-xs text-slate-500">Reranking</span>
         <span className="text-sm font-semibold text-slate-800 ml-auto">

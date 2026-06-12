@@ -30,7 +30,7 @@ export default function HybridSearchPage() {
   return (
     <div className="p-8 max-w-4xl">
       <PageHeader
-        icon={<Combine className="text-purple-600" size={28} />}
+        icon={<Combine className="text-[#d97706]" size={28} />}
         title="Hybrid Search — Technical Deep Dive"
         info="Why vector search alone fails on exact terms, how BM25 complements it, and how Reciprocal Rank Fusion merges both signals inside PostgreSQL."
       />

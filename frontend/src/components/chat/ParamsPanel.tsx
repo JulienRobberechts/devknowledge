@@ -22,21 +22,21 @@ export default function ParamsPanel({
   onClose?: () => void;
 }) {
   const inputClass = readOnly
-    ? "w-16 text-xs text-right border border-gray-100 rounded-md px-2 py-1 bg-gray-50 text-gray-400 cursor-default"
-    : "w-16 text-xs text-right border border-gray-200 rounded-md px-2 py-1 outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-100 bg-white text-gray-700";
+    ? "w-16 text-xs text-right border border-slate-100 rounded-md px-2 py-1 bg-slate-50 text-slate-400 cursor-default"
+    : "w-16 text-xs text-right border border-slate-200 rounded-md px-2 py-1 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-100 bg-white text-slate-700";
 
   const selectClass = `text-xs border rounded-md px-2 py-1 max-w-[140px] outline-none ${
     readOnly
-      ? "bg-gray-50 border-gray-100 text-gray-400 cursor-default"
-      : "bg-white border-gray-200 text-gray-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-100"
+      ? "bg-slate-50 border-slate-100 text-slate-400 cursor-default"
+      : "bg-white border-slate-200 text-slate-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-100"
   }`;
 
   return (
     <div className="flex flex-col h-full bg-white">
-      <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+      <div className="flex items-start justify-between px-5 py-4 border-b border-slate-100 shrink-0">
         <div>
-          <p className="text-sm font-semibold text-gray-800">Settings</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">
+          <p className="text-sm font-semibold text-slate-800">Settings</p>
+          <p className="text-[11px] text-slate-400 mt-0.5">
             {readOnly
               ? "Read-only · active conversation"
               : "Applied to the next conversation"}
@@ -45,7 +45,7 @@ export default function ParamsPanel({
         {onClose && (
           <button
             onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors mt-0.5"
+            className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors mt-0.5"
           >
             <X className="w-4 h-4" />
           </button>
@@ -54,7 +54,7 @@ export default function ParamsPanel({
 
       <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5">
         <section className="flex flex-col gap-2.5">
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-0.5">
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-0.5">
             Retrieval
           </p>
           <Field
@@ -194,10 +194,10 @@ export default function ParamsPanel({
           )}
         </section>
 
-        <div className="h-px bg-gray-100" />
+        <div className="h-px bg-slate-100" />
 
         <section className="flex flex-col gap-2.5">
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-0.5">
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-0.5">
             Generation
           </p>
           <Field
@@ -271,10 +271,10 @@ export default function ParamsPanel({
           </Field>
         </section>
 
-        <div className="h-px bg-gray-100" />
+        <div className="h-px bg-slate-100" />
 
         <section className="flex flex-col gap-2.5">
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-0.5">
+          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-0.5">
             Knowledge check
           </p>
           {(

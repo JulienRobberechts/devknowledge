@@ -36,11 +36,11 @@ export function Field({
     <div>
       <div className="flex items-center justify-between gap-3 min-h-[28px]">
         <div className="flex items-center gap-1 shrink-0">
-          <span className="text-xs text-gray-500 leading-tight">{label}</span>
+          <span className="text-xs text-slate-500 leading-tight">{label}</span>
           {info && (
             <button
               onClick={() => setOpen((v) => !v)}
-              className="text-gray-300 hover:text-blue-500 transition-colors"
+              className="text-slate-300 hover:text-[#d97706] transition-colors"
               aria-label={`About: ${label}`}
             >
               <Info size={11} />
@@ -50,12 +50,12 @@ export function Field({
         <div className="shrink-0">{children}</div>
       </div>
       {open && info && (
-        <div className="mt-1.5 text-[11px] text-gray-600 bg-blue-50/70 border-l-2 border-blue-300 rounded-r-md pl-2.5 pr-2 py-1.5 leading-relaxed">
+        <div className="mt-1.5 text-[11px] text-gray-600 bg-amber-50 border-l-2 border-[#d97706] rounded-r-md pl-2.5 pr-2 py-1.5 leading-relaxed">
           {info}
           {techLink && (
             <Link
               to={techLink}
-              className="inline-flex items-center gap-0.5 ml-1.5 text-blue-500 hover:text-blue-700 font-medium transition-colors"
+              className="inline-flex items-center gap-0.5 ml-1.5 text-[#d97706] hover:text-[#92400e] font-medium transition-colors"
             >
               <BookOpen size={10} />
               Learn more
@@ -81,7 +81,7 @@ export function Toggle({
       type="button"
       onClick={() => !disabled && onChange(!checked)}
       className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-        checked ? "bg-indigo-500" : "bg-gray-200"
+        checked ? "bg-[#d97706]" : "bg-slate-200"
       } ${disabled ? "opacity-50 cursor-default" : "cursor-pointer"}`}
     >
       <span

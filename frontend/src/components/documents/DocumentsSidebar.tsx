@@ -16,7 +16,7 @@ export default function DocumentsSidebar() {
   return (
     <div className="flex flex-col h-full p-4">
       <PageHeader
-        icon={<FileText className="text-green-600" size={28} />}
+        icon={<FileText className="text-[#d97706]" size={28} />}
         title="Documents"
         info="Manage documents indexed in the knowledge base. Each document is split into chunks, vectorized and stored for semantic search."
       />
@@ -30,10 +30,10 @@ export default function DocumentsSidebar() {
           <div
             key={doc.id}
             onClick={() => navigate(`/documents/${doc.id}`)}
-            className={`group flex items-center justify-between px-3 py-2 rounded-md text-sm cursor-pointer ${
+            className={`group flex items-center justify-between px-3 py-2 rounded-lg text-sm cursor-pointer ${
               activeId === doc.id
-                ? "bg-green-100 text-green-800 font-medium"
-                : "text-gray-700 hover:bg-gray-100"
+                ? "bg-amber-50 text-[#92400e] font-medium border border-amber-200"
+                : "text-slate-600 hover:bg-slate-50"
             }`}
           >
             <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -44,7 +44,7 @@ export default function DocumentsSidebar() {
           </div>
         ))}
         {!documents?.length && (
-          <p className="text-xs text-gray-400 px-3 py-2">No documents yet.</p>
+          <p className="text-xs text-slate-400 px-3 py-2">No documents yet.</p>
         )}
       </nav>
     </div>

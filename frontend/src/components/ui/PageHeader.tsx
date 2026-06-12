@@ -14,17 +14,17 @@ export default function PageHeader({ icon, title, info }: PageHeaderProps) {
     <div className="mb-6">
       <div className="flex items-center gap-3">
         {icon}
-        <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
+        <h1 className="text-2xl font-bold text-slate-800">{title}</h1>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="text-gray-300 hover:text-blue-500 transition-colors"
+          className="text-slate-300 hover:text-[#d97706] transition-colors"
           aria-label={`About: ${title}`}
         >
           <Info size={16} />
         </button>
       </div>
       {open && (
-        <p className="mt-2 text-xs text-gray-500 bg-blue-50 rounded px-3 py-2 max-w-xl">
+        <p className="mt-2 text-xs text-slate-600 bg-amber-50 border-l-2 border-[#d97706] rounded-r px-3 py-2 max-w-xl">
           {info}
         </p>
       )}

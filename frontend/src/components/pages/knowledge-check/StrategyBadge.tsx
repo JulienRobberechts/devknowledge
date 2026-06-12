@@ -1,19 +1,11 @@
 export default function StrategyBadge({
   label,
-  color,
 }: {
   label: string;
-  color: "teal" | "purple" | "blue";
+  color?: string;
 }) {
-  const colors = {
-    teal: "bg-teal-100 text-teal-800 border-teal-200",
-    purple: "bg-purple-100 text-purple-800 border-purple-200",
-    blue: "bg-blue-100 text-blue-800 border-blue-200",
-  };
   return (
-    <span
-      className={`inline-block border rounded-full px-3 py-0.5 text-xs font-semibold ${colors[color]}`}
-    >
+    <span className="inline-block border border-amber-200 rounded-full px-3 py-0.5 text-xs font-semibold bg-amber-50 text-[#92400e]">
       {label}
     </span>
   );

@@ -64,12 +64,12 @@ export default function AppLayout() {
   ) : null;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       <IconNav />
       {sidebarContent && (
         <>
           <div
-            className="border-r border-gray-200 overflow-hidden bg-white shrink-0"
+            className="border-r border-slate-200 overflow-hidden bg-white shrink-0"
             style={{
               width: collapsed ? 0 : sidebarWidth,
               transition: isDragging ? "none" : "width 0.2s ease",
@@ -85,19 +85,21 @@ export default function AppLayout() {
           <div className="relative shrink-0 w-2 flex items-start">
             <div
               className={`absolute inset-y-0 left-0 w-1 cursor-col-resize transition-colors ${
-                isDragging ? "bg-blue-400" : "hover:bg-blue-400 bg-transparent"
+                isDragging
+                  ? "bg-amber-400"
+                  : "hover:bg-amber-400 bg-transparent"
               }`}
               onMouseDown={handleMouseDown}
             />
             <button
               onClick={() => setCollapsed((c) => !c)}
               title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-              className="absolute top-5 -right-2.5 z-10 flex items-center justify-center w-5 h-5 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 cursor-pointer"
+              className="absolute top-5 -right-2.5 z-10 flex items-center justify-center w-5 h-5 bg-white border border-slate-200 rounded-full shadow-sm hover:bg-slate-50 cursor-pointer"
             >
               {collapsed ? (
-                <ChevronRight size={11} className="text-gray-500" />
+                <ChevronRight size={11} className="text-slate-400" />
               ) : (
-                <ChevronLeft size={11} className="text-gray-500" />
+                <ChevronLeft size={11} className="text-slate-400" />
               )}
             </button>
           </div>

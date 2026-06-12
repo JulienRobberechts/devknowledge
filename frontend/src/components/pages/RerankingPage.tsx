@@ -30,7 +30,7 @@ export default function RerankingPage() {
   return (
     <div className="p-8 max-w-4xl">
       <PageHeader
-        icon={<ArrowUpDown className="text-purple-600" size={28} />}
+        icon={<ArrowUpDown className="text-[#d97706]" size={28} />}
         title="Re-ranking — Technical Deep Dive"
         info="Why vector search alone isn't enough, how a cross-encoder fixes it, and how Voyage rerank-2.5 is wired into this project."
       />

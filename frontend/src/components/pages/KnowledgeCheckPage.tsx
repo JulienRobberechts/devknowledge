@@ -35,7 +35,7 @@ export default function KnowledgeCheckPage() {
   return (
     <div className="p-8 max-w-4xl">
       <PageHeader
-        icon={<ShieldCheck className="text-teal-600" size={28} />}
+        icon={<ShieldCheck className="text-[#d97706]" size={28} />}
         title="Knowledge Check — Technical Deep Dive"
         info="Three strategies to detect whether an LLM answer comes from retrieved documents or from the model's training data."
       />
@@ -45,7 +45,7 @@ export default function KnowledgeCheckPage() {
         tabs={TABS}
         active={activeTab}
         onChange={setActiveTab}
-        activeTextColor="text-teal-700"
+        activeTextColor="text-[#92400e]"
       />
 
       {activeTab === "Overview" && <OverviewTab />}

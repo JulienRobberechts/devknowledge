@@ -30,7 +30,7 @@ export default function LLMModelsPage() {
   return (
     <div className="p-8 max-w-5xl">
       <PageHeader
-        icon={<Brain className="text-blue-600" size={28} />}
+        icon={<Brain className="text-[#d97706]" size={28} />}
         title="LLM Models — Comparison"
         info="Overview of available Claude models, their characteristics, and when to use them in a RAG pipeline."
       />
@@ -40,7 +40,7 @@ export default function LLMModelsPage() {
         tabs={TABS}
         active={activeTab}
         onChange={setActiveTab}
-        activeTextColor="text-blue-700"
+        activeTextColor="text-[#92400e]"
       />
 
       {activeTab === "Models" && <ModelsTab />}

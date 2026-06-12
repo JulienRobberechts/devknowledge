@@ -87,8 +87,8 @@ export default function ChatInterface() {
       title={showParams ? "Hide settings" : "Show settings"}
       className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
         showParams
-          ? "border-indigo-300 bg-indigo-50 text-indigo-600"
-          : "border-gray-200 bg-white text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          ? "border-amber-300 bg-amber-50 text-[#92400e]"
+          : "border-slate-200 bg-white text-slate-500 hover:text-slate-700 hover:border-slate-300"
       }`}
     >
       <Settings2 className="w-3.5 h-3.5" />
@@ -98,16 +98,16 @@ export default function ChatInterface() {
 
   if (!id) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-slate-50">
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="border-b border-gray-200 bg-white px-6 py-3 shrink-0 flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-400">
+          <div className="border-b border-slate-200 bg-white px-6 py-3 shrink-0 flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-400">
               New conversation
             </span>
             {settingsButton}
           </div>
           <div className="flex-1 flex flex-col items-center justify-center px-6 gap-4">
-            <p className="text-gray-400 text-sm">
+            <p className="text-slate-400 text-sm">
               Ask anything about your knowledge base
             </p>
             <div className="w-full max-w-2xl">
@@ -121,7 +121,7 @@ export default function ChatInterface() {
           </div>
         </div>
         {showParams && (
-          <aside className="w-72 border-l border-gray-200 shrink-0 flex flex-col">
+          <aside className="w-72 border-l border-slate-200 shrink-0 flex flex-col">
             <ParamsPanel
               params={pendingParams}
               onChange={setPendingParams}
@@ -135,14 +135,14 @@ export default function ChatInterface() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+      <div className="flex items-center justify-center h-full text-slate-400 text-sm">
         Loading…
       </div>
     );
   }
   if (!conversation) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+      <div className="flex items-center justify-center h-full text-slate-400 text-sm">
         Conversation not found
       </div>
     );
@@ -151,8 +151,8 @@ export default function ChatInterface() {
   const isEmpty = conversation.messages.length === 0 && !stream.isStreaming;
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <div className="border-b border-gray-200 bg-white px-6 py-3 shrink-0 flex items-center justify-between">
+    <div className="flex flex-col h-screen bg-slate-50">
+      <div className="border-b border-slate-200 bg-white px-6 py-3 shrink-0 flex items-center justify-between">
         <EditableTitle id={conversation.id} title={conversation.title} />
         {settingsButton}
       </div>
@@ -160,7 +160,7 @@ export default function ChatInterface() {
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
           {isEmpty ? (
             <div className="flex-1 flex flex-col items-center justify-center px-6 gap-4">
-              <p className="text-gray-400 text-sm">
+              <p className="text-slate-400 text-sm">
                 Ask anything about your knowledge base
               </p>
               <div className="w-full max-w-2xl">
@@ -183,7 +183,7 @@ export default function ChatInterface() {
                   isStreaming={stream.isStreaming}
                 />
               </div>
-              <div className="border-t border-gray-200 bg-white px-4 py-3 shrink-0">
+              <div className="border-t border-slate-200 bg-white px-4 py-3 shrink-0">
                 <div className="max-w-3xl mx-auto">
                   <ChatInputForm
                     input={input}
@@ -197,7 +197,7 @@ export default function ChatInterface() {
           )}
         </main>
         {showParams && (
-          <aside className="w-72 border-l border-gray-200 shrink-0 flex flex-col overflow-hidden">
+          <aside className="w-72 border-l border-slate-200 shrink-0 flex flex-col overflow-hidden">
             <ParamsPanel
               params={conversation.params}
               readOnly

@@ -25,7 +25,7 @@ function SourcesList({ sources }: { sources: SourceCitation[] }) {
       {hidden > 0 && !expanded && (
         <button
           onClick={() => setExpanded(true)}
-          className="text-xs text-indigo-500 hover:text-indigo-700 text-left"
+          className="text-xs text-[#d97706] hover:text-[#92400e] text-left font-medium"
         >
           + {hidden} more reference{hidden > 1 ? "s" : ""}
         </button>
@@ -37,8 +37,8 @@ function SourcesList({ sources }: { sources: SourceCitation[] }) {
 function AssistantBubble({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex gap-3 items-start">
-      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center mt-0.5">
-        <Bot className="w-4 h-4 text-gray-500" />
+      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mt-0.5">
+        <Bot className="w-4 h-4 text-[#d97706]" />
       </div>
       <div className="flex-1 min-w-0">{children}</div>
     </div>
@@ -71,13 +71,13 @@ export default function MessageList({
       {messages.map((msg) =>
         msg.role === "user" ? (
           <div key={msg.id} className="flex justify-end">
-            <div className="max-w-[75%] bg-indigo-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
+            <div className="max-w-[75%] bg-[#1f2937] text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
               {msg.content}
             </div>
           </div>
         ) : (
           <AssistantBubble key={msg.id}>
-            <div className="prose prose-sm prose-gray max-w-none">
+            <div className="prose prose-sm prose-slate max-w-none">
               <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
             {msg.sources.length > 0 && <SourcesList sources={msg.sources} />}

@@ -31,13 +31,13 @@ export default function Sidebar() {
   return (
     <div className="flex flex-col h-full p-4">
       <PageHeader
-        icon={<MessageSquare className="text-blue-500" size={28} />}
+        icon={<MessageSquare className="text-[#d97706]" size={28} />}
         title="Conversations"
         info="Ask questions about your documents. The system retrieves relevant passages and generates a contextual answer."
       />
       <button
         onClick={() => navigate("/conversations/new")}
-        className="w-full mb-4 px-3 py-2 bg-sky-500 text-white rounded-md text-sm font-medium hover:bg-sky-600"
+        className="w-full mb-4 px-3 py-2 bg-[#1f2937] text-white rounded-lg text-sm font-medium hover:bg-[#374151] transition-colors"
       >
         + New conversation
       </button>
@@ -45,10 +45,10 @@ export default function Sidebar() {
         {conversations?.map((conv) => (
           <div
             key={conv.id}
-            className={`group flex items-center justify-between px-3 py-2 rounded-md text-sm ${
+            className={`group flex items-center justify-between px-3 py-2 rounded-lg text-sm ${
               activeId === conv.id
-                ? "bg-sky-50 text-sky-800 font-medium border border-sky-200"
-                : "text-slate-700 hover:bg-slate-50"
+                ? "bg-amber-50 text-[#92400e] font-medium border border-amber-200"
+                : "text-slate-600 hover:bg-slate-50"
             }`}
           >
             <Link
@@ -60,7 +60,7 @@ export default function Sidebar() {
             </Link>
             <button
               onClick={(e) => void handleDelete(e, conv.id)}
-              className="hidden group-hover:block ml-2 text-gray-400 hover:text-red-500"
+              className="hidden group-hover:block ml-2 text-slate-300 hover:text-red-400"
             >
               ×
             </button>

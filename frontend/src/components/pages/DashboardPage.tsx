@@ -37,21 +37,29 @@ export default function DashboardPage() {
         className="relative overflow-hidden px-8 py-10"
         style={{
           background:
-            "linear-gradient(135deg, var(--argos-navy) 0%, #0d2d5e 60%, #0c3875 100%)",
+            "linear-gradient(135deg, #111827 0%, #1f2937 60%, #374151 100%)",
         }}
       >
         {/* Glow circle behind logo */}
         <div
           className="absolute left-8 top-1/2 -translate-y-1/2 w-40 h-40 rounded-full opacity-20 blur-3xl"
-          style={{ background: "var(--argos-bright)" }}
+          style={{ background: "#d97706" }}
         />
         <div className="relative flex items-center gap-8">
-          <img
-            src="/logo-argos.jpg"
-            alt="Argos"
-            className="h-32 w-32 rounded-full shrink-0 border-[6px] border-[#f59e0b] bg-white object-contain shadow-2xl"
-            style={{ boxShadow: "0 0 40px rgba(34,211,238,0.25)" }}
-          />
+          <div
+            className="relative h-32 w-32 rounded-full shrink-0 border-[6px] border-[#d97706] bg-white overflow-hidden"
+            style={{ boxShadow: "0 0 40px rgba(217,119,6,0.25)" }}
+          >
+            <img
+              src="/logo-argos-1.jpg"
+              alt="Argos"
+              className="h-full w-full object-contain"
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: "#374151", mixBlendMode: "color" }}
+            />
+          </div>
           <div
             style={{
               display: "inline-grid",
@@ -67,7 +75,7 @@ export default function DashboardPage() {
                 display: "flex",
                 justifyContent: "space-between",
                 background:
-                  "linear-gradient(90deg, #b45309 0%, #f59e0b 40%, #fef08a 100%)",
+                  "linear-gradient(90deg, #92400e 0%, #d97706 40%, #fcd34d 100%)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -84,7 +92,7 @@ export default function DashboardPage() {
                 textAlign: "justify",
                 textAlignLast: "justify",
                 background:
-                  "linear-gradient(90deg, #b45309 0%, #f59e0b 40%, #fef08a 100%)",
+                  "linear-gradient(90deg, #92400e 0%, #d97706 40%, #fcd34d 100%)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -109,31 +117,31 @@ export default function DashboardPage() {
           <StatCard
             label="Indexed documents"
             value={docsLoading ? "…" : readyDocs}
-            icon={<FileText size={20} className="text-sky-600" />}
-            color="bg-sky-50"
-            border="border-sky-200"
+            icon={<FileText size={20} className="text-[#d97706]" />}
+            color="bg-amber-50"
+            border="border-amber-100"
             sub={docsLoading ? undefined : `of ${documents.length} total`}
           />
           <StatCard
             label="Conversations"
             value={convsLoading ? "…" : conversations.length}
-            icon={<MessageSquare size={20} className="text-cyan-600" />}
-            color="bg-cyan-50"
-            border="border-cyan-200"
+            icon={<MessageSquare size={20} className="text-[#d97706]" />}
+            color="bg-amber-50"
+            border="border-amber-100"
           />
           <StatCard
             label="Messages exchanged"
             value={convsLoading ? "…" : totalMessages}
-            icon={<TrendingUp size={20} className="text-blue-600" />}
-            color="bg-blue-50"
-            border="border-blue-200"
+            icon={<TrendingUp size={20} className="text-[#d97706]" />}
+            color="bg-amber-50"
+            border="border-amber-100"
           />
           <StatCard
             label="RAG Pipeline"
             value={configLoading ? "…" : "Active"}
-            icon={<Zap size={20} className="text-sky-500" />}
-            color="bg-sky-50"
-            border="border-sky-200"
+            icon={<Zap size={20} className="text-[#d97706]" />}
+            color="bg-amber-50"
+            border="border-amber-100"
             sub={config ? config.rag.chunkingStrategy : undefined}
           />
         </div>

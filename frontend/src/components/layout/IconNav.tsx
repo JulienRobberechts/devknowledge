@@ -27,16 +27,24 @@ export default function IconNav() {
       {/* Logo / home link */}
       <NavLink to="/" end title="Argos — Dashboard" className="mb-2 shrink-0">
         {({ isActive }) => (
-          <img
-            src="/logo-argos.jpg"
-            alt="Argos"
-            className={`w-12 h-12 rounded-full object-contain bg-white border-2 border-[#f59e0b] shadow-2xl transition-all ${
+          <div
+            className={`relative w-12 h-12 rounded-full bg-white border-2 border-[#d97706] shadow-2xl overflow-hidden transition-all ${
               isActive ? "" : "opacity-80 hover:opacity-100"
             }`}
             style={
-              isActive ? { boxShadow: "0 0 40px rgba(34,211,238,0.25)" } : {}
+              isActive ? { boxShadow: "0 0 40px rgba(217,119,6,0.25)" } : {}
             }
-          />
+          >
+            <img
+              src="/logo-argos-1.jpg"
+              alt="Argos"
+              className="h-full w-full object-contain"
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: "#374151", mixBlendMode: "color" }}
+            />
+          </div>
         )}
       </NavLink>
 
@@ -49,8 +57,8 @@ export default function IconNav() {
           className={({ isActive }) =>
             `flex items-center justify-center w-10 h-10 rounded-lg transition-colors ${
               isActive
-                ? "bg-sky-500 text-white"
-                : "text-slate-400 hover:bg-slate-700 hover:text-white"
+                ? "bg-[#374151] text-[#d97706]"
+                : "text-slate-500 hover:bg-[#374151] hover:text-[#fcd34d]"
             }`
           }
         >

@@ -39,21 +39,23 @@ export default function DocumentUpload({
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+      className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
         isDragActive
-          ? "border-blue-400 bg-blue-50"
-          : "border-gray-300 hover:border-gray-400"
+          ? "border-[#d97706] bg-amber-50"
+          : "border-slate-300 hover:border-[#d97706] hover:bg-amber-50/40"
       }`}
     >
       <input {...getInputProps()} />
       {uploading ? (
-        <div className="text-sm text-blue-600">Uploading...</div>
+        <div className="text-sm text-[#d97706] font-medium">Uploading...</div>
       ) : isDragActive ? (
-        <div className="text-sm text-blue-600">Drop files here...</div>
+        <div className="text-sm text-[#92400e] font-medium">
+          Drop files here...
+        </div>
       ) : (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-slate-500">
           Drag & drop files here, or click to select
-          <div className="text-xs text-gray-400 mt-1">
+          <div className="text-xs text-slate-400 mt-1">
             PDF, Markdown, or Text files
           </div>
         </div>

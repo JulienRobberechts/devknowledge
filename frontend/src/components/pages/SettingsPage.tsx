@@ -18,27 +18,27 @@ function Row({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="py-2 border-b border-gray-100 last:border-0">
+    <div className="py-2 border-b border-slate-100 last:border-0">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <span className="text-sm text-gray-600">{label}</span>
+          <span className="text-sm text-slate-600">{label}</span>
           <button
             onClick={() => setOpen((v) => !v)}
-            className="text-gray-300 hover:text-blue-500 transition-colors"
+            className="text-slate-300 hover:text-[#d97706] transition-colors"
             aria-label={`About: ${label}`}
           >
             <Info size={13} />
           </button>
         </div>
-        <span className="text-sm font-mono text-gray-900">{value}</span>
+        <span className="text-sm font-mono text-slate-900">{value}</span>
       </div>
       {open && (
-        <div className="mt-1.5 text-xs text-gray-600 bg-blue-50/70 border-l-2 border-blue-300 rounded-r-md pl-2.5 pr-2 py-1.5 leading-relaxed">
+        <div className="mt-1.5 text-xs text-slate-600 bg-amber-50 border-l-2 border-[#d97706] rounded-r-md pl-2.5 pr-2 py-1.5 leading-relaxed">
           {info}
           {techLink && (
             <Link
               to={techLink}
-              className="inline-flex items-center gap-0.5 ml-1.5 text-blue-500 hover:text-blue-700 font-medium transition-colors"
+              className="inline-flex items-center gap-0.5 ml-1.5 text-[#d97706] hover:text-[#92400e] font-medium transition-colors"
             >
               <BookOpen size={11} />
               Learn more
@@ -59,10 +59,10 @@ function Section({
 }) {
   return (
     <div className="mb-6">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
         {title}
       </h2>
-      <div className="bg-white border border-gray-200 rounded-lg px-4">
+      <div className="bg-white border border-slate-200 rounded-lg px-4">
         {children}
       </div>
     </div>
@@ -75,12 +75,12 @@ export default function SettingsPage() {
   return (
     <div className="p-8 max-w-xl">
       <PageHeader
-        icon={<Settings className="text-gray-600" size={28} />}
+        icon={<Settings className="text-[#d97706]" size={28} />}
         title="Settings"
         info="Argos system configuration. These values are set server-side via environment variables and displayed here as read-only."
       />
 
-      {isLoading && <p className="text-gray-400 text-sm">Loading…</p>}
+      {isLoading && <p className="text-slate-400 text-sm">Loading…</p>}
       {isError && (
         <p className="text-red-500 text-sm">Failed to load configuration.</p>
       )}
@@ -132,7 +132,7 @@ export default function SettingsPage() {
             <Row
               label="Search mode"
               value={config.rag.searchMode}
-              info="'hybrid' fuses vector (pgvector) and full-text (BM25/tsvector) rankings via Reciprocal Rank Fusion. 'vector' uses cosine similarity only. Configurable via SEARCH_MODE environment variable."
+              info="'hybrid' fuses vector (pgvector) and full-text (BM25/tsvector) rankings via Reciprocal Rank Fusion. 'vector' uses cosine similarity only."
               techLink="/technical?tab=Query"
             />
           </Section>
@@ -141,25 +141,25 @@ export default function SettingsPage() {
             <Row
               label="Provider"
               value={config.llm.provider}
-              info="API used for response generation. Configurable via environment variables."
+              info="API used for response generation."
               techLink="/technical?tab=Query"
             />
             <Row
               label="Model"
               value={config.llm.model}
-              info="LLM model used for response generation. Overridable via LLM_MODEL environment variable."
+              info="LLM model used for response generation."
               techLink="/technical?tab=Query"
             />
             <Row
               label="Max tokens"
               value={config.llm.maxTokens}
-              info="Maximum number of tokens the LLM can generate in a response. Increasing this allows longer answers."
+              info="Maximum number of tokens the LLM can generate in a response."
               techLink="/technical?tab=Config"
             />
             <Row
               label="Temperature"
               value={config.llm.temperature}
-              info="Controls response creativity (0 = deterministic, 1 = very creative). A low value is recommended for factual answers."
+              info="Controls response creativity (0 = deterministic, 1 = very creative)."
               techLink="/technical?tab=Config"
             />
           </Section>
@@ -174,7 +174,7 @@ export default function SettingsPage() {
             <Row
               label="Model"
               value={config.embeddings.model}
-              info="Embedding model used for vectorizing documents and queries. Overridable via EMBEDDING_MODEL environment variable."
+              info="Embedding model used for vectorizing documents and queries."
               techLink="/technical?tab=Ingestion"
             />
           </Section>
@@ -183,13 +183,13 @@ export default function SettingsPage() {
             <Row
               label="Enabled"
               value={config.rag.reranking.enabled ? "true" : "false"}
-              info="Whether cross-encoder re-ranking is active. Enabled automatically when VOYAGE_API_KEY is set, or forced via RERANK_ENABLED."
+              info="Whether cross-encoder re-ranking is active."
               techLink="/technical/reranking"
             />
             <Row
               label="Model"
               value={config.rag.reranking.model}
-              info="Reranker model used for the second retrieval stage. Overridable via RERANK_MODEL environment variable."
+              info="Reranker model used for the second retrieval stage."
               techLink="/technical/reranking"
             />
           </Section>
