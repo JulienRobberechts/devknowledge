@@ -1,8 +1,15 @@
 import { NavLink } from "react-router-dom";
-import { FlaskConical, ArrowUpDown, Brain, ShieldCheck } from "lucide-react";
+import {
+  FlaskConical,
+  ArrowUpDown,
+  Brain,
+  ShieldCheck,
+  Combine,
+} from "lucide-react";
 
 const pages = [
   { to: "/technical", label: "RAG Core", icon: FlaskConical, end: true },
+  { to: "/technical/hybrid-search", label: "Hybrid Search", icon: Combine },
   { to: "/technical/reranking", label: "Re-ranking", icon: ArrowUpDown },
   { to: "/technical/llm-models", label: "Modèles LLM", icon: Brain },
   {

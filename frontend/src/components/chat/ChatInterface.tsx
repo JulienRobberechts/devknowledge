@@ -42,6 +42,7 @@ export default function ChatInterface() {
         llmTemperature: appConfig.llm.temperature,
         llmMaxTokens: appConfig.llm.maxTokens,
         knowledgeCheckStrategies: [],
+        searchMode: appConfig.rag.searchMode,
       });
     }
   }, [appConfig]);

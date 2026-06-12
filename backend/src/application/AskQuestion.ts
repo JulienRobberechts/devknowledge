@@ -64,6 +64,7 @@ export class AskQuestion {
             candidateMultiplier: params.rerankCandidateMultiplier,
           }
         : undefined,
+      params?.searchMode,
     );
 
     this.logger.info("Retrieval complete", {

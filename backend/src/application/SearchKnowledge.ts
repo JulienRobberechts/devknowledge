@@ -23,6 +23,7 @@ export class SearchKnowledge {
       candidateMultiplier?: number;
       model?: string;
     },
+    searchMode?: "vector" | "hybrid",
   ): Promise<ChunkSearchResult[]> {
     const vector = await this.embeddingAdapter.embed(query, "query");
 
@@ -42,8 +43,9 @@ export class SearchKnowledge {
       );
     }
 
+    const effectiveMode = searchMode ?? this.searchMode;
     const results =
-      this.searchMode === "hybrid"
+      effectiveMode === "hybrid"
         ? await this.chunkRepo.searchHybrid(query, vector, limit, minScore)
         : await this.chunkRepo.search(vector, limit, minScore);
     if (results.length === 0) {

@@ -10,6 +10,7 @@ export interface ConversationParams {
   llmTemperature: number;
   llmMaxTokens: number;
   knowledgeCheckStrategies: KnowledgeCheckStrategy[];
+  searchMode: "vector" | "hybrid";
 }
 
 export interface Conversation {

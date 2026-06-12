@@ -105,6 +105,29 @@ export default function ParamsPanel({
             />
           </Field>
           <Field
+            label="Search mode"
+            info="'hybrid' fuses vector similarity (pgvector) and full-text (BM25/tsvector) rankings via Reciprocal Rank Fusion. 'vector' uses cosine similarity only."
+            techLink="/technical/hybrid-search"
+          >
+            <select
+              value={params.searchMode ?? "hybrid"}
+              disabled={readOnly}
+              onChange={
+                readOnly
+                  ? undefined
+                  : (e) =>
+                      onChange?.({
+                        ...params,
+                        searchMode: e.target.value as "vector" | "hybrid",
+                      })
+              }
+              className={selectClass}
+            >
+              <option value="hybrid">hybrid</option>
+              <option value="vector">vector</option>
+            </select>
+          </Field>
+          <Field
             label="Reranking"
             info="Enables a second retrieval stage using a cross-encoder model."
             techLink="/technical/reranking"

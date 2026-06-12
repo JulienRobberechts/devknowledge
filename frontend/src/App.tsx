@@ -18,6 +18,7 @@ import TechnicalPage from "./components/pages/TechnicalPage";
 import RerankingPage from "./components/pages/RerankingPage";
 import LLMModelsPage from "./components/pages/LLMModelsPage";
 import KnowledgeCheckPage from "./components/pages/KnowledgeCheckPage";
+import HybridSearchPage from "./components/pages/HybridSearchPage";
 import { useConversations } from "./hooks/useConversation";
 import { MessageSquare } from "lucide-react";
 import PageHeader from "./components/ui/PageHeader";
@@ -74,6 +75,10 @@ export default function App() {
             <Route path="technical" element={<TechnicalPage />} />
             <Route path="technical/reranking" element={<RerankingPage />} />
             <Route path="technical/llm-models" element={<LLMModelsPage />} />
+            <Route
+              path="technical/hybrid-search"
+              element={<HybridSearchPage />}
+            />
             <Route
               path="technical/knowledge-check"
               element={<KnowledgeCheckPage />}

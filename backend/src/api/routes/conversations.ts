@@ -21,6 +21,7 @@ const conversationParamsSchema = z.object({
   llmTemperature: z.number().min(0).max(1).optional(),
   llmMaxTokens: z.number().int().min(64).max(8192).optional(),
   knowledgeCheckStrategies: z.array(knowledgeCheckStrategySchema).optional(),
+  searchMode: z.enum(["vector", "hybrid"]).optional(),
 });
 
 const createConversationSchema = z.object({
@@ -67,6 +68,7 @@ export function conversationsRouter(
             llmMaxTokens: p.llmMaxTokens ?? config.llm.anthropic.maxTokens,
             knowledgeCheckStrategies:
               p.knowledgeCheckStrategies ?? config.rag.knowledgeCheckStrategies,
+            searchMode: p.searchMode ?? config.rag.searchMode,
           },
           messages: [],
           createdAt: new Date(),
