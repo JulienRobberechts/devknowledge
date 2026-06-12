@@ -95,6 +95,7 @@ export interface AppConfig {
     chunkOverlap: number;
     retrievalLimit: number;
     retrievalMinScore: number;
+    searchMode: "vector" | "hybrid";
     reranking: {
       enabled: boolean;
       model: string;

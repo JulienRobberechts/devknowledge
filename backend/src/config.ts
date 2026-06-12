@@ -37,6 +37,7 @@ const config = {
     chunkOverlap: parseInt(process.env.CHUNK_OVERLAP_TOKENS ?? "128", 10),
     retrievalLimit: parseInt(process.env.RETRIEVAL_LIMIT ?? "8", 10),
     retrievalMinScore: parseFloat(process.env.RETRIEVAL_MIN_SCORE ?? "0.75"),
+    searchMode: (process.env.SEARCH_MODE ?? "hybrid") as "vector" | "hybrid",
     knowledgeCheckStrategies: [] as (
       | "faithfulness"
       | "counterfactual"

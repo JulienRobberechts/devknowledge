@@ -80,6 +80,7 @@ const searchKnowledge = new SearchKnowledge(
   embeddingAdapter,
   reranker,
   config.rerank.candidateMultiplier,
+  config.rag.searchMode,
 );
 const knowledgeChecker = new CheckContextualKnowledge(llmAdapter);
 const askQuestion = new AskQuestion(
@@ -130,7 +131,7 @@ app.use("/api/quizzes", quizzesRouter(generateQuiz));
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
 

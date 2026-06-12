@@ -11,6 +11,7 @@ export class SearchKnowledge {
     private readonly embeddingAdapter: EmbeddingPort,
     private readonly reranker: RerankPort | null = null,
     private readonly candidateMultiplier = 3,
+    private readonly searchMode: "vector" | "hybrid" = "vector",
   ) {}
 
   async execute(
@@ -41,7 +42,10 @@ export class SearchKnowledge {
       );
     }
 
-    const results = await this.chunkRepo.search(vector, limit, minScore);
+    const results =
+      this.searchMode === "hybrid"
+        ? await this.chunkRepo.searchHybrid(query, vector, limit, minScore)
+        : await this.chunkRepo.search(vector, limit, minScore);
     if (results.length === 0) {
       console.warn("[SearchKnowledge] No results found", {
         query,

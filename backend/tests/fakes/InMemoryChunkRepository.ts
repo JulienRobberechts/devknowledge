@@ -44,6 +44,55 @@ export class InMemoryChunkRepository implements ChunkRepository {
     return results.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
+  async searchHybrid(
+    query: string,
+    vector: number[],
+    limit: number,
+    _minScore: number,
+  ): Promise<ChunkSearchResult[]> {
+    const k = 60;
+    const queryTerms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const scores = new Map<string, { chunk: Chunk; score: number }>();
+
+    const vectorResults = Array.from(this.chunks.values())
+      .map((chunk) => ({
+        chunk,
+        sim: cosineSimilarity(vector, chunk.embedding),
+      }))
+      .sort((a, b) => b.sim - a.sim)
+      .slice(0, limit * 3);
+
+    vectorResults.forEach(({ chunk }, idx) => {
+      scores.set(chunk.id, { chunk, score: 1 / (k + idx + 1) });
+    });
+
+    const textResults = Array.from(this.chunks.values())
+      .map((chunk) => ({
+        chunk,
+        matches: queryTerms.filter((t) =>
+          chunk.content.toLowerCase().includes(t),
+        ).length,
+      }))
+      .filter((r) => r.matches > 0)
+      .sort((a, b) => b.matches - a.matches)
+      .slice(0, limit * 3);
+
+    textResults.forEach(({ chunk }, idx) => {
+      const rrfScore = 1 / (k + idx + 1);
+      const existing = scores.get(chunk.id);
+      if (existing) {
+        existing.score += rrfScore;
+      } else {
+        scores.set(chunk.id, { chunk, score: rrfScore });
+      }
+    });
+
+    return Array.from(scores.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map(({ chunk, score }) => ({ chunk, score }));
+  }
+
   async findByDocumentId(documentId: string): Promise<Chunk[]> {
     return Array.from(this.chunks.values())
       .filter((c) => c.documentId === documentId)

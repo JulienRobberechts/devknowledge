@@ -15,6 +15,7 @@ export function configRouter(): Router {
         chunkOverlap: config.rag.chunkOverlap,
         retrievalLimit: config.rag.retrievalLimit,
         retrievalMinScore: config.rag.retrievalMinScore,
+        searchMode: config.rag.searchMode,
         reranking: {
           enabled: config.rerank.enabled,
           model: config.rerank.model,

@@ -129,6 +129,12 @@ export default function SettingsPage() {
               info="Cosine similarity threshold (0–1) below which a chunk is ignored. A high score filters out less relevant results."
               techLink="/technical?tab=Query"
             />
+            <Row
+              label="Search mode"
+              value={config.rag.searchMode}
+              info="'hybrid' fuses vector (pgvector) and full-text (BM25/tsvector) rankings via Reciprocal Rank Fusion. 'vector' uses cosine similarity only. Configurable via SEARCH_MODE environment variable."
+              techLink="/technical?tab=Query"
+            />
           </Section>
 
           <Section title="LLM">

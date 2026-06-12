@@ -98,4 +98,53 @@ describe("SearchKnowledge", () => {
     const results = await search.execute("query", 2, 0);
     expect(results).toHaveLength(2);
   });
+
+  describe("hybrid mode", () => {
+    it("should call searchHybrid when searchMode is hybrid", async () => {
+      const queryVec = unitVec(1024, 0);
+      const searchHybrid = vi.spyOn(chunkRepo, "searchHybrid");
+      const search = new SearchKnowledge(
+        chunkRepo,
+        { embed: vi.fn().mockResolvedValue(queryVec), embedMany: vi.fn() },
+        null,
+        3,
+        "hybrid",
+      );
+      await search.execute("my query", 5, 0);
+      expect(searchHybrid).toHaveBeenCalledWith("my query", queryVec, 5, 0);
+    });
+
+    it("should call search (vector only) when searchMode is vector", async () => {
+      const queryVec = unitVec(1024, 0);
+      const search = vi.spyOn(chunkRepo, "search");
+      const searchKnowledge = new SearchKnowledge(
+        chunkRepo,
+        { embed: vi.fn().mockResolvedValue(queryVec), embedMany: vi.fn() },
+        null,
+        3,
+        "vector",
+      );
+      await searchKnowledge.execute("my query", 5, 0);
+      expect(search).toHaveBeenCalledWith(queryVec, 5, 0);
+    });
+
+    it("should return hybrid results passed to caller", async () => {
+      const queryVec = unitVec(1024, 0);
+      const chunk = makeChunk(unitVec(1024, 0), {
+        content: "exact acronym RAG",
+      });
+      await chunkRepo.save(chunk);
+
+      const search = new SearchKnowledge(
+        chunkRepo,
+        { embed: vi.fn().mockResolvedValue(queryVec), embedMany: vi.fn() },
+        null,
+        3,
+        "hybrid",
+      );
+      const results = await search.execute("RAG", 5, 0);
+      expect(results.length).toBeGreaterThan(0);
+      expect(results[0].chunk.id).toBe(chunk.id);
+    });
+  });
 });

@@ -73,6 +73,69 @@ export class PgVectorChunkRepository implements ChunkRepository {
     }));
   }
 
+  async searchHybrid(
+    query: string,
+    vector: number[],
+    limit: number,
+    _minScore: number,
+  ): Promise<ChunkSearchResult[]> {
+    const candidateLimit = limit * 3;
+
+    const [vectorResult, textResult] = await Promise.all([
+      pool.query(
+        `SELECT id, document_id, content, metadata,
+                ROW_NUMBER() OVER (ORDER BY embedding <=> $1::vector) AS rank
+         FROM chunks
+         LIMIT $2`,
+        [JSON.stringify(vector), candidateLimit],
+      ),
+      pool.query(
+        `SELECT id, document_id, content, metadata,
+                ROW_NUMBER() OVER (ORDER BY ts_rank_cd(ts_content, plainto_tsquery('simple', $1)) DESC) AS rank
+         FROM chunks
+         WHERE ts_content @@ plainto_tsquery('simple', $1)
+         LIMIT $2`,
+        [query, candidateLimit],
+      ),
+    ]);
+
+    const k = 60;
+    const scores = new Map<
+      string,
+      { row: Record<string, unknown>; score: number }
+    >();
+
+    for (const row of vectorResult.rows) {
+      const id = row.id as string;
+      scores.set(id, { row, score: 1 / (k + Number(row.rank)) });
+    }
+
+    for (const row of textResult.rows) {
+      const id = row.id as string;
+      const rrfScore = 1 / (k + Number(row.rank));
+      const existing = scores.get(id);
+      if (existing) {
+        existing.score += rrfScore;
+      } else {
+        scores.set(id, { row, score: rrfScore });
+      }
+    }
+
+    return Array.from(scores.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map(({ row, score }) => ({
+        chunk: {
+          id: row.id as string,
+          documentId: row.document_id as string,
+          content: row.content as string,
+          embedding: [],
+          metadata: row.metadata as Chunk["metadata"],
+        },
+        score,
+      }));
+  }
+
   async deleteByDocumentId(documentId: string): Promise<void> {
     await pool.query("DELETE FROM chunks WHERE document_id = $1", [documentId]);
   }
