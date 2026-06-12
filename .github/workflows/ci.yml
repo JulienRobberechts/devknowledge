@@ -59,8 +59,8 @@ jobs:
       - run: npm run typecheck
         working-directory: frontend
 
-  deploy:
-    name: Deploy to Railway
+  deploy-api:
+    name: Deploy API to Railway
     needs: [test, lint, build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -70,11 +70,21 @@ jobs:
         with:
           node-version: '22'
       - run: npm install -g @railway/cli
-      - name: Deploy API
-        run: railway up --service argos-api --detach
+      - run: railway up --service argos-api
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      - name: Deploy Frontend
-        run: railway up --service argos-frontend --detach
+
+  deploy-frontend:
+    name: Deploy Frontend to Railway
+    needs: [test, lint, build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g @railway/cli
+      - run: railway up --service argos-frontend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
