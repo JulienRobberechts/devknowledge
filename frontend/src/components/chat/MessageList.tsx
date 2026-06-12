@@ -95,6 +95,16 @@ function KnowledgeCheckPanel({ results }: { results: KnowledgeCheckResult[] }) {
                             — "{claim.sourceExcerpt.slice(0, 80)}…"
                           </span>
                         )}
+                        {claim.documentId && claim.documentTitle && (
+                          <a
+                            href={`http://localhost:5173/documents/${claim.documentId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-1.5 text-indigo-500 hover:text-indigo-700 underline underline-offset-2"
+                          >
+                            {claim.documentTitle}
+                          </a>
+                        )}
                       </span>
                     </li>
                   ))}

@@ -141,6 +141,7 @@ export class AskQuestion {
             assistantContent,
             searchResults,
             strategies,
+            titleById,
           )
         : undefined;
 

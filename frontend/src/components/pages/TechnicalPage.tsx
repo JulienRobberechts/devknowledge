@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   FlaskConical,
   FileText,
@@ -167,6 +168,10 @@ function TabBar({
       ))}
     </div>
   );
+}
+
+function isTab(value: string | null): value is Tab {
+  return TABS.includes(value as Tab);
 }
 
 function OverviewTab() {
@@ -765,7 +770,15 @@ function ConfigTab() {
 }
 
 export default function TechnicalPage() {
-  const [activeTab, setActiveTab] = useState<Tab>("Overview");
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState<Tab>(
+    isTab(tabParam) ? tabParam : "Overview",
+  );
+
+  useEffect(() => {
+    if (isTab(tabParam)) setActiveTab(tabParam);
+  }, [tabParam]);
 
   return (
     <div className="p-8 max-w-4xl">

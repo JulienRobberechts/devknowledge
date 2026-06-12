@@ -19,13 +19,14 @@ export class CheckContextualKnowledge {
     answer: string,
     chunks: ChunkSearchResult[],
     strategies: KnowledgeCheckStrategy[],
+    titleById: Map<string, string> = new Map(),
   ): Promise<KnowledgeCheckResult[]> {
     const results: KnowledgeCheckResult[] = [];
     for (const strategy of strategies) {
       try {
         if (strategy === "faithfulness") {
           results.push(
-            await checkFaithfulness(this.llm, query, answer, chunks),
+            await checkFaithfulness(this.llm, query, answer, chunks, titleById),
           );
         } else if (strategy === "counterfactual") {
           results.push(await checkCounterfactual(this.llm, query, answer));

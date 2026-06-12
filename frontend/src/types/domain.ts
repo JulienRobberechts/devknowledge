@@ -39,6 +39,8 @@ export interface KnowledgeClaim {
   claim: string;
   status: "SUPPORTED" | "UNSUPPORTED";
   sourceExcerpt?: string;
+  documentId?: string;
+  documentTitle?: string;
 }
 
 export interface KnowledgeCheckResult {

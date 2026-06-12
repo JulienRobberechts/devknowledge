@@ -1,5 +1,6 @@
 import { Info, Settings } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useConfig } from "../../hooks/useConfig";
 import PageHeader from "../ui/PageHeader";
 
@@ -7,10 +8,12 @@ function Row({
   label,
   value,
   info,
+  techLink,
 }: {
   label: string;
   value: string | number;
   info: string;
+  techLink?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -30,9 +33,17 @@ function Row({
         <span className="text-sm font-mono text-gray-900">{value}</span>
       </div>
       {open && (
-        <p className="mt-1 text-xs text-gray-500 bg-blue-50 rounded px-2 py-1">
-          {info}
-        </p>
+        <div className="mt-1 text-xs text-gray-500 bg-blue-50 rounded px-2 py-1 flex items-start justify-between gap-2">
+          <p>{info}</p>
+          {techLink && (
+            <Link
+              to={techLink}
+              className="flex-shrink-0 text-blue-500 hover:text-blue-700 underline whitespace-nowrap"
+            >
+              En savoir plus →
+            </Link>
+          )}
+        </div>
       )}
     </div>
   );
@@ -88,16 +99,19 @@ export default function SettingsPage() {
               label="Strategy"
               value={config.rag.chunkingStrategy}
               info="Document splitting method. 'sentence' respects sentence boundaries; 'recursive' splits into fixed-size blocks."
+              techLink="/technical?tab=Ingestion"
             />
             <Row
               label="Chunk size (tokens)"
               value={config.rag.chunkSize}
               info="Maximum number of tokens per chunk. A larger chunk provides more context but may dilute relevance during retrieval."
+              techLink="/technical?tab=Ingestion"
             />
             <Row
               label="Overlap (tokens)"
               value={config.rag.chunkOverlap}
               info="Number of tokens shared between consecutive chunks. Prevents ideas from being cut across two chunks."
+              techLink="/technical?tab=Ingestion"
             />
           </Section>
 
@@ -106,11 +120,13 @@ export default function SettingsPage() {
               label="Result limit"
               value={config.rag.retrievalLimit}
               info="Maximum number of chunks returned by vector search and injected into the LLM context."
+              techLink="/technical?tab=Query"
             />
             <Row
               label="Minimum score"
               value={config.rag.retrievalMinScore}
               info="Cosine similarity threshold (0–1) below which a chunk is ignored. A high score filters out less relevant results."
+              techLink="/technical?tab=Query"
             />
           </Section>
 
@@ -119,21 +135,25 @@ export default function SettingsPage() {
               label="Provider"
               value={config.llm.provider}
               info="API used for response generation. Configurable via environment variables."
+              techLink="/technical?tab=Query"
             />
             <Row
               label="Model"
               value={config.llm.model}
               info="LLM model used for response generation. Overridable via LLM_MODEL environment variable."
+              techLink="/technical?tab=Query"
             />
             <Row
               label="Max tokens"
               value={config.llm.maxTokens}
               info="Maximum number of tokens the LLM can generate in a response. Increasing this allows longer answers."
+              techLink="/technical?tab=Config"
             />
             <Row
               label="Temperature"
               value={config.llm.temperature}
               info="Controls response creativity (0 = deterministic, 1 = very creative). A low value is recommended for factual answers."
+              techLink="/technical?tab=Config"
             />
           </Section>
 
@@ -142,11 +162,13 @@ export default function SettingsPage() {
               label="Provider"
               value={config.embeddings.provider}
               info="API used for vectorizing documents and queries."
+              techLink="/technical?tab=Ingestion"
             />
             <Row
               label="Model"
               value={config.embeddings.model}
               info="Embedding model used for vectorizing documents and queries. Overridable via EMBEDDING_MODEL environment variable."
+              techLink="/technical?tab=Ingestion"
             />
           </Section>
 
@@ -155,11 +177,13 @@ export default function SettingsPage() {
               label="Enabled"
               value={config.rag.reranking.enabled ? "true" : "false"}
               info="Whether cross-encoder re-ranking is active. Enabled automatically when VOYAGE_API_KEY is set, or forced via RERANK_ENABLED."
+              techLink="/technical/reranking"
             />
             <Row
               label="Model"
               value={config.rag.reranking.model}
               info="Reranker model used for the second retrieval stage. Overridable via RERANK_MODEL environment variable."
+              techLink="/technical/reranking"
             />
           </Section>
         </>
