@@ -73,8 +73,7 @@ export default function DashboardPage() {
               Knowledge Intelligence Platform
             </p>
             <p className="mt-2 text-slate-400 text-xs max-w-md">
-              Indexed documents, RAG pipeline and conversations — all in one
-              place.
+              demo of Indexed documents, RAG pipeline and conversations.
             </p>
           </div>
         </div>
