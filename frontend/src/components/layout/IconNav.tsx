@@ -6,6 +6,7 @@ import {
   FlaskConical,
   SquareCheck,
 } from "lucide-react";
+import { useConfig } from "../../hooks/useConfig";
 
 const navItems = [
   { to: "/", icon: null, label: "Argos" },
@@ -17,6 +18,8 @@ const navItems = [
 ];
 
 export default function IconNav() {
+  const { data: config } = useConfig();
+
   return (
     <nav className="flex flex-col items-center py-4 gap-1 w-14 shrink-0 bg-slate-900 h-full">
       {navItems.map(({ to, icon: Icon, label }) => (
@@ -42,6 +45,22 @@ export default function IconNav() {
           )}
         </NavLink>
       ))}
+      <div className="mt-auto flex flex-col items-center gap-0.5 pb-1">
+        <span
+          className="text-[9px] text-slate-500 leading-tight"
+          title={`Frontend v${__APP_VERSION__}`}
+        >
+          F {__APP_VERSION__}
+        </span>
+        {config?.version && (
+          <span
+            className="text-[9px] text-slate-500 leading-tight"
+            title={`Backend v${config.version}`}
+          >
+            B {config.version}
+          </span>
+        )}
+      </div>
     </nav>
   );
 }

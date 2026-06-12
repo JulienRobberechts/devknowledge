@@ -1,11 +1,13 @@
 import { Router } from "express";
 import config from "../../config";
+import pkg from "../../../package.json";
 
 export function configRouter(): Router {
   const router = Router();
 
   router.get("/", (_req, res) => {
     res.json({
+      version: pkg.version,
       logLevel: config.server.logLevel,
       rag: {
         chunkingStrategy: config.rag.chunkingStrategy,

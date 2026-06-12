@@ -87,6 +87,7 @@ export interface DocumentSummary {
 }
 
 export interface AppConfig {
+  version: string;
   logLevel: string;
   rag: {
     chunkingStrategy: string;
