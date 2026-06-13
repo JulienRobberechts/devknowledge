@@ -9,7 +9,6 @@ export default function RagUsageTab() {
         icon={<Zap size={20} />}
         title="Recommendation for this RAG project"
         subtitle="Which model to choose based on the use case"
-        accentColor="blue"
       />
       <div className="space-y-3 text-sm text-slate-700">
         <div className="flex gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">

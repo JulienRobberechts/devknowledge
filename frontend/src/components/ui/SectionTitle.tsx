@@ -6,7 +6,6 @@ export default function SectionTitle({
   icon: React.ReactNode;
   title: string;
   subtitle?: string;
-  accentColor?: string;
 }) {
   return (
     <div className="flex items-start gap-3 mb-4">

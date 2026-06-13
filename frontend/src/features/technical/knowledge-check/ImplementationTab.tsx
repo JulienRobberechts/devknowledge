@@ -12,7 +12,6 @@ export default function ImplementationTab() {
           icon={<Code2 size={20} />}
           title="Implementation — CheckContextualKnowledge"
           subtitle="How the three strategies are orchestrated"
-          accentColor="teal"
         />
         <p className="text-sm text-slate-700 leading-relaxed mb-3">
           The{" "}
@@ -68,7 +67,6 @@ async run(
           icon={<Info size={20} />}
           title="Domain types"
           subtitle="The shared data structures used across the stack"
-          accentColor="teal"
         />
         <CodeBlock
           code={`// domain/entities/Message.ts

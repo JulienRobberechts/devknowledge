@@ -9,7 +9,6 @@ export default function OverviewTab() {
         icon={<AlertTriangle size={20} />}
         title="The problem: parametric vs contextual knowledge"
         subtitle="Why a correct answer can still be the wrong answer"
-        accentColor="teal"
       />
       <p className="text-sm text-slate-700 leading-relaxed mb-4">
         In a RAG system the LLM receives retrieved chunks as context. Ideally

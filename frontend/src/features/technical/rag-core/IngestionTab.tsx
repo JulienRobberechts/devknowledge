@@ -85,8 +85,7 @@ export default function IngestionTab() {
                 // priority order in findBestSplit()
               </div>
               <div>
-                1. double newline{" "}
-                <span className="text-amber-600">"\n\n"</span>
+                1. double newline <span className="text-amber-600">"\n\n"</span>
               </div>
               <div>
                 2. single newline <span className="text-amber-600">"\n"</span>
@@ -163,7 +162,7 @@ Chunk 2:           [sentence B] [sentence C] [sentence D]
         <div className="bg-slate-50 rounded-lg p-4 mb-4 text-sm text-slate-700">
           <p className="font-medium mb-2">
             This project uses Voyage AI — model:{" "}
-            <code className="bg-slate-200 px-1 rounded text-amber-700">
+            <code className="bg-slate-100 px-1 rounded text-amber-700">
               voyage-4-lite
             </code>
           </p>
@@ -172,11 +171,11 @@ Chunk 2:           [sentence B] [sentence C] [sentence D]
               Output dimension: <strong>1024 floats</strong> per text
             </li>
             <li>
-              Two <code className="bg-slate-200 px-1 rounded">input_type</code>{" "}
+              Two <code className="bg-slate-100 px-1 rounded">input_type</code>{" "}
               modes:{" "}
-              <code className="bg-slate-200 px-1 rounded">"document"</code> for
+              <code className="bg-slate-100 px-1 rounded">"document"</code> for
               ingestion,{" "}
-              <code className="bg-slate-200 px-1 rounded">"query"</code> for
+              <code className="bg-slate-100 px-1 rounded">"query"</code> for
               search — this asymmetric embedding improves retrieval quality
             </li>
             <li>Batching: up to 20 texts per API call</li>

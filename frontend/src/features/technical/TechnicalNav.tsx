@@ -6,16 +6,10 @@ import {
   ShieldCheck,
   Combine,
   Gauge,
-  Workflow,
 } from "lucide-react";
 
 const pages = [
   { to: "/technical", label: "RAG Core", icon: FlaskConical, end: true },
-  {
-    to: "/technical/rag-pipeline",
-    label: "Pipeline Visualiseur",
-    icon: Workflow,
-  },
   { to: "/technical/hybrid-search", label: "Hybrid Search", icon: Combine },
   { to: "/technical/reranking", label: "Re-ranking", icon: ArrowUpDown },
   { to: "/technical/llm-models", label: "Modèles LLM", icon: Brain },

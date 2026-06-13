@@ -20,7 +20,7 @@ export default function OverviewTab() {
           splitting the problem in two:
         </p>
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-amber-50 rounded-lg p-4 border border-amber-100">
+          <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
             <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-2">
               Offline — Ingestion
             </p>
@@ -30,7 +30,7 @@ export default function OverviewTab() {
               everything in a database.
             </p>
           </div>
-          <div className="bg-amber-50 rounded-lg p-4 border border-amber-100">
+          <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
             <p className="text-xs font-semibold text-amber-800 uppercase tracking-wide mb-2">
               Online — Query
             </p>

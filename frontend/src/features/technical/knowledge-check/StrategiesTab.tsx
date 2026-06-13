@@ -12,10 +12,9 @@ function FaithfulnessCard() {
         icon={<BarChart2 size={20} />}
         title="Strategy 1 — Faithfulness (RAGAS)"
         subtitle="Decompose the answer into atomic claims, verify each one against sources"
-        accentColor="teal"
       />
       <div className="mb-3">
-        <StrategyBadge label="faithfulness" color="teal" />
+        <StrategyBadge label="faithfulness" />
       </div>
       <p className="text-sm text-slate-700 leading-relaxed mb-4">
         A second LLM call (the <em>judge</em>) receives the original question,
@@ -78,10 +77,9 @@ function CounterfactualCard() {
         icon={<GitCompare size={20} />}
         title="Strategy 2 — Counterfactual"
         subtitle="Ask the same question without context — if the answer is the same, RAG didn't help"
-        accentColor="purple"
       />
       <div className="mb-3">
-        <StrategyBadge label="counterfactual" color="purple" />
+        <StrategyBadge label="counterfactual" />
       </div>
       <p className="text-sm text-slate-700 leading-relaxed mb-4">
         The strategy generates two answers to the same question — one with the
@@ -167,10 +165,9 @@ function CitationForcingCard() {
         icon={<Quote size={20} />}
         title="Strategy 3 — Citation Forcing"
         subtitle="Demand an exact quote for every claim — then verify the quote actually exists"
-        accentColor="blue"
       />
       <div className="mb-3">
-        <StrategyBadge label="citation_forcing" color="blue" />
+        <StrategyBadge label="citation_forcing" />
       </div>
       <p className="text-sm text-slate-700 leading-relaxed mb-4">
         The judge is asked to map every factual claim to an <em>exact quote</em>{" "}
@@ -226,7 +223,6 @@ export default function StrategiesTab() {
           icon={<Layers size={20} />}
           title="Strategy comparison"
           subtitle="Choosing the right check for your use case"
-          accentColor="teal"
         />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -249,7 +245,7 @@ export default function StrategiesTab() {
             <tbody>
               <tr className="border-b border-slate-100">
                 <td className="py-3 pr-4">
-                  <StrategyBadge label="faithfulness" color="teal" />
+                  <StrategyBadge label="faithfulness" />
                 </td>
                 <td className="py-3 pr-4 text-xs text-slate-700">1</td>
                 <td className="py-3 pr-4 text-xs text-slate-600">
@@ -261,7 +257,7 @@ export default function StrategiesTab() {
               </tr>
               <tr className="border-b border-slate-100">
                 <td className="py-3 pr-4">
-                  <StrategyBadge label="counterfactual" color="purple" />
+                  <StrategyBadge label="counterfactual" />
                 </td>
                 <td className="py-3 pr-4 text-xs text-slate-700">2</td>
                 <td className="py-3 pr-4 text-xs text-slate-600">
@@ -273,7 +269,7 @@ export default function StrategiesTab() {
               </tr>
               <tr>
                 <td className="py-3 pr-4">
-                  <StrategyBadge label="citation_forcing" color="blue" />
+                  <StrategyBadge label="citation_forcing" />
                 </td>
                 <td className="py-3 pr-4 text-xs text-slate-700">1</td>
                 <td className="py-3 pr-4 text-xs text-slate-600">

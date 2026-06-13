@@ -11,7 +11,6 @@ export default function ComparisonTab() {
         icon={<Layers size={20} />}
         title="Comparison table"
         subtitle="All current models side by side"
-        accentColor="blue"
       />
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
@@ -42,7 +41,10 @@ export default function ComparisonTab() {
           </thead>
           <tbody>
             {MODELS.map((m) => (
-              <tr key={m.id} className="border-b border-slate-100 last:border-0">
+              <tr
+                key={m.id}
+                className="border-b border-slate-100 last:border-0"
+              >
                 <td className="py-2.5 pr-4">
                   <div className="flex items-center gap-2">
                     <TierBadge tier={m.tier} />

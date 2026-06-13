@@ -21,7 +21,6 @@ import LLMModelsPage from "./features/technical/LLMModelsPage";
 import KnowledgeCheckPage from "./features/technical/KnowledgeCheckPage";
 import HybridSearchPage from "./features/technical/HybridSearchPage";
 import EvaluationPage from "./features/technical/EvaluationPage";
-import RagPipelinePage from "./features/technical/RagPipelinePage";
 import FontPreviewPage from "./components/pages/FontPreviewPage";
 import ColorPalettePage from "./components/pages/ColorPalettePage";
 import { useConversations } from "./hooks/useConversation";
@@ -79,7 +78,6 @@ export default function App() {
             <Route path="quiz" element={<QuizPage />} />
             <Route path="technical" element={<TechnicalLayout />}>
               <Route index element={<TechnicalPage />} />
-              <Route path="rag-pipeline" element={<RagPipelinePage />} />
               <Route path="hybrid-search" element={<HybridSearchPage />} />
               <Route path="reranking" element={<RerankingPage />} />
               <Route path="llm-models" element={<LLMModelsPage />} />
