@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { Combine } from "lucide-react";
 import PageHeader from "../../components/ui/PageHeader";
 import TabBar from "../../components/ui/TabBar";
-import TechnicalNav from "./TechnicalNav";
 import OverviewTab from "./hybrid-search/OverviewTab";
 import PipelineTab from "./hybrid-search/PipelineTab";
 import ImplementationTab from "./hybrid-search/ImplementationTab";
@@ -28,14 +27,13 @@ export default function HybridSearchPage() {
   }, [tabParam]);
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8 w-full">
       <PageHeader
         icon={<Combine className="text-[#d97706]" size={28} />}
         title="Hybrid Search — Technical Deep Dive"
         info="Why vector search alone fails on exact terms, how BM25 complements it, and how Reciprocal Rank Fusion merges both signals inside PostgreSQL."
       />
 
-      <TechnicalNav />
       <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
       {activeTab === "Overview" && <OverviewTab />}

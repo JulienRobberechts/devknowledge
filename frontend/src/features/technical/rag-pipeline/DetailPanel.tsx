@@ -47,7 +47,7 @@ function CodeBlock({ code }: { code: string }) {
 
 // ── Extras ────────────────────────────────────────────────────
 
-function VectorChart({ phase }: { phase: "ing" | "q" }) {
+function VectorChart({ phase }: { phase: "ing" | "q" | "gen" | "eval" }) {
   const accent = phase === "ing" ? "#58a6ff" : "#3fb950";
   const dims = Array.from({ length: 40 }, () => Math.random() * 2 - 1);
   return (

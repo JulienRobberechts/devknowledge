@@ -15,6 +15,7 @@ import DashboardPage from "./components/pages/DashboardPage";
 import QuizPage from "./components/pages/QuizPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import TechnicalPage from "./features/technical/TechnicalPage";
+import TechnicalLayout from "./features/technical/TechnicalLayout";
 import RerankingPage from "./features/technical/RerankingPage";
 import LLMModelsPage from "./features/technical/LLMModelsPage";
 import KnowledgeCheckPage from "./features/technical/KnowledgeCheckPage";
@@ -76,22 +77,15 @@ export default function App() {
             <Route path="conversations/new" element={<ChatInterface />} />
             <Route path="conversations/:id" element={<ChatInterface />} />
             <Route path="quiz" element={<QuizPage />} />
-            <Route path="technical" element={<TechnicalPage />} />
-            <Route path="technical/reranking" element={<RerankingPage />} />
-            <Route path="technical/llm-models" element={<LLMModelsPage />} />
-            <Route
-              path="technical/hybrid-search"
-              element={<HybridSearchPage />}
-            />
-            <Route
-              path="technical/knowledge-check"
-              element={<KnowledgeCheckPage />}
-            />
-            <Route path="technical/evaluation" element={<EvaluationPage />} />
-            <Route
-              path="technical/rag-pipeline"
-              element={<RagPipelinePage />}
-            />
+            <Route path="technical" element={<TechnicalLayout />}>
+              <Route index element={<TechnicalPage />} />
+              <Route path="rag-pipeline" element={<RagPipelinePage />} />
+              <Route path="hybrid-search" element={<HybridSearchPage />} />
+              <Route path="reranking" element={<RerankingPage />} />
+              <Route path="llm-models" element={<LLMModelsPage />} />
+              <Route path="knowledge-check" element={<KnowledgeCheckPage />} />
+              <Route path="evaluation" element={<EvaluationPage />} />
+            </Route>
             <Route path="settings" element={<SettingsPage />} />
             <Route path="font-preview" element={<FontPreviewPage />} />
             <Route path="color-palette" element={<ColorPalettePage />} />

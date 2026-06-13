@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { Brain } from "lucide-react";
 import PageHeader from "../../components/ui/PageHeader";
 import TabBar from "../../components/ui/TabBar";
-import TechnicalNav from "./TechnicalNav";
 import ModelsTab from "./llm-models/ModelsTab";
 import ComparisonTab from "./llm-models/ComparisonTab";
 import RagUsageTab from "./llm-models/RagUsageTab";
@@ -28,14 +27,13 @@ export default function LLMModelsPage() {
   }, [tabParam]);
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8 w-full">
       <PageHeader
         icon={<Brain className="text-[#d97706]" size={28} />}
         title="LLM Models — Comparison"
         info="Overview of available Claude models, their characteristics, and when to use them in a RAG pipeline."
       />
 
-      <TechnicalNav />
       <TabBar
         tabs={TABS}
         active={activeTab}

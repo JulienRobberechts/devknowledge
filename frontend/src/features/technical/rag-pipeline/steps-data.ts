@@ -1,4 +1,4 @@
-export type Phase = "ing" | "q";
+export type Phase = "ing" | "q" | "gen" | "eval";
 
 export interface Step {
   id: string;
@@ -367,7 +367,7 @@ function buildPrompt(chunks: Chunk[], history: Message[], query: string) {
   },
   {
     id: "llm",
-    phase: "q",
+    phase: "gen",
     icon: "🤖",
     label: "Génération LLM",
     sub: "claude-sonnet-4-6 · streaming SSE token par token",
@@ -400,42 +400,8 @@ async generate({ messages, onToken }: LLMInput) {
     extra: "token-stream",
   },
   {
-    id: "response",
-    phase: "q",
-    icon: "✨",
-    label: "Réponse avec sources",
-    sub: "Tokens assemblés + citations → conversation sauvegardée",
-    input: { key: "stream", val: "stream de tokens complet" },
-    output: {
-      key: "response",
-      val: "Réponse + SOURCE[1,2,3] · sauvegardée en base",
-    },
-    annotation:
-      "Après la génération, le message assistant complet est sauvegardé avec les chunk IDs des sources. Cela permet d'afficher les citations cliquables dans le frontend et de tracer les sources pour l'évaluation RAGAS (étape suivante).",
-    formula: null,
-    code: `// AskQuestion.ts — fin du pipeline
-let fullResponse = '';
-await llm.generate({
-  messages,
-  onToken: (token) => {
-    fullResponse += token;
-    onToken(token); // ← forward au client via SSE
-  }
-});
-
-await conversationRepo.addMessage(conversationId, {
-  role:    'assistant',
-  content: fullResponse,
-  sources: chunks.map(c => ({
-    chunkId:    c.id,
-    documentId: c.documentId,
-    excerpt:    c.content.slice(0, 120)
-  }))
-});`,
-  },
-  {
     id: "faithfulness",
-    phase: "q",
+    phase: "eval",
     icon: "🔬",
     label: "Évaluation RAGAS — fidélité",
     sub: "Atomic statements vs sources · score ∈ [0,1] · détection hallucinations",
@@ -484,7 +450,89 @@ export class RagasEvaluator {
   }
 }`,
   },
+  {
+    id: "citation-forcing",
+    phase: "eval",
+    icon: "📎",
+    label: "Citation forcing",
+    sub: "LLM forcé à citer · vérification précision des références",
+    input: { key: "data", val: "réponse LLM + chunks numérotés [SOURCE N]" },
+    output: {
+      key: "score",
+      val: "citation_precision = 0.89 · 8/9 références ancrées",
+    },
+    annotation:
+      "Citation forcing oblige le modèle à baliser chaque affirmation avec [SOURCE N]. On vérifie ensuite que chaque citation renvoie bien à une source qui contient cette information. Détecte les citations inventées : le modèle écrit [SOURCE 3] alors que SOURCE 3 ne contient pas le fait cité.",
+    formula: `citation_precision = |citations valides| / |total citations dans la réponse|
+
+Exemple :
+  "La recherche hybride combine vectorielle + BM25 [SOURCE 1]"
+    → SOURCE 1 contient bien cette info ✓
+  "pgvector est basé sur FAISS en interne [SOURCE 2]"
+    → SOURCE 2 ne contient pas cette info ✗ hallucination
+
+  precision = 1/2 = 0.50 ← alerte`,
+    code: `// Citation forcing scorer
+async citationPrecision(
+  response: string,
+  sources: Record<number, string>
+): Promise<number> {
+  // Extraire les paires (affirmation, numéro source) via regex
+  const cited = [...response.matchAll(/([^.]+)\\[SOURCE (\\d+)\\]/g)]
+    .map(m => ({ claim: m[1].trim(), src: Number(m[2]) }));
+  let valid = 0;
+  for (const { claim, src } of cited) {
+    const ok = await this.llm.verify(\`
+      Est-ce que ce claim est supporté par la source ?
+      Claim: "\${claim}"
+      Source: "\${sources[src] ?? ''}"
+      Réponds UNIQUEMENT avec du JSON : {"supported": true|false}
+    \`);
+    if (ok) valid++;
+  }
+  return cited.length ? valid / cited.length : 1;
+}`,
+    extra: undefined,
+  },
+  {
+    id: "counterfactual",
+    phase: "eval",
+    icon: "🔄",
+    label: "Counterfactual",
+    sub: "Contexte modifié → mesure de sensibilité au RAG",
+    input: {
+      key: "data",
+      val: "chunks originaux + version perturbée (fait erroné injecté)",
+    },
+    output: {
+      key: "delta",
+      val: "sensitivity = 0.73 · réponse a bien changé avec le contexte",
+    },
+    annotation:
+      "L'évaluation counterfactual remplace un fait clé dans les sources (ex : '1883' → '1901') et relance le pipeline complet. Si la réponse ne change pas, le modèle ignore les sources et répond depuis sa mémoire paramétrique — signe de mémorisation plutôt que de retrieval. Un bon RAG doit être 'context-faithful'.",
+    formula: `sensitivity = 1 - cosine_sim(response_original, response_modifiée)
+
+→ sensitivity ≈ 0 : réponse identique → modèle ignore le contexte ✗
+→ sensitivity ≈ 1 : réponse change    → modèle suit le contexte     ✓
+
+Seuil recommandé : sensitivity > 0.40 pour valider le grounding`,
+    code: `// Counterfactual evaluation
+async counterfactual(
+  question:       string,
+  originalChunks: Chunk[],
+  perturbedChunks: Chunk[]  // chunks avec un fait modifié
+): Promise<number> {
+  const r1 = await this.ask(question, originalChunks);
+  const r2 = await this.ask(question, perturbedChunks);
+  const [e1, e2] = await this.embed([r1, r2]);
+  // sensitivity élevée → le modèle suit bien les sources
+  return 1 - cosineSimilarity(e1, e2);
+}`,
+    extra: undefined,
+  },
 ];
 
 export const INGESTION_STEPS = STEPS.filter((s) => s.phase === "ing");
 export const QUERY_STEPS = STEPS.filter((s) => s.phase === "q");
+export const GEN_STEPS = STEPS.filter((s) => s.phase === "gen");
+export const EVAL_STEPS = STEPS.filter((s) => s.phase === "eval");

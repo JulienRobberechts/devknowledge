@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 import PageHeader from "../../components/ui/PageHeader";
 import TabBar from "../../components/ui/TabBar";
-import TechnicalNav from "./TechnicalNav";
 import OverviewTab from "./knowledge-check/OverviewTab";
 import StrategiesTab from "./knowledge-check/StrategiesTab";
 import ImplementationTab from "./knowledge-check/ImplementationTab";
@@ -33,14 +32,13 @@ export default function KnowledgeCheckPage() {
   }, [tabParam]);
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8 w-full">
       <PageHeader
         icon={<ShieldCheck className="text-[#d97706]" size={28} />}
         title="Knowledge Check — Technical Deep Dive"
         info="Three strategies to detect whether an LLM answer comes from retrieved documents or from the model's training data."
       />
 
-      <TechnicalNav />
       <TabBar
         tabs={TABS}
         active={activeTab}

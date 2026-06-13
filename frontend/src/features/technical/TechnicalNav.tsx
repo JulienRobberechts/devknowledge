@@ -29,7 +29,7 @@ const pages = [
 
 export default function TechnicalNav() {
   return (
-    <div className="flex gap-1 mb-6 bg-slate-100 p-1 rounded-xl">
+    <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
       {pages.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}

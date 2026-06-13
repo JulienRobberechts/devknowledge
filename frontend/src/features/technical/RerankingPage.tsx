@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { ArrowUpDown } from "lucide-react";
 import PageHeader from "../../components/ui/PageHeader";
 import TabBar from "../../components/ui/TabBar";
-import TechnicalNav from "./TechnicalNav";
 import OverviewTab from "./reranking/OverviewTab";
 import PipelineTab from "./reranking/PipelineTab";
 import ImplementationTab from "./reranking/ImplementationTab";
@@ -28,14 +27,13 @@ export default function RerankingPage() {
   }, [tabParam]);
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8 w-full">
       <PageHeader
         icon={<ArrowUpDown className="text-[#d97706]" size={28} />}
         title="Re-ranking — Technical Deep Dive"
         info="Why vector search alone isn't enough, how a cross-encoder fixes it, and how Voyage rerank-2.5 is wired into this project."
       />
 
-      <TechnicalNav />
       <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
       {activeTab === "Overview" && <OverviewTab />}

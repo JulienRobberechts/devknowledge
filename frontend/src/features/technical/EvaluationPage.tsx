@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { Gauge } from "lucide-react";
 import PageHeader from "../../components/ui/PageHeader";
 import TabBar from "../../components/ui/TabBar";
-import TechnicalNav from "./TechnicalNav";
 import OverviewTab from "./evaluation/OverviewTab";
 import MetricsTab from "./evaluation/MetricsTab";
 import RisksTab from "./evaluation/RisksTab";
@@ -28,14 +27,13 @@ export default function EvaluationPage() {
   }, [tabParam]);
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8 w-full">
       <PageHeader
         icon={<Gauge className="text-[#d97706]" size={28} />}
         title="RAG Evaluation — Technical Deep Dive"
         info="Why RAG systems fail silently, how three independent metrics expose each failure mode, and how the eval pipeline is wired in this project."
       />
 
-      <TechnicalNav />
       <TabBar
         tabs={TABS}
         active={activeTab}
