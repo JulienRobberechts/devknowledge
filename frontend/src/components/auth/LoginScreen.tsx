@@ -57,10 +57,20 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           </div>
           <div className="text-center">
             <h1
-              className="text-2xl font-bold tracking-wide"
-              style={{ color: "var(--argos-yellow)" }}
+              style={{
+                fontFamily: "'Audiowide', sans-serif",
+                fontWeight: 400,
+                fontSize: "1.5rem",
+                letterSpacing: "0.05em",
+                background:
+                  "linear-gradient(90deg, #92400e 0%, #d97706 40%, #fcd34d 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                color: "transparent",
+              }}
             >
-              Argos
+              ARGOS
             </h1>
             <p className="text-sm mt-1" style={{ color: "#6b7280" }}>
               Knowledge base &amp; RAG assistant
