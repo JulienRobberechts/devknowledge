@@ -3,7 +3,10 @@ import { Request, Response, NextFunction } from "express";
 import { ZodError, ZodIssueCode } from "zod";
 
 vi.mock("../../config", () => ({
-  default: { api: { key: "key" }, server: { nodeEnv: "development" } },
+  default: {
+    api: { key: "key" },
+    server: { nodeEnv: "development", logLevel: "info" },
+  },
 }));
 
 import { errorHandler } from "./errorHandler";

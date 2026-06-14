@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import path from "path";
 import { z } from "zod";
@@ -38,6 +40,7 @@ if (!envResult.success) {
 import config from "./config";
 import { apiKeyAuth } from "./api/middleware/apiKeyAuth";
 import { errorHandler } from "./api/middleware/errorHandler";
+import { authRouter } from "./api/routes/auth";
 import { configRouter } from "./api/routes/config";
 import { documentsRouter } from "./api/routes/documents";
 import { conversationsRouter } from "./api/routes/conversations";
@@ -68,7 +71,18 @@ import pool from "./infrastructure/db/pool";
 
 const documentRepo = new PgDocumentRepository();
 const chunkRepo = new PgVectorChunkRepository();
-const conversationRepo = new PgConversationRepository();
+const conversationRepo = new PgConversationRepository({
+  retrievalLimit: config.rag.retrievalLimit,
+  retrievalMinScore: config.rag.retrievalMinScore,
+  rerankEnabled: config.rerank.enabled,
+  rerankModel: config.rerank.model,
+  rerankCandidateMultiplier: config.rerank.candidateMultiplier,
+  llmModel: config.llm.anthropic.model,
+  llmTemperature: config.llm.anthropic.temperature,
+  llmMaxTokens: config.llm.anthropic.maxTokens,
+  knowledgeCheckStrategies: config.rag.knowledgeCheckStrategies,
+  searchMode: config.rag.searchMode,
+});
 const embeddingAdapter = new VoyageEmbeddingAdapter();
 const llmAdapter = new AnthropicLLMAdapter();
 const fileParser = new MultiFileParser();
@@ -120,7 +134,13 @@ const resetAll = new ResetAll(fileStorage, appSettingsService, pool);
 const app = express();
 const PORT = config.server.port;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGIN,
+    credentials: true,
+  }),
+);
+app.use(cookieParser());
 app.use(express.json());
 
 app.get("/health", (_req, res) => {
@@ -132,7 +152,16 @@ app.use(
   "/api/admin",
   adminRouter(checkStorageConsistency, appSettingsService, resetAll),
 );
+app.use("/api/auth", authRouter());
 
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api", apiLimiter);
 app.use("/api", apiKeyAuth);
 app.use(
   "/api/documents",

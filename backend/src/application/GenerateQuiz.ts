@@ -91,7 +91,14 @@ export class GenerateQuiz {
       .replace(/\s*```\s*$/m, "")
       .trim();
 
-    const parsed = JSON.parse(cleaned);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      throw new Error(
+        `LLM returned invalid JSON for quiz: ${cleaned.slice(0, 200)}`,
+      );
+    }
     const result = responseSchema.parse(parsed);
     return result.questions.slice(0, expectedCount);
   }

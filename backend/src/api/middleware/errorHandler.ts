@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import config from "../../config";
+import { Logger } from "../../infrastructure/logger/Logger";
+
+const logger = new Logger("errorHandler");
 
 export function errorHandler(
   err: unknown,
@@ -19,9 +21,10 @@ export function errorHandler(
     return;
   }
 
-  if (config.server.nodeEnv !== "production" && err instanceof Error) {
-    console.error(err.stack);
-  }
+  logger.error(
+    "Unhandled error",
+    err instanceof Error ? err : new Error(String(err)),
+  );
 
   res.status(500).json({ error: "Internal server error" });
 }

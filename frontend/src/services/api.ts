@@ -11,16 +11,30 @@ import type {
   SourceCitation,
 } from "../types/domain";
 
-const API_KEY = import.meta.env.VITE_API_KEY as string;
+export class UnauthorizedError extends Error {
+  constructor() {
+    super("Unauthorized");
+  }
+}
+
+let onUnauthorized: (() => void) | null = null;
+
+export function setOnUnauthorized(cb: () => void): void {
+  onUnauthorized = cb;
+}
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, {
     ...options,
+    credentials: "include",
     headers: {
-      "x-api-key": API_KEY,
       ...(options?.headers as Record<string, string> | undefined),
     },
   });
+  if (res.status === 401) {
+    onUnauthorized?.();
+    throw new UnauthorizedError();
+  }
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error((body as { error?: string }).error ?? res.statusText);
@@ -30,6 +44,23 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  login: (password: string) =>
+    fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ password }),
+    }),
+
+  logout: () =>
+    fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }),
+
+  checkAuth: () =>
+    fetch("/api/auth/me", { credentials: "include" }).then((r) => r.ok),
+
   getDocuments: () => request<Document[]>("/documents"),
   getDocument: (id: string) => request<Document>(`/documents/${id}`),
   uploadDocument: (file: File, title?: string) => {
@@ -47,8 +78,12 @@ export const api = {
     ),
   getDocumentRaw: async (id: string): Promise<ArrayBuffer> => {
     const res = await fetch(`/api/documents/${id}/raw`, {
-      headers: { "x-api-key": API_KEY },
+      credentials: "include",
     });
+    if (res.status === 401) {
+      onUnauthorized?.();
+      throw new UnauthorizedError();
+    }
     if (!res.ok) throw new Error("Raw file not available");
     return res.arrayBuffer();
   },

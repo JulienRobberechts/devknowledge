@@ -12,7 +12,7 @@ vi.mock("@anthropic-ai/sdk", () => ({
 vi.mock("../../config", () => ({
   default: {
     llm: { anthropic: { apiKey: "test-key", maxTokens: 512 } },
-    server: { nodeEnv: "test" },
+    server: { nodeEnv: "test", logLevel: "info" },
   },
 }));
 

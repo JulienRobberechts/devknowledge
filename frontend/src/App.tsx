@@ -6,7 +6,7 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import AppLayout from "./components/layout/AppLayout";
 import ChatInterface from "./components/chat/ChatInterface";
 import DocumentDetail from "./components/documents/DocumentDetail";
@@ -25,6 +25,8 @@ import ColorPalettePage from "./components/pages/ColorPalettePage";
 import { useConversations } from "./hooks/useConversation";
 import { MessageSquare } from "lucide-react";
 import PageHeader from "./components/ui/PageHeader";
+import LoginScreen from "./components/auth/LoginScreen";
+import { api, setOnUnauthorized } from "./services/api";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +65,23 @@ function ConversationsPage() {
 }
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setOnUnauthorized(() => setIsAuthenticated(false));
+    api.checkAuth().then(setIsAuthenticated);
+  }, []);
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50" />
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginScreen onLogin={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

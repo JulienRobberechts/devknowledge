@@ -4,8 +4,11 @@ import {
 } from "../domain/ports/ChunkRepository";
 import { EmbeddingPort } from "../domain/ports/EmbeddingPort";
 import { RerankPort } from "../domain/ports/RerankPort";
+import { Logger } from "../infrastructure/logger/Logger";
 
 export class SearchKnowledge {
+  private readonly logger = new Logger("SearchKnowledge");
+
   constructor(
     private readonly chunkRepo: ChunkRepository,
     private readonly embeddingAdapter: EmbeddingPort,
@@ -49,7 +52,7 @@ export class SearchKnowledge {
         ? await this.chunkRepo.searchHybrid(query, vector, limit, minScore)
         : await this.chunkRepo.search(vector, limit, minScore);
     if (results.length === 0) {
-      console.warn("[SearchKnowledge] No results found", {
+      this.logger.warn("No results found", {
         query,
         limit,
         minScore,
@@ -76,7 +79,7 @@ export class SearchKnowledge {
     );
 
     if (candidates.length === 0) {
-      console.warn("[SearchKnowledge] No candidates found for reranking", {
+      this.logger.warn("No candidates found for reranking", {
         query,
         candidateLimit,
       });

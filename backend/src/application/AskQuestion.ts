@@ -104,6 +104,8 @@ export class AskQuestion {
         model: params?.llmModel,
         temperature: params?.llmTemperature,
         maxTokens: params?.llmMaxTokens,
+        systemPrompt:
+          "Always respond in the same language as the user's question.",
       });
       this.logger.info("LLM response complete", { conversationId });
     } catch (err) {

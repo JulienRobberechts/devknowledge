@@ -4,6 +4,9 @@ import { z } from "zod";
 import { ConversationRepository } from "../../domain/ports/ConversationRepository";
 import { AskQuestion } from "../../application/AskQuestion";
 import config from "../../config";
+import { Logger } from "../../infrastructure/logger/Logger";
+
+const logger = new Logger("conversations");
 
 const knowledgeCheckStrategySchema = z.enum([
   "faithfulness",
@@ -217,13 +220,16 @@ export function conversationsRouter(
           );
         }
         res.write(
-          `event: done\ndata: ${JSON.stringify({ messageId: assistantMessage.id, totalTokens: assistantMessage.content.length })}\n\n`,
+          `event: done\ndata: ${JSON.stringify({ messageId: assistantMessage.id, contentLength: assistantMessage.content.length })}\n\n`,
         );
       } catch (err) {
         res.write(
           `event: error\ndata: ${JSON.stringify({ error: "Stream error" })}\n\n`,
         );
-        console.error("SSE stream error:", err);
+        logger.error(
+          "SSE stream error",
+          err instanceof Error ? err : new Error(String(err)),
+        );
       } finally {
         cleanup();
         res.end();

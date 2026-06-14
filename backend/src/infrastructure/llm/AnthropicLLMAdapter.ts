@@ -36,7 +36,7 @@ export class AnthropicLLMAdapter implements LLMPort {
       model,
       max_tokens: maxTokens,
       temperature,
-      system: "Always respond in the same language as the user's question.",
+      ...(options?.systemPrompt ? { system: options.systemPrompt } : {}),
       messages: [{ role: "user", content: prompt }],
     });
 

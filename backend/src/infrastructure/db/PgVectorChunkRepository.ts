@@ -26,7 +26,29 @@ export class PgVectorChunkRepository implements ChunkRepository {
   }
 
   async saveMany(chunks: Chunk[]): Promise<void> {
-    await Promise.all(chunks.map((c) => this.save(c)));
+    if (chunks.length === 0) return;
+    const values = chunks
+      .map((_, i) => {
+        const b = i * 5;
+        return `($${b + 1}::uuid, $${b + 2}::uuid, $${b + 3}::text, $${b + 4}::vector, $${b + 5}::jsonb)`;
+      })
+      .join(", ");
+    await pool.query(
+      `INSERT INTO chunks (id, document_id, content, embedding, metadata)
+       VALUES ${values}
+       ON CONFLICT (id) DO UPDATE SET
+         document_id = EXCLUDED.document_id,
+         content = EXCLUDED.content,
+         embedding = EXCLUDED.embedding,
+         metadata = EXCLUDED.metadata`,
+      chunks.flatMap((c) => [
+        c.id,
+        c.documentId,
+        c.content,
+        JSON.stringify(c.embedding),
+        JSON.stringify(c.metadata),
+      ]),
+    );
   }
 
   async search(
@@ -35,12 +57,15 @@ export class PgVectorChunkRepository implements ChunkRepository {
     minScore: number,
   ): Promise<ChunkSearchResult[]> {
     const result = await pool.query(
-      `SELECT
-         id, document_id, content, metadata,
-         1 - (embedding <=> $1::vector) AS score
-       FROM chunks
-       WHERE 1 - (embedding <=> $1::vector) >= $2
-       ORDER BY embedding <=> $1::vector
+      `WITH scored AS (
+         SELECT id, document_id, content, metadata,
+                1 - (embedding <=> $1::vector) AS score
+         FROM chunks
+       )
+       SELECT id, document_id, content, metadata, score
+       FROM scored
+       WHERE score >= $2
+       ORDER BY score DESC
        LIMIT $3`,
       [JSON.stringify(vector), minScore, limit],
     );

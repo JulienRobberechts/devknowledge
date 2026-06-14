@@ -9,27 +9,7 @@ import {
   SourceCitation,
 } from "../../domain/entities/Message";
 import { ConversationRepository } from "../../domain/ports/ConversationRepository";
-import config from "../../config";
 import pool from "./pool";
-
-function toParams(raw: unknown): ConversationParams {
-  const p = (raw ?? {}) as Partial<ConversationParams>;
-  return {
-    retrievalLimit: p.retrievalLimit ?? config.rag.retrievalLimit,
-    retrievalMinScore: p.retrievalMinScore ?? config.rag.retrievalMinScore,
-    rerankEnabled: p.rerankEnabled ?? config.rerank.enabled,
-    rerankModel: p.rerankModel ?? config.rerank.model,
-    rerankCandidateMultiplier:
-      p.rerankCandidateMultiplier ?? config.rerank.candidateMultiplier,
-    llmModel: p.llmModel ?? config.llm.anthropic.model,
-    llmTemperature: p.llmTemperature ?? config.llm.anthropic.temperature,
-    llmMaxTokens: p.llmMaxTokens ?? config.llm.anthropic.maxTokens,
-    knowledgeCheckStrategies: Array.isArray(p.knowledgeCheckStrategies)
-      ? p.knowledgeCheckStrategies
-      : config.rag.knowledgeCheckStrategies,
-    searchMode: p.searchMode ?? config.rag.searchMode,
-  };
-}
 
 function toMessage(row: Record<string, unknown>): Message {
   return {
@@ -62,6 +42,27 @@ async function fetchMessages(
 }
 
 export class PgConversationRepository implements ConversationRepository {
+  constructor(private readonly defaults: ConversationParams) {}
+
+  private toParams(raw: unknown): ConversationParams {
+    const p = (raw ?? {}) as Partial<ConversationParams>;
+    return {
+      retrievalLimit: p.retrievalLimit ?? this.defaults.retrievalLimit,
+      retrievalMinScore: p.retrievalMinScore ?? this.defaults.retrievalMinScore,
+      rerankEnabled: p.rerankEnabled ?? this.defaults.rerankEnabled,
+      rerankModel: p.rerankModel ?? this.defaults.rerankModel,
+      rerankCandidateMultiplier:
+        p.rerankCandidateMultiplier ?? this.defaults.rerankCandidateMultiplier,
+      llmModel: p.llmModel ?? this.defaults.llmModel,
+      llmTemperature: p.llmTemperature ?? this.defaults.llmTemperature,
+      llmMaxTokens: p.llmMaxTokens ?? this.defaults.llmMaxTokens,
+      knowledgeCheckStrategies: Array.isArray(p.knowledgeCheckStrategies)
+        ? p.knowledgeCheckStrategies
+        : this.defaults.knowledgeCheckStrategies,
+      searchMode: p.searchMode ?? this.defaults.searchMode,
+    };
+  }
+
   async save(conversation: Conversation): Promise<void> {
     await pool.query(
       `INSERT INTO conversations (id, title, params, created_at)
@@ -87,7 +88,7 @@ export class PgConversationRepository implements ConversationRepository {
     return {
       id: row.id as string,
       title: row.title as string,
-      params: toParams(row.params),
+      params: this.toParams(row.params),
       createdAt: new Date(row.created_at as string),
       messages: messagesByConv.get(id) ?? [],
     };
@@ -103,7 +104,7 @@ export class PgConversationRepository implements ConversationRepository {
     return result.rows.map((row) => ({
       id: row.id as string,
       title: row.title as string,
-      params: toParams(row.params),
+      params: this.toParams(row.params),
       createdAt: new Date(row.created_at as string),
       messages: messagesByConv.get(row.id as string) ?? [],
     }));

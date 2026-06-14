@@ -5,8 +5,6 @@ import { Message } from "../../src/domain/entities/Message";
 import { PgConversationRepository } from "../../src/infrastructure/db/PgConversationRepository";
 import pool from "../../src/infrastructure/db/pool";
 
-const repo = new PgConversationRepository();
-
 const DEFAULT_PARAMS = {
   retrievalLimit: 8,
   retrievalMinScore: 0.75,
@@ -19,6 +17,8 @@ const DEFAULT_PARAMS = {
   knowledgeCheckStrategies: [],
   searchMode: "hybrid" as const,
 };
+
+const repo = new PgConversationRepository(DEFAULT_PARAMS);
 
 function makeConversation(overrides?: Partial<Conversation>): Conversation {
   return {

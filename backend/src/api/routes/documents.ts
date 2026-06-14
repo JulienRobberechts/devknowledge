@@ -2,6 +2,9 @@ import { randomUUID } from "crypto";
 import { Router, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
+import { Logger } from "../../infrastructure/logger/Logger";
+
+const logger = new Logger("documents");
 import { DocumentRepository } from "../../domain/ports/DocumentRepository";
 import { ChunkRepository } from "../../domain/ports/ChunkRepository";
 import { DocumentSummaryRepository } from "../../domain/ports/DocumentSummaryRepository";
@@ -10,7 +13,29 @@ import { IngestDocument } from "../../application/IngestDocument";
 import { SummarizeDocument } from "../../application/SummarizeDocument";
 import { createDocumentSchema } from "../dto/document.dto";
 
-const upload = multer({ storage: multer.memoryStorage() });
+const ALLOWED_MIMETYPES = new Set([
+  "application/pdf",
+  "text/plain",
+  "text/markdown",
+  "text/x-markdown",
+]);
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (
+      ALLOWED_MIMETYPES.has(file.mimetype) ||
+      ext === ".md" ||
+      ext === ".markdown"
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Unsupported file type: ${file.mimetype}`));
+    }
+  },
+});
 
 function sourceTypeFromMime(
   mimetype: string,
@@ -67,7 +92,10 @@ export function documentsRouter(
         await documentRepo.save(document);
 
         ingestDocument.execute(document.id).catch((err: unknown) => {
-          console.error("Background ingestion failed:", err);
+          logger.error(
+            "Background ingestion failed",
+            err instanceof Error ? err : new Error(String(err)),
+          );
         });
 
         res.status(202).json({ id: document.id, status: "pending" });

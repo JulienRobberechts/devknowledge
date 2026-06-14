@@ -1,4 +1,7 @@
 import type { KnowledgeCheckResult, SourceCitation } from "../types/domain";
+import { UnauthorizedError, setOnUnauthorized } from "./api";
+
+export { setOnUnauthorized };
 
 interface SSEHandlers {
   onDelta: (token: string) => void;
@@ -20,11 +23,16 @@ export function streamMessage(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": import.meta.env.VITE_API_KEY as string,
       },
+      credentials: "include",
       body: JSON.stringify({ content }),
       signal: controller.signal,
     });
+
+    if (res.status === 401) {
+      handlers.onError("Session expirée");
+      throw new UnauthorizedError();
+    }
 
     if (!res.ok || !res.body) {
       handlers.onError("Failed to connect to stream");
@@ -65,9 +73,9 @@ export function streamMessage(
   };
 
   run().catch((err: unknown) => {
-    if ((err as Error).name !== "AbortError") {
-      handlers.onError("Stream error");
-    }
+    if ((err as Error).name === "AbortError") return;
+    if (err instanceof UnauthorizedError) return;
+    handlers.onError("Stream error");
   });
 
   return () => controller.abort();
