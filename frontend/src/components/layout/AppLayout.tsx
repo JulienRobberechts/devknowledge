@@ -32,6 +32,10 @@ export default function AppLayout() {
   const [isDragging, setIsDragging] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
+  useEffect(() => {
+    if (matchDocumentId) setShowSettings(false);
+  }, [matchDocumentId?.params.id]);
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     dragging.current = true;
