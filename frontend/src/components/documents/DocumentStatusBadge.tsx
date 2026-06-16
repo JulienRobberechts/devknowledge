@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import type { DocumentStatus } from "../../types/domain";
 
 const statusConfig: Record<
@@ -21,8 +22,9 @@ export default function DocumentStatusBadge({
   const { label, className } = statusConfig[status];
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-xs font-medium ${className}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${className}`}
     >
+      {status === "processing" && <Loader2 className="size-3 animate-spin" />}
       {label}
     </span>
   );
