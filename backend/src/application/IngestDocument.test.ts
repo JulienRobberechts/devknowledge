@@ -93,7 +93,11 @@ describe("IngestDocument", () => {
     const doc = makeDocument();
     await docRepo.save(doc);
     await makeIngest({ chunkSize: 3, chunkOverlap: 0 }).execute(doc.id);
-    const results = await chunkRepo.search(Array(1024).fill(0.1), 100, 0);
+    const results = await chunkRepo.searchByVector(
+      Array(1024).fill(0.1),
+      100,
+      0,
+    );
     expect(results.length).toBeGreaterThan(1);
   });
 
@@ -115,7 +119,11 @@ describe("IngestDocument", () => {
     const doc = makeDocument();
     await docRepo.save(doc);
     await makeIngest().execute(doc.id);
-    const results = await chunkRepo.search(Array(1024).fill(0.1), 100, 0);
+    const results = await chunkRepo.searchByVector(
+      Array(1024).fill(0.1),
+      100,
+      0,
+    );
     expect(results.length).toBeGreaterThan(0);
   });
 
@@ -164,13 +172,15 @@ describe("IngestDocument", () => {
     const doc = makeDocument();
     await docRepo.save(doc);
     await makeIngest().execute(doc.id);
-    const firstCount = (await chunkRepo.search(Array(1024).fill(0.1), 100, 0))
-      .length;
+    const firstCount = (
+      await chunkRepo.searchByVector(Array(1024).fill(0.1), 100, 0)
+    ).length;
 
     await docRepo.updateStatus(doc.id, "pending");
     await makeIngest().execute(doc.id);
-    const secondCount = (await chunkRepo.search(Array(1024).fill(0.1), 100, 0))
-      .length;
+    const secondCount = (
+      await chunkRepo.searchByVector(Array(1024).fill(0.1), 100, 0)
+    ).length;
     expect(secondCount).toBe(firstCount);
   });
 });

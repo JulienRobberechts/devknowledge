@@ -29,7 +29,7 @@ export class InMemoryChunkRepository implements IChunkRepository {
     await Promise.all(chunks.map((c) => this.save(c)));
   }
 
-  async search(
+  async searchByVector(
     vector: number[],
     limit: number,
     minScore: number,

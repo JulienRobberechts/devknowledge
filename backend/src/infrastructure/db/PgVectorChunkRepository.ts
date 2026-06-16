@@ -51,7 +51,7 @@ export class PgVectorChunkRepository implements IChunkRepository {
     );
   }
 
-  async search(
+  async searchByVector(
     vector: number[],
     limit: number,
     minScore: number,

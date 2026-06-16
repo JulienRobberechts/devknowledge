@@ -1,6 +1,6 @@
-import { IEmbeddingPort } from "../../src/domain/ports/IEmbeddingPort";
+import { ITextEncoder } from "../../src/domain/ports/ITextEncoder";
 
-export class InMemoryEmbeddingAdapter implements IEmbeddingPort {
+export class InMemoryEmbeddingAdapter implements ITextEncoder {
   private readonly dimension = 1024;
 
   async embed(_text: string): Promise<number[]> {

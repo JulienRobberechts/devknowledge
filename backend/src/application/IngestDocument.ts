@@ -4,7 +4,7 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { IChunkRepository } from "../domain/ports/IChunkRepository";
 import { IDocumentRepository } from "../domain/ports/IDocumentRepository";
-import { IEmbeddingPort } from "../domain/ports/IEmbeddingPort";
+import { ITextEncoder } from "../domain/ports/ITextEncoder";
 import { IFileParserPort } from "../domain/ports/IFileParserPort";
 import { IFileStoragePort } from "../domain/ports/IFileStoragePort";
 import {
@@ -22,7 +22,7 @@ export class IngestDocument {
   constructor(
     private readonly documentRepo: IDocumentRepository,
     private readonly chunkRepo: IChunkRepository,
-    private readonly embeddingAdapter: IEmbeddingPort,
+    private readonly embeddingAdapter: ITextEncoder,
     private readonly fileStorage: IFileStoragePort,
     private readonly fileParser: IFileParserPort,
     private readonly getChunkingConfig: () => Promise<ChunkingConfig>,

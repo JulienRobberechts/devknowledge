@@ -52,7 +52,7 @@ describe("PgVectorChunkRepository", () => {
     const embedding = Array(1024).fill(0.1);
     const chunk = makeChunk(documentId, embedding);
     await chunkRepo.save(chunk);
-    const results = await chunkRepo.search(embedding, 10, 0.0);
+    const results = await chunkRepo.searchByVector(embedding, 10, 0.0);
     expect(results).toHaveLength(1);
     expect(results[0].chunk.id).toBe(chunk.id);
   });
@@ -79,7 +79,7 @@ describe("PgVectorChunkRepository", () => {
 
     await chunkRepo.saveMany([chunk1, chunk2, chunk3]);
 
-    const results = await chunkRepo.search(queryVector, 10, 0.0);
+    const results = await chunkRepo.searchByVector(queryVector, 10, 0.0);
     expect(results).toHaveLength(3);
     expect(results[0].chunk.id).toBe(chunk1.id);
     expect(results[0].score).toBeGreaterThan(results[1].score);
@@ -101,7 +101,7 @@ describe("PgVectorChunkRepository", () => {
       makeChunk(documentId, embLow, { content: "low score" }),
     ]);
 
-    const results = await chunkRepo.search(queryVector, 10, 0.5);
+    const results = await chunkRepo.searchByVector(queryVector, 10, 0.5);
     expect(results).toHaveLength(1);
     expect(results[0].chunk.content).toBe("high score");
   });
@@ -113,7 +113,7 @@ describe("PgVectorChunkRepository", () => {
       makeChunk(documentId, embedding),
       makeChunk(documentId, embedding),
     ]);
-    const results = await chunkRepo.search(embedding, 2, 0.0);
+    const results = await chunkRepo.searchByVector(embedding, 2, 0.0);
     expect(results).toHaveLength(2);
   });
 
@@ -123,7 +123,11 @@ describe("PgVectorChunkRepository", () => {
       makeChunk(documentId, Array(1024).fill(0.2)),
     ]);
     await chunkRepo.deleteByDocumentId(documentId);
-    const results = await chunkRepo.search(Array(1024).fill(0.1), 10, 0.0);
+    const results = await chunkRepo.searchByVector(
+      Array(1024).fill(0.1),
+      10,
+      0.0,
+    );
     expect(results).toHaveLength(0);
   });
 });

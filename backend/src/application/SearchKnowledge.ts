@@ -2,7 +2,7 @@ import {
   IChunkRepository,
   ChunkSearchResult,
 } from "../domain/ports/IChunkRepository";
-import { IEmbeddingPort } from "../domain/ports/IEmbeddingPort";
+import { ITextEncoder } from "../domain/ports/ITextEncoder";
 import { IRerankPort } from "../domain/ports/IRerankPort";
 import { Logger } from "../infrastructure/logger/Logger";
 
@@ -11,7 +11,7 @@ export class SearchKnowledge {
 
   constructor(
     private readonly chunkRepo: IChunkRepository,
-    private readonly embeddingAdapter: IEmbeddingPort,
+    private readonly embeddingAdapter: ITextEncoder,
     private readonly reranker: IRerankPort | null = null,
     private readonly candidateMultiplier = 3,
     private readonly searchMode: "vector" | "hybrid" = "vector",
@@ -50,7 +50,7 @@ export class SearchKnowledge {
     const results =
       effectiveMode === "hybrid"
         ? await this.chunkRepo.searchHybrid(query, vector, limit, minScore)
-        : await this.chunkRepo.search(vector, limit, minScore);
+        : await this.chunkRepo.searchByVector(vector, limit, minScore);
     if (results.length === 0) {
       this.logger.warn("No results found", {
         query,
@@ -72,7 +72,7 @@ export class SearchKnowledge {
   ): Promise<ChunkSearchResult[]> {
     const candidateLimit =
       limit * (candidateMultiplier ?? this.candidateMultiplier);
-    const candidates = await this.chunkRepo.search(
+    const candidates = await this.chunkRepo.searchByVector(
       vector,
       candidateLimit,
       minScore * 0.5,
