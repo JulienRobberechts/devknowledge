@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { Router, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
@@ -9,6 +8,7 @@ import { DocumentRepository } from "../../domain/ports/DocumentRepository";
 import { ChunkRepository } from "../../domain/ports/ChunkRepository";
 import { DocumentSummaryRepository } from "../../domain/ports/DocumentSummaryRepository";
 import { FileStoragePort } from "../../domain/ports/FileStoragePort";
+import { CreateDocument } from "../../application/CreateDocument";
 import { IngestDocument } from "../../application/IngestDocument";
 import { SummarizeDocument } from "../../application/SummarizeDocument";
 import { createDocumentSchema } from "../dto/document.dto";
@@ -37,20 +37,11 @@ const upload = multer({
   },
 });
 
-function sourceTypeFromMime(
-  mimetype: string,
-  originalname: string,
-): "pdf" | "markdown" | "text" {
-  if (mimetype === "application/pdf") return "pdf";
-  const ext = path.extname(originalname).toLowerCase();
-  if (ext === ".md" || ext === ".markdown") return "markdown";
-  return "text";
-}
-
 export function documentsRouter(
   documentRepo: DocumentRepository,
   chunkRepo: ChunkRepository,
   fileStorage: FileStoragePort,
+  createDocument: CreateDocument,
   ingestDocument: IngestDocument,
   summaryRepo: DocumentSummaryRepository,
   summarizeDocument: SummarizeDocument,
@@ -72,24 +63,13 @@ export function documentsRouter(
           req.file.originalname,
           "latin1",
         ).toString("utf8");
-        const title = body.title ?? path.basename(originalName);
-        const sourceType = sourceTypeFromMime(req.file.mimetype, originalName);
 
-        const id = randomUUID();
-        const ext = path.extname(originalName).toLowerCase();
-        const key = `${id}${ext}`;
-        await fileStorage.upload(key, req.file.buffer, req.file.mimetype);
-
-        const document = {
-          id,
-          title,
-          sourceType,
-          status: "pending" as const,
-          filePath: key,
-          createdAt: new Date(),
-        };
-
-        await documentRepo.save(document);
+        const document = await createDocument.execute({
+          buffer: req.file.buffer,
+          originalName,
+          mimetype: req.file.mimetype,
+          title: body.title,
+        });
 
         ingestDocument.execute(document.id).catch((err: unknown) => {
           logger.error(

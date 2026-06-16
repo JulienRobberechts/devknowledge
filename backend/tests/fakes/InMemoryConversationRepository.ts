@@ -1,4 +1,7 @@
-import { Conversation } from "../../src/domain/entities/Conversation";
+import {
+  Conversation,
+  ConversationSummary,
+} from "../../src/domain/entities/Conversation";
 import { Message } from "../../src/domain/entities/Message";
 import { ConversationRepository } from "../../src/domain/ports/ConversationRepository";
 
@@ -16,8 +19,14 @@ export class InMemoryConversationRepository implements ConversationRepository {
     return this.conversations.get(id) ?? null;
   }
 
-  async findAll(): Promise<Conversation[]> {
-    return Array.from(this.conversations.values());
+  async findAll(): Promise<ConversationSummary[]> {
+    return Array.from(this.conversations.values()).map((c) => ({
+      id: c.id,
+      title: c.title,
+      params: c.params,
+      createdAt: c.createdAt,
+      messageCount: c.messages.length,
+    }));
   }
 
   async addMessage(conversationId: string, message: Message): Promise<void> {

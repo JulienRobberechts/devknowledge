@@ -73,6 +73,14 @@ export interface Conversation {
   createdAt: string;
 }
 
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  params: ConversationParams;
+  messageCount: number;
+  createdAt: string;
+}
+
 export interface QuizQuestion {
   text: string;
   options: string[];

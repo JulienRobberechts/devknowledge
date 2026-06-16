@@ -55,6 +55,7 @@ import { AnthropicLLMAdapter } from "./infrastructure/llm/AnthropicLLMAdapter";
 import { MultiFileParser } from "./infrastructure/parsers/MultiFileParser";
 import { createStorageBackends } from "./infrastructure/storage/createFileStorage";
 import { DynamicFileStorage } from "./infrastructure/storage/DynamicFileStorage";
+import { CreateDocument } from "./application/CreateDocument";
 import { IngestDocument } from "./application/IngestDocument";
 import { SearchKnowledge } from "./application/SearchKnowledge";
 import { AskQuestion } from "./application/AskQuestion";
@@ -93,6 +94,7 @@ const fileStorage = new DynamicFileStorage(
   () => appSettingsService.getSettings().then((s) => s.storage.provider),
   storageBackends,
 );
+const createDocument = new CreateDocument(documentRepo, fileStorage);
 const ingestDocument = new IngestDocument(
   documentRepo,
   chunkRepo,
@@ -169,6 +171,7 @@ app.use(
     documentRepo,
     chunkRepo,
     fileStorage,
+    createDocument,
     ingestDocument,
     summaryRepo,
     summarizeDocument,

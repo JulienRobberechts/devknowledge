@@ -106,12 +106,12 @@ describe("PgConversationRepository", () => {
     expect(found!.messages[1].content).toBe("Second");
   });
 
-  it("findAll includes messages for each conversation", async () => {
+  it("findAll includes message count for each conversation", async () => {
     const conv = makeConversation();
     await repo.save(conv);
     await repo.addMessage(conv.id, makeMessage(conv.id));
     const all = await repo.findAll();
-    expect(all[0].messages).toHaveLength(1);
+    expect(all[0].messageCount).toBe(1);
   });
 
   it("delete removes the conversation and cascades to messages", async () => {

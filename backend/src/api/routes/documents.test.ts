@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import express from "express";
 import request from "supertest";
 import { documentsRouter } from "./documents";
+import { CreateDocument } from "../../application/CreateDocument";
 import { InMemoryDocumentRepository } from "../../../tests/fakes/InMemoryDocumentRepository";
 import { InMemoryChunkRepository } from "../../../tests/fakes/InMemoryChunkRepository";
 import { Document } from "../../domain/entities/Document";
@@ -39,6 +40,7 @@ function makeApp(
     upsert: vi.fn().mockResolvedValue(undefined),
   };
   const fakeSummarize = { execute: vi.fn().mockResolvedValue("summary") };
+  const createDocument = new CreateDocument(docRepo, fileStorage as never);
   const app = express();
   app.use(express.json());
   app.use(
@@ -47,6 +49,7 @@ function makeApp(
       docRepo,
       chunkRepo,
       fileStorage as never,
+      createDocument,
       ingest as never,
       fakeSummaryRepo as never,
       fakeSummarize as never,

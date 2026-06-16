@@ -20,3 +20,11 @@ export interface Conversation {
   messages: Message[];
   createdAt: Date;
 }
+
+export interface ConversationSummary {
+  id: string;
+  title: string;
+  params: ConversationParams;
+  messageCount: number;
+  createdAt: Date;
+}

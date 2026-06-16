@@ -1,6 +1,7 @@
 import {
   Conversation,
   ConversationParams,
+  ConversationSummary,
 } from "../../domain/entities/Conversation";
 import {
   KnowledgeCheckResult,
@@ -94,19 +95,20 @@ export class PgConversationRepository implements ConversationRepository {
     };
   }
 
-  async findAll(): Promise<Conversation[]> {
+  async findAll(): Promise<ConversationSummary[]> {
     const result = await pool.query(
-      "SELECT * FROM conversations ORDER BY created_at DESC",
+      `SELECT c.*, COUNT(m.id)::int AS message_count
+       FROM conversations c
+       LEFT JOIN messages m ON m.conversation_id = c.id
+       GROUP BY c.id
+       ORDER BY c.created_at DESC`,
     );
-    if (result.rows.length === 0) return [];
-    const ids = result.rows.map((r) => r.id as string);
-    const messagesByConv = await fetchMessages(ids);
     return result.rows.map((row) => ({
       id: row.id as string,
       title: row.title as string,
       params: this.toParams(row.params),
       createdAt: new Date(row.created_at as string),
-      messages: messagesByConv.get(row.id as string) ?? [],
+      messageCount: row.message_count as number,
     }));
   }
 

@@ -26,7 +26,7 @@ export default function DashboardPage() {
 
   const readyDocs = documents.filter((d) => d.status === "ready").length;
   const totalMessages = conversations.reduce(
-    (sum, c) => sum + (c.messages?.length ?? 0),
+    (sum, c) => sum + (c.messageCount ?? 0),
     0,
   );
 

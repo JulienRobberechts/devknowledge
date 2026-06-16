@@ -6,7 +6,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { Document, Conversation } from "../../types/domain";
+import type { Document, ConversationSummary } from "../../types/domain";
 
 export function StatCard({
   label,
@@ -149,7 +149,7 @@ export function RecentDocuments({ documents }: { documents: Document[] }) {
 export function RecentConversations({
   conversations,
 }: {
-  conversations: Conversation[];
+  conversations: ConversationSummary[];
 }) {
   const recent = [...conversations]
     .sort(
@@ -161,7 +161,7 @@ export function RecentConversations({
   return (
     <div className="space-y-1">
       {recent.map((conv) => {
-        const msgCount = conv.messages?.length ?? 0;
+        const msgCount = conv.messageCount ?? 0;
         return (
           <Link
             key={conv.id}

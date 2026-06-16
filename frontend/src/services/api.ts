@@ -5,6 +5,7 @@ import type {
   ConsistencyReport,
   Conversation,
   ConversationParams,
+  ConversationSummary,
   Document,
   DocumentSummary,
   QuizQuestion,
@@ -100,7 +101,7 @@ export const api = {
       method: "POST",
     }),
 
-  getConversations: () => request<Conversation[]>("/conversations"),
+  getConversations: () => request<ConversationSummary[]>("/conversations"),
   getConversation: (id: string) =>
     request<Conversation>(`/conversations/${id}`),
   createConversation: (params?: Partial<ConversationParams>, title?: string) =>
