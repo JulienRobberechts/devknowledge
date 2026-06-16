@@ -4,7 +4,6 @@ import { randomUUID } from "crypto";
 import { beforeAll, describe, expect, it } from "vitest";
 import { VoyageEmbeddingAdapter } from "../../src/infrastructure/embeddings/VoyageEmbeddingAdapter";
 import { MarkdownParser } from "../../src/infrastructure/parsers/MarkdownParser";
-import { createChunkingStrategy } from "../../src/domain/services/ChunkingStrategy";
 import { IngestDocument } from "../../src/application/IngestDocument";
 import { SearchKnowledge } from "../../src/application/SearchKnowledge";
 import { InMemoryChunkRepository } from "../fakes/InMemoryChunkRepository";
@@ -38,7 +37,6 @@ describe.skipIf(!VOYAGE_API_KEY)(
     beforeAll(async () => {
       const embeddingAdapter = new VoyageEmbeddingAdapter(VOYAGE_API_KEY!);
       const parser = new MarkdownParser();
-      const chunkingStrategy = createChunkingStrategy("sentence");
       const docRepo = new InMemoryDocumentRepository();
       const chunkRepo = new InMemoryChunkRepository();
 
@@ -58,8 +56,11 @@ describe.skipIf(!VOYAGE_API_KEY)(
         embeddingAdapter,
         diskFileStorage,
         parser,
-        chunkingStrategy,
-        { chunkSize: CHUNK_SIZE, chunkOverlap: CHUNK_OVERLAP },
+        async () => ({
+          strategy: "sentence",
+          chunkSize: CHUNK_SIZE,
+          chunkOverlap: CHUNK_OVERLAP,
+        }),
       );
 
       await ingest.execute(documentId);
