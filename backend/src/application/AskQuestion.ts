@@ -168,7 +168,7 @@ export class AskQuestion {
     await this.conversationRepo.addMessage(conversationId, assistantMessage);
 
     if (history.length === 0) {
-      const title = await this.generateTitle(userContent, assistantContent);
+      const title = await this.generateConversationTitle(userContent, assistantContent);
       await this.conversationRepo.updateTitle(conversationId, title);
     }
 
@@ -254,7 +254,7 @@ export class AskQuestion {
     return { assistantContent, knowledgeCheck };
   }
 
-  private async generateTitle(
+  private async generateConversationTitle(
     userContent: string,
     assistantContent: string,
   ): Promise<string> {
