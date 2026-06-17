@@ -28,9 +28,7 @@ export class CheckStorageConsistency {
       this.fileStorage.list(),
     ]);
 
-    const dbKeys = new Set(
-      docs.flatMap((d) => (d.filePath ? [toKey(d.filePath)] : [])),
-    );
+    const dbKeys = new Set(docs.flatMap((d) => (d.filePath ? [toKey(d.filePath)] : [])));
     const storageSet = new Set(storageKeys.map(toKey));
 
     return {

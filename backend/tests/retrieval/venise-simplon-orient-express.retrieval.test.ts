@@ -36,7 +36,7 @@ describe.skipIf(!VOYAGE_API_KEY)(
     let chunkCount: number;
 
     beforeAll(async () => {
-      const embeddingAdapter = new VoyageEmbeddingAdapter(VOYAGE_API_KEY!);
+      const embeddingAdapter = new VoyageEmbeddingAdapter(VOYAGE_API_KEY as string);
       const parser = new MarkdownParser();
       const docRepo = new InMemoryDocumentRepository();
       const chunkRepo = new InMemoryChunkRepository();

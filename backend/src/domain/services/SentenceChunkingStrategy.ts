@@ -1,8 +1,4 @@
-import type {
-  ChunkConfig,
-  ChunkResult,
-  IChunkingStrategy,
-} from "./ChunkingTypes";
+import type { ChunkConfig, ChunkResult, IChunkingStrategy } from "./ChunkingTypes";
 
 interface Sentence {
   text: string;

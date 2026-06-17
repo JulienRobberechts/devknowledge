@@ -1,9 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type {
-  KnowledgeCheckResult,
-  Message,
-  SourceCitation,
-} from "../domain/entities/Message";
+import type { KnowledgeCheckResult, Message, SourceCitation } from "../domain/entities/Message";
 import type { ChunkSearchResult } from "../domain/ports/IChunkRepository";
 import type { IConversationRepository } from "../domain/ports/IConversationRepository";
 import type { IDocumentRepository } from "../domain/ports/IDocumentRepository";
@@ -95,12 +91,7 @@ export class AskQuestion {
     const strategies = params?.knowledgeCheckStrategies ?? [];
     const useCitationForcing = strategies.includes("citation_forcing");
 
-    const prompt = this.buildPrompt(
-      userContent,
-      searchResults,
-      history,
-      useCitationForcing,
-    );
+    const prompt = this.buildPrompt(userContent, searchResults, history, useCitationForcing);
 
     let rawContent: string;
     try {
@@ -108,8 +99,7 @@ export class AskQuestion {
         model: params?.llmModel,
         temperature: params?.llmTemperature,
         maxTokens: params?.llmMaxTokens,
-        systemPrompt:
-          "Always respond in the same language as the user's question.",
+        systemPrompt: "Always respond in the same language as the user's question.",
       });
       this.logger.info("LLM response complete", { conversationId });
     } catch (err) {
@@ -129,24 +119,14 @@ export class AskQuestion {
       return errorMessage;
     }
 
-    const uniqueDocIds = [
-      ...new Set(searchResults.map((r) => r.chunk.documentId)),
-    ];
-    const docs = await Promise.all(
-      uniqueDocIds.map((id) => this.documentRepo.findById(id)),
-    );
-    const titleById = new Map(
-      uniqueDocIds.map((id, i) => [id, docs[i]?.title ?? id]),
-    );
+    const uniqueDocIds = [...new Set(searchResults.map((r) => r.chunk.documentId))];
+    const docs = await Promise.all(uniqueDocIds.map((id) => this.documentRepo.findById(id)));
+    const titleById = new Map(uniqueDocIds.map((id, i) => [id, docs[i]?.title ?? id]));
 
     let assistantContent = rawContent;
     let inlineCitationResult: KnowledgeCheckResult | undefined;
     if (useCitationForcing) {
-      const parsed = parseCitationForcingResult(
-        rawContent,
-        searchResults,
-        titleById,
-      );
+      const parsed = parseCitationForcingResult(rawContent, searchResults, titleById);
       assistantContent = parsed.cleanContent;
       inlineCitationResult = parsed.result;
     }
@@ -157,8 +137,7 @@ export class AskQuestion {
     const sources: SourceCitation[] = searchResults.map((result) => ({
       chunkId: result.chunk.id,
       documentId: result.chunk.documentId,
-      documentTitle:
-        titleById.get(result.chunk.documentId) ?? result.chunk.documentId,
+      documentTitle: titleById.get(result.chunk.documentId) ?? result.chunk.documentId,
       sourceType: sourceTypeById.get(result.chunk.documentId) ?? "text",
       excerpt: result.chunk.content,
       score: result.score,
@@ -206,10 +185,7 @@ export class AskQuestion {
     return assistantMessage;
   }
 
-  private async generateTitle(
-    userContent: string,
-    assistantContent: string,
-  ): Promise<string> {
+  private async generateTitle(userContent: string, assistantContent: string): Promise<string> {
     const prompt = [
       "Generate a short title (5 words maximum) summarizing this exchange. Reply with only the title, no quotes, no punctuation at the end.",
       "",

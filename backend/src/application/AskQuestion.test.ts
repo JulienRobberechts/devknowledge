@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { assert, beforeEach, describe, expect, it, vi } from "vitest";
 import { InMemoryConversationRepository } from "../../tests/fakes/InMemoryConversationRepository";
 import type { Chunk } from "../domain/entities/Chunk";
 import type { Conversation } from "../domain/entities/Conversation";
 import type { Message } from "../domain/entities/Message";
 import type { ChunkSearchResult } from "../domain/ports/IChunkRepository";
+import type { IDocumentRepository } from "../domain/ports/IDocumentRepository";
 import { AskQuestion } from "./AskQuestion";
 import type { SearchKnowledge } from "./SearchKnowledge";
 
@@ -30,7 +31,11 @@ function makeConversation(overrides?: Partial<Conversation>): Conversation {
   };
 }
 
-function makeMessage(conversationId: string, role: "user" | "assistant", content: string): Message {
+function makeMessage(
+  conversationId: string,
+  role: "user" | "assistant",
+  content: string,
+): Message {
   return {
     id: randomUUID(),
     conversationId,
@@ -54,10 +59,14 @@ function makeChunkResult(content = "Relevant content"): ChunkSearchResult {
 
 function makeLLMAdapter(response = "Test LLM response") {
   return {
-    stream: vi.fn().mockImplementation(async (_prompt: string, onToken: (t: string) => void) => {
-      onToken(response);
-      return response;
-    }),
+    stream: vi
+      .fn()
+      .mockImplementation(
+        async (_prompt: string, onToken: (t: string) => void) => {
+          onToken(response);
+          return response;
+        },
+      ),
   };
 }
 
@@ -85,8 +94,7 @@ describe("AskQuestion", () => {
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
     await ask.execute(conv.id, "What is RAG?", vi.fn());
     expect(mockSearchKnowledge.execute).toHaveBeenCalledWith(
@@ -109,8 +117,7 @@ describe("AskQuestion", () => {
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
     await ask.execute(conv.id, "Question?", vi.fn());
     const prompt: string = llmAdapter.stream.mock.calls[0][0];
@@ -124,15 +131,20 @@ describe("AskQuestion", () => {
     const conv = makeConversation();
     await convRepo.save(conv);
     for (let i = 0; i < 5; i++) {
-      await convRepo.addMessage(conv.id, makeMessage(conv.id, "user", `User msg ${i}`));
-      await convRepo.addMessage(conv.id, makeMessage(conv.id, "assistant", `Assistant msg ${i}`));
+      await convRepo.addMessage(
+        conv.id,
+        makeMessage(conv.id, "user", `User msg ${i}`),
+      );
+      await convRepo.addMessage(
+        conv.id,
+        makeMessage(conv.id, "assistant", `Assistant msg ${i}`),
+      );
     }
     const ask = new AskQuestion(
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
     await ask.execute(conv.id, "Current question", vi.fn());
     const prompt: string = llmAdapter.stream.mock.calls[0][0];
@@ -147,17 +159,18 @@ describe("AskQuestion", () => {
     const conv = makeConversation();
     await convRepo.save(conv);
     const onToken = vi.fn();
-    llmAdapter.stream.mockImplementation(async (_p: string, cb: (t: string) => void) => {
-      cb("token1");
-      cb("token2");
-      return "token1token2";
-    });
+    llmAdapter.stream.mockImplementation(
+      async (_p: string, cb: (t: string) => void) => {
+        cb("token1");
+        cb("token2");
+        return "token1token2";
+      },
+    );
     const ask = new AskQuestion(
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
     await ask.execute(conv.id, "Question?", onToken);
     expect(onToken).toHaveBeenCalledWith("token1");
@@ -171,8 +184,7 @@ describe("AskQuestion", () => {
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
     await ask.execute(conv.id, "My question", vi.fn());
     const updated = await convRepo.findById(conv.id);
@@ -191,12 +203,13 @@ describe("AskQuestion", () => {
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
     await ask.execute(conv.id, "Question?", vi.fn());
     const updated = await convRepo.findById(conv.id);
     const assistantMsg = updated?.messages[1];
+    expect(assistantMsg).toBeDefined();
+    assert(assistantMsg);
     expect(assistantMsg.sources).toHaveLength(1);
     expect(assistantMsg.sources[0].chunkId).toBe(chunkResult.chunk.id);
     expect(assistantMsg.sources[0].score).toBe(chunkResult.score);
@@ -210,10 +223,11 @@ describe("AskQuestion", () => {
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
-    await expect(ask.execute(conv.id, "Question?", vi.fn())).resolves.toBeDefined();
+    await expect(
+      ask.execute(conv.id, "Question?", vi.fn()),
+    ).resolves.toBeDefined();
     const updated = await convRepo.findById(conv.id);
     expect(updated?.messages).toHaveLength(2);
     expect(updated?.messages[1].role).toBe("assistant");
@@ -228,8 +242,7 @@ describe("AskQuestion", () => {
       mockSearchKnowledge as unknown as SearchKnowledge,
       llmAdapter,
       convRepo,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockDocumentRepo as any,
+      mockDocumentRepo as unknown as IDocumentRepository,
     );
     const result = await ask.execute(conv.id, "Unknown topic", vi.fn());
     expect(llmAdapter.stream).not.toHaveBeenCalled();
