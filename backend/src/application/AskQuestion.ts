@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+import type { SourceType } from "../domain/entities/Document";
 import type {
   KnowledgeCheckResult,
+  KnowledgeCheckStrategy,
   Message,
   SourceCitation,
 } from "../domain/entities/Message";
@@ -92,7 +94,8 @@ export class AskQuestion {
       return noInfoMessage;
     }
 
-    const strategies = params?.knowledgeCheckStrategies ?? [];
+    const strategies: KnowledgeCheckStrategy[] =
+      params?.knowledgeCheckStrategies ?? [];
     const useCitationForcing = strategies.includes("citation_forcing");
 
     const prompt = this.buildPrompt(
@@ -129,57 +132,23 @@ export class AskQuestion {
       return errorMessage;
     }
 
-    const uniqueDocIds = [
-      ...new Set(searchResults.map((r) => r.chunk.documentId)),
-    ];
-    const docs = await Promise.all(
-      uniqueDocIds.map((id) => this.documentRepo.findById(id)),
-    );
-    const titleById = new Map(
-      uniqueDocIds.map((id, i) => [id, docs[i]?.title ?? id]),
-    );
+    const { titleById, sourceTypeById } =
+      await this.fetchDocumentMeta(searchResults);
 
-    let assistantContent = rawContent;
-    let inlineCitationResult: KnowledgeCheckResult | undefined;
-    if (useCitationForcing) {
-      const parsed = parseCitationForcingResult(
+    const { assistantContent, knowledgeCheck } =
+      await this.applyKnowledgeChecks(
         rawContent,
+        userContent,
         searchResults,
+        strategies,
         titleById,
       );
-      assistantContent = parsed.cleanContent;
-      inlineCitationResult = parsed.result;
-    }
-    const sourceTypeById = new Map(
-      uniqueDocIds.map((id, i) => [id, docs[i]?.sourceType ?? "text"]),
+
+    const sources = this.buildSourceCitations(
+      searchResults,
+      titleById,
+      sourceTypeById,
     );
-
-    const sources: SourceCitation[] = searchResults.map((result) => ({
-      chunkId: result.chunk.id,
-      documentId: result.chunk.documentId,
-      documentTitle:
-        titleById.get(result.chunk.documentId) ?? result.chunk.documentId,
-      sourceType: sourceTypeById.get(result.chunk.documentId) ?? "text",
-      excerpt: result.chunk.content,
-      score: result.score,
-    }));
-
-    const otherStrategies = strategies.filter((s) => s !== "citation_forcing");
-    const otherChecks =
-      this.knowledgeChecker && otherStrategies.length > 0
-        ? await this.knowledgeChecker.run(
-            userContent,
-            assistantContent,
-            searchResults,
-            otherStrategies,
-            titleById,
-          )
-        : [];
-
-    const knowledgeCheck = [
-      ...(inlineCitationResult ? [inlineCitationResult] : []),
-      ...otherChecks,
-    ];
 
     this.logger.info("Knowledge check complete", {
       conversationId,
@@ -204,6 +173,85 @@ export class AskQuestion {
     }
 
     return assistantMessage;
+  }
+
+  private async fetchDocumentMeta(searchResults: ChunkSearchResult[]): Promise<{
+    titleById: Map<string, string>;
+    sourceTypeById: Map<string, SourceType>;
+  }> {
+    const uniqueDocIds = [
+      ...new Set(searchResults.map((r) => r.chunk.documentId)),
+    ];
+    const docs = await Promise.all(
+      uniqueDocIds.map((id) => this.documentRepo.findById(id)),
+    );
+    const titleById = new Map(
+      uniqueDocIds.map((id, i) => [id, docs[i]?.title ?? id]),
+    );
+    const sourceTypeById = new Map<string, SourceType>(
+      uniqueDocIds.map((id, i) => [id, docs[i]?.sourceType ?? "text"]),
+    );
+    return { titleById, sourceTypeById };
+  }
+
+  private buildSourceCitations(
+    searchResults: ChunkSearchResult[],
+    titleById: Map<string, string>,
+    sourceTypeById: Map<string, SourceType>,
+  ): SourceCitation[] {
+    return searchResults.map((result) => ({
+      chunkId: result.chunk.id,
+      documentId: result.chunk.documentId,
+      documentTitle:
+        titleById.get(result.chunk.documentId) ?? result.chunk.documentId,
+      sourceType: sourceTypeById.get(result.chunk.documentId) ?? "text",
+      excerpt: result.chunk.content,
+      score: result.score,
+    }));
+  }
+
+  private async applyKnowledgeChecks(
+    rawContent: string,
+    userContent: string,
+    searchResults: ChunkSearchResult[],
+    strategies: KnowledgeCheckStrategy[],
+    titleById: Map<string, string>,
+  ): Promise<{
+    assistantContent: string;
+    knowledgeCheck: KnowledgeCheckResult[];
+  }> {
+    const useCitationForcing = strategies.includes("citation_forcing");
+    let assistantContent = rawContent;
+    let inlineCitationResult: KnowledgeCheckResult | undefined;
+
+    if (useCitationForcing) {
+      const parsed = parseCitationForcingResult(
+        rawContent,
+        searchResults,
+        titleById,
+      );
+      assistantContent = parsed.cleanContent;
+      inlineCitationResult = parsed.result;
+    }
+
+    const otherStrategies = strategies.filter((s) => s !== "citation_forcing");
+    const otherChecks =
+      this.knowledgeChecker && otherStrategies.length > 0
+        ? await this.knowledgeChecker.run(
+            userContent,
+            assistantContent,
+            searchResults,
+            otherStrategies,
+            titleById,
+          )
+        : [];
+
+    const knowledgeCheck: KnowledgeCheckResult[] = [
+      ...(inlineCitationResult ? [inlineCitationResult] : []),
+      ...otherChecks,
+    ];
+
+    return { assistantContent, knowledgeCheck };
   }
 
   private async generateTitle(
