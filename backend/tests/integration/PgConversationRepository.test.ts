@@ -17,7 +17,7 @@ const DEFAULT_PARAMS = ConversationParams.create({
   llmModel: "claude-haiku-4-5-20251001",
   llmTemperature: 0.1,
   llmMaxTokens: 1024,
-  knowledgeCheckStrategies: [],
+  responseGroundingStrategies: [],
   searchMode: "hybrid",
 });
 
