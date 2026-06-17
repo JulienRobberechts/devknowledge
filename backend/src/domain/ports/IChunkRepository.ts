@@ -12,7 +12,11 @@ export interface IChunkRepository {
   /** Persists multiple chunks in one operation. */
   saveMany(chunks: Chunk[]): Promise<void>;
   /** Searches chunks by vector similarity, filtered by minimum score. */
-  searchByVector(vector: number[], limit: number, minScore: number): Promise<ChunkSearchResult[]>;
+  searchByVector(
+    vector: number[],
+    limit: number,
+    minScore: number,
+  ): Promise<ChunkSearchResult[]>;
   /** Hybrid search combining full-text query and vector similarity. */
   searchHybrid(
     query: string,
@@ -24,4 +28,6 @@ export interface IChunkRepository {
   findByDocumentId(documentId: string): Promise<Chunk[]>;
   /** Deletes all chunks belonging to a document. */
   deleteByDocumentId(documentId: string): Promise<void>;
+  /** Deletes all chunks. */
+  deleteAll(): Promise<void>;
 }

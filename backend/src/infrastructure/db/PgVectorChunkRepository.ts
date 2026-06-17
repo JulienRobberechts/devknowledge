@@ -1,5 +1,8 @@
 import type { Chunk } from "../../domain/entities/Chunk";
-import type { ChunkSearchResult, IChunkRepository } from "../../domain/ports/IChunkRepository";
+import type {
+  ChunkSearchResult,
+  IChunkRepository,
+} from "../../domain/ports/IChunkRepository";
 import pool from "./pool";
 
 export class PgVectorChunkRepository implements IChunkRepository {
@@ -122,7 +125,10 @@ export class PgVectorChunkRepository implements IChunkRepository {
     ]);
 
     const k = 60;
-    const scores = new Map<string, { row: Record<string, unknown>; score: number }>();
+    const scores = new Map<
+      string,
+      { row: Record<string, unknown>; score: number }
+    >();
 
     for (const row of vectorResult.rows) {
       const id = row.id as string;
@@ -157,5 +163,9 @@ export class PgVectorChunkRepository implements IChunkRepository {
 
   async deleteByDocumentId(documentId: string): Promise<void> {
     await pool.query("DELETE FROM chunks WHERE document_id = $1", [documentId]);
+  }
+
+  async deleteAll(): Promise<void> {
+    await pool.query("TRUNCATE TABLE chunks");
   }
 }

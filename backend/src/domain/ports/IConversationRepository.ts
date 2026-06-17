@@ -1,4 +1,7 @@
-import type { Conversation, ConversationSummary } from "../entities/Conversation";
+import type {
+  Conversation,
+  ConversationSummary,
+} from "../entities/Conversation";
 import type { Message } from "../entities/Message";
 
 /** Persists and retrieves conversations and their messages. */
@@ -15,4 +18,6 @@ export interface IConversationRepository {
   updateTitle(id: string, title: string): Promise<void>;
   /** Deletes a conversation. */
   delete(id: string): Promise<void>;
+  /** Deletes all conversations and their messages. */
+  deleteAll(): Promise<void>;
 }

@@ -1,4 +1,7 @@
-import type { Document, DocumentStatus } from "../../src/domain/entities/Document";
+import type {
+  Document,
+  DocumentStatus,
+} from "../../src/domain/entities/Document";
 import type { IDocumentRepository } from "../../src/domain/ports/IDocumentRepository";
 
 export class InMemoryDocumentRepository implements IDocumentRepository {
@@ -25,6 +28,10 @@ export class InMemoryDocumentRepository implements IDocumentRepository {
     if (doc) {
       this.documents.set(id, { ...doc, status });
     }
+  }
+
+  async deleteAll(): Promise<void> {
+    this.documents.clear();
   }
 
   clear(): void {

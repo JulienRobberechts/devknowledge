@@ -12,4 +12,6 @@ export interface IDocumentRepository {
   delete(id: string): Promise<void>;
   /** Updates the processing status of a document. */
   updateStatus(id: string, status: DocumentStatus): Promise<void>;
+  /** Deletes all documents. */
+  deleteAll(): Promise<void>;
 }

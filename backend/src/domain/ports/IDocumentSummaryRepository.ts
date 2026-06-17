@@ -6,4 +6,6 @@ export interface IDocumentSummaryRepository {
   findByDocumentId(documentId: string): Promise<DocumentSummary | null>;
   /** Creates or updates the summary of a document. */
   upsert(documentId: string, content: string): Promise<void>;
+  /** Deletes all summaries. */
+  deleteAll(): Promise<void>;
 }

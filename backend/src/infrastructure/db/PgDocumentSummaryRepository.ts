@@ -14,9 +14,10 @@ function toSummary(row: Record<string, unknown>): DocumentSummary {
 
 export class PgDocumentSummaryRepository implements IDocumentSummaryRepository {
   async findByDocumentId(documentId: string): Promise<DocumentSummary | null> {
-    const result = await pool.query("SELECT * FROM document_summaries WHERE document_id = $1", [
-      documentId,
-    ]);
+    const result = await pool.query(
+      "SELECT * FROM document_summaries WHERE document_id = $1",
+      [documentId],
+    );
     return result.rows[0] ? toSummary(result.rows[0]) : null;
   }
 
@@ -29,5 +30,9 @@ export class PgDocumentSummaryRepository implements IDocumentSummaryRepository {
          updated_at = NOW()`,
       [documentId, content],
     );
+  }
+
+  async deleteAll(): Promise<void> {
+    await pool.query("TRUNCATE TABLE document_summaries");
   }
 }

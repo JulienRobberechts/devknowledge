@@ -1,4 +1,7 @@
-import type { Pool } from "pg";
+import type { IChunkRepository } from "../domain/ports/IChunkRepository";
+import type { IConversationRepository } from "../domain/ports/IConversationRepository";
+import type { IDocumentRepository } from "../domain/ports/IDocumentRepository";
+import type { IDocumentSummaryRepository } from "../domain/ports/IDocumentSummaryRepository";
 import type { IFileStoragePort } from "../domain/ports/IFileStoragePort";
 import type {
   AppSettingsPatch,
@@ -12,7 +15,10 @@ export class ResetAll {
   constructor(
     private readonly fileStorage: IFileStoragePort,
     private readonly settingsService: AppSettingsService,
-    private readonly pool: Pool,
+    private readonly chunkRepo: IChunkRepository,
+    private readonly summaryRepo: IDocumentSummaryRepository,
+    private readonly conversationRepo: IConversationRepository,
+    private readonly documentRepo: IDocumentRepository,
   ) {}
 
   async execute(newSettings?: AppSettingsPatch): Promise<void> {
@@ -22,9 +28,10 @@ export class ResetAll {
       logger.warn("[ResetAll] storage.deleteAll() failed, continuing:", err);
     });
 
-    await this.pool.query(
-      "TRUNCATE TABLE messages, document_summaries, chunks, conversations, documents CASCADE",
-    );
+    await this.chunkRepo.deleteAll();
+    await this.summaryRepo.deleteAll();
+    await this.conversationRepo.deleteAll();
+    await this.documentRepo.deleteAll();
 
     if (newSettings) {
       await this.settingsService.updateSettings(newSettings);
