@@ -54,9 +54,7 @@ const envSchema = z
 
 const envResult = envSchema.safeParse(process.env);
 if (!envResult.success) {
-  const missing = envResult.error.issues
-    .map((e) => e.message || e.path.join("."))
-    .join("\n  ");
+  const missing = envResult.error.issues.map((e) => e.message || e.path.join(".")).join("\n  ");
   console.error(`Invalid configuration:\n  ${missing}`);
   process.exit(1);
 }
@@ -149,11 +147,7 @@ const askQuestion = new AskQuestion(
   new Logger("AskQuestion"),
   knowledgeChecker,
 );
-const generateQuiz = new GenerateQuiz(
-  chunkRepo,
-  llmAdapter,
-  new Logger("GenerateQuiz"),
-);
+const generateQuiz = new GenerateQuiz(chunkRepo, llmAdapter, new Logger("GenerateQuiz"));
 const summaryRepo = new PgDocumentSummaryRepository();
 const summarizeDocument = new SummarizeDocument(
   documentRepo,
@@ -162,13 +156,10 @@ const summarizeDocument = new SummarizeDocument(
   llmAdapter,
   new Logger("SummarizeDocument"),
 );
-const checkStorageConsistency = new CheckStorageConsistency(
-  documentRepo,
-  fileStorage,
-);
+const checkStorageConsistency = new CheckStorageConsistency(documentRepo, fileStorage);
 const resetAll = new ResetAll(
   fileStorage,
-  appSettingsService,
+  (patch) => appSettingsService.updateSettings(patch),
   chunkRepo,
   summaryRepo,
   conversationRepo,
@@ -193,10 +184,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/config", configRouter(appSettingsService));
-app.use(
-  "/api/admin",
-  adminRouter(checkStorageConsistency, appSettingsService, resetAll),
-);
+app.use("/api/admin", adminRouter(checkStorageConsistency, appSettingsService, resetAll));
 app.use("/api/auth", authRouter());
 
 const apiLimiter = rateLimit({
@@ -220,10 +208,7 @@ app.use(
     summarizeDocument,
   ),
 );
-app.use(
-  "/api/conversations",
-  conversationsRouter(conversationRepo, askQuestion),
-);
+app.use("/api/conversations", conversationsRouter(conversationRepo, askQuestion));
 app.use("/api/search", searchRouter(searchKnowledge));
 app.use("/api/quizzes", quizzesRouter(generateQuiz));
 

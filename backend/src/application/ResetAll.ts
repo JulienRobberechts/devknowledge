@@ -4,16 +4,15 @@ import type { IDocumentRepository } from "../domain/ports/IDocumentRepository";
 import type { IDocumentSummaryRepository } from "../domain/ports/IDocumentSummaryRepository";
 import type { IFileStoragePort } from "../domain/ports/IFileStoragePort";
 import type { ILogger } from "../domain/ports/ILogger";
-import type {
-  AppSettingsPatch,
-  AppSettingsService,
-} from "./AppSettingsService";
+import type { AppSettingsPatch } from "./AppSettingsService";
 
 /** Use case : supprime tous les fichiers du storage et tronque toutes les tables, puis applique les nouveaux paramètres si fournis. */
 export class ResetAll {
   constructor(
     private readonly fileStorage: IFileStoragePort,
-    private readonly settingsService: AppSettingsService,
+    private readonly updateSettings: (
+      patch: AppSettingsPatch,
+    ) => Promise<unknown>,
     private readonly chunkRepo: IChunkRepository,
     private readonly summaryRepo: IDocumentSummaryRepository,
     private readonly conversationRepo: IConversationRepository,
@@ -36,7 +35,7 @@ export class ResetAll {
     await this.documentRepo.deleteAll();
 
     if (newSettings) {
-      await this.settingsService.updateSettings(newSettings);
+      await this.updateSettings(newSettings);
     }
   }
 }
