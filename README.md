@@ -4,6 +4,59 @@
 
 A Retrieval-Augmented Generation API for querying internal knowledge bases.
 
+## Évaluation RAG
+
+Lance la suite d'évaluation sur les 14 paires question/réponse du dataset de démo :
+
+```bash
+cd backend
+npm run eval
+```
+
+Le script affiche un tableau de scores sur 3 métriques :
+
+| Métrique | Description |
+|----------|-------------|
+| **Faithfulness** | Les faits de la réponse sont tous présents dans les chunks récupérés |
+| **Answer Relevance** | La réponse répond bien à la question (similarité cosine entre embeddings) |
+| **Context Recall** | Les chunks récupérés couvrent les affirmations de la réponse attendue |
+
+### Variables d'environnement requises
+
+Le script lit les variables depuis `backend/.env`. Les trois variables suivantes sont obligatoires :
+
+```env
+ANTHROPIC_API_KEY=sk-ant-...   # Clé API Anthropic (Claude)
+VOYAGE_API_KEY=pa-...          # Clé API Voyage AI (embeddings)
+DATABASE_URL=postgresql://...  # Connexion PostgreSQL avec les chunks ingérés
+```
+
+### Connexion à la base Docker locale
+
+Le `.env` utilise `postgres` comme hostname (nom du service Docker). Pour exécuter `npm run eval` **depuis le host** (hors conteneur), il faut pointer sur `localhost` car le port 5432 est exposé par le `docker-compose.yml` :
+
+```bash
+# Démarrer les services si ce n'est pas déjà fait
+docker compose up -d postgres
+
+# Lancer l'évaluation en surchargeant DATABASE_URL
+DATABASE_URL=postgresql://devknowledge:<POSTGRES_PASSWORD>@localhost:5432/devknowledge npm run eval
+```
+
+Ou modifier temporairement le `.env` en remplaçant `postgres` par `localhost` dans `DATABASE_URL` :
+
+```env
+# Pour npm run eval depuis le host :
+DATABASE_URL=postgresql://devknowledge:<POSTGRES_PASSWORD>@localhost:5432/devknowledge
+
+# Pour l'API dans Docker (valeur d'origine) :
+# DATABASE_URL=postgresql://devknowledge:<POSTGRES_PASSWORD>@postgres:5432/devknowledge
+```
+
+> **Note :** Les documents de démo doivent avoir été ingérés au préalable (via l'API ou `docker compose up`) pour que les chunks soient présents en base.
+
+---
+
 ## Limitations PDF
 
 `pdf-parse` (backed by Mozilla PDF.js) has the following known limitations:

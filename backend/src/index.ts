@@ -168,7 +168,7 @@ app.use("/api/admin", adminRouter(checkStorageConsistency, appSettingsService, r
 app.use("/api/auth", authRouter());
 
 const apiLimiter = rateLimit({
-  windowMs: 60 * 1000,
+  windowMs: 5 * 60 * 1000,
   max: 60,
   standardHeaders: true,
   legacyHeaders: false,
