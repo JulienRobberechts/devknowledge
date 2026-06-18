@@ -30,7 +30,7 @@ export function streamMessage(
     });
 
     if (res.status === 401) {
-      handlers.onError("Session expirée");
+      handlers.onError("Session expired");
       throw new UnauthorizedError();
     }
 

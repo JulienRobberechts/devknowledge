@@ -39,7 +39,7 @@ function findBestSplit(
   return maxEnd;
 }
 
-/** Découpe par fenêtre glissante sur des tokens (mots), en cherchant la meilleure coupure naturelle (paragraphe > newline > phrase > espace). */
+/** Sliding-window chunking over word tokens, seeking the best natural split point (paragraph > newline > sentence > space). */
 export class RecursiveChunkingStrategy implements IChunkingStrategy {
   chunk(text: string, config: ChunkConfig): ChunkResult[] {
     const { chunkSize, chunkOverlap } = config;

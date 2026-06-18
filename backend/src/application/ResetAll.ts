@@ -6,7 +6,7 @@ import type { IFileStoragePort } from "../domain/ports/IFileStoragePort";
 import type { ILogger } from "../domain/ports/ILogger";
 import type { AppSettingsPatch } from "./AppSettingsService";
 
-/** Use case : supprime tous les fichiers du storage et tronque toutes les tables, puis applique les nouveaux paramètres si fournis. */
+/** Use case: deletes all storage files and truncates all tables, then applies new settings if provided. */
 export class ResetAll {
   constructor(
     private readonly fileStorage: IFileStoragePort,

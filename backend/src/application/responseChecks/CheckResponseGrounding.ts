@@ -9,7 +9,7 @@ import { checkCitationForcing } from "./strategies/citationForcing";
 import { checkCounterfactual } from "./strategies/counterfactual";
 import { checkFaithfulness } from "./strategies/faithfulness";
 
-/** Orchestre les stratégies de vérification de qualité des réponses (faithfulness, counterfactual, citation_forcing) et agrège leurs résultats. */
+/** Orchestrates response quality check strategies (faithfulness, counterfactual, citation_forcing) and aggregates their results. */
 export class CheckResponseGrounding {
   constructor(
     private readonly llm: ILLMPort,

@@ -18,7 +18,7 @@ const responseSchema = z.object({
 
 export type QuizQuestion = z.infer<typeof questionSchema>;
 
-/** Use case : génère des questions à choix multiples à partir du contenu de documents via le LLM. */
+/** Use case: generates multiple-choice questions from document content via the LLM. */
 export class GenerateQuiz {
   constructor(
     private readonly chunkRepo: IChunkRepository,

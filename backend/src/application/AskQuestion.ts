@@ -19,7 +19,7 @@ const NO_INFO_RESPONSE =
   "I don't have enough information to answer this question based on the available knowledge base.";
 const ERROR_RESPONSE = "An error occurred while generating the response.";
 
-/** Use case : répond à une question utilisateur via RAG — récupère les chunks pertinents, streame la réponse LLM et applique les vérifications de qualité configurées. */
+/** Use case: answers a user question via RAG — retrieves relevant chunks, streams the LLM response, and applies the configured quality checks. */
 export class AskQuestion {
   constructor(
     private readonly retrieveKnowledge: IRetrieveKnowledge,

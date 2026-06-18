@@ -1,6 +1,6 @@
-/** Value Object : position ordinale et plage de caractères d'un chunk dans le document source. */
+/** Value Object: ordinal position and character range of a chunk within the source document. */
 export class ChunkMetadata {
-  /** Nominal branding : empêche l'assignation accidentelle entre Value Objects de même forme. */
+  /** Nominal branding: prevents accidental assignment between Value Objects of the same shape. */
   declare private readonly _brand: void;
 
   readonly position: number;

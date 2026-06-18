@@ -2,9 +2,9 @@ import type { ChunkMetadata } from "../entities/Chunk";
 
 export type ChunkingStrategyName = "recursive" | "sentence";
 
-/** Value Object : configuration du découpage de texte — invariant : chunkOverlap < chunkSize. */
+/** Value Object: text splitting configuration — invariant: chunkOverlap < chunkSize. */
 export class ChunkConfig {
-  /** Nominal branding : empêche l'assignation accidentelle entre Value Objects de même forme. */
+  /** Nominal branding: prevents accidental assignment between Value Objects of the same shape. */
   declare private readonly _brand: void;
 
   readonly chunkSize: number;

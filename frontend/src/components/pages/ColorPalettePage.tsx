@@ -1,20 +1,28 @@
 const PALETTE = {
-  name: "Acier & Soleil",
-  desc: "Gris acier industriel rehaussé d'un jaune solaire.",
+  name: "Steel & Sun",
+  desc: "Industrial steel grey enhanced with a solar yellow.",
   banner: "linear-gradient(135deg, #111827 0%, #1f2937 60%, #374151 100%)",
   accent: "linear-gradient(90deg, #92400e 0%, #d97706 40%, #fcd34d 100%)",
   border: "#d97706",
   swatches: [
-    { label: "Carbone", hex: "#111827", usage: "Fond principal" },
-    { label: "Acier", hex: "#1f2937", usage: "Fond secondaire" },
-    { label: "Ardoise", hex: "#374151", usage: "Fond tertiaire" },
-    { label: "Bronze", hex: "#92400e", usage: "Accent foncé" },
-    { label: "Soleil", hex: "#d97706", usage: "Accent principal" },
-    { label: "Jaune", hex: "#fcd34d", usage: "Accent clair / Interactif" },
+    { label: "Carbon", hex: "#111827", usage: "Main background" },
+    { label: "Steel", hex: "#1f2937", usage: "Secondary background" },
+    { label: "Slate", hex: "#374151", usage: "Tertiary background" },
+    { label: "Bronze", hex: "#92400e", usage: "Dark accent" },
+    { label: "Sun", hex: "#d97706", usage: "Main accent" },
+    { label: "Yellow", hex: "#fcd34d", usage: "Light accent / Interactive" },
   ],
 };
 
-function Swatch({ hex, label, usage }: { hex: string; label: string; usage: string }) {
+function Swatch({
+  hex,
+  label,
+  usage,
+}: {
+  hex: string;
+  label: string;
+  usage: string;
+}) {
   return (
     <div className="flex items-center gap-3">
       <div
@@ -34,11 +42,13 @@ export default function ColorPalettePage() {
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 font-audiowide">{PALETTE.name}</h1>
+        <h1 className="text-2xl font-bold text-slate-800 font-audiowide">
+          {PALETTE.name}
+        </h1>
         <p className="text-sm text-slate-500 mt-1">{PALETTE.desc}</p>
       </div>
 
-      {/* Aperçu bandeau */}
+      {/* Banner preview */}
       <div
         className="rounded-2xl p-6 flex items-center gap-5"
         style={{ background: PALETTE.banner }}
@@ -47,7 +57,9 @@ export default function ColorPalettePage() {
           className="w-16 h-16 rounded-full bg-white flex-shrink-0"
           style={{ border: `5px solid ${PALETTE.border}` }}
         />
-        <div style={{ display: "inline-grid", gridTemplateColumns: "max-content" }}>
+        <div
+          style={{ display: "inline-grid", gridTemplateColumns: "max-content" }}
+        >
           <span
             style={{
               fontFamily: "'Audiowide', sans-serif",
@@ -83,9 +95,11 @@ export default function ColorPalettePage() {
         </div>
       </div>
 
-      {/* Nuancier */}
+      {/* Swatches */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-        <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">Nuancier</h2>
+        <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">
+          Swatches
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {PALETTE.swatches.map((s) => (
             <Swatch key={s.hex} {...s} />
@@ -93,19 +107,31 @@ export default function ColorPalettePage() {
         </div>
       </div>
 
-      {/* Dégradés */}
+      {/* Gradients */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-        <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">Dégradés</h2>
+        <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">
+          Gradients
+        </h2>
         <div className="space-y-3">
           <div>
-            <p className="text-xs text-slate-400 mb-1">Fond bandeau</p>
-            <div className="h-10 rounded-lg" style={{ background: PALETTE.banner }} />
-            <p className="text-[10px] font-mono text-slate-400 mt-1">{PALETTE.banner}</p>
+            <p className="text-xs text-slate-400 mb-1">Banner background</p>
+            <div
+              className="h-10 rounded-lg"
+              style={{ background: PALETTE.banner }}
+            />
+            <p className="text-[10px] font-mono text-slate-400 mt-1">
+              {PALETTE.banner}
+            </p>
           </div>
           <div>
-            <p className="text-xs text-slate-400 mb-1">Accent texte</p>
-            <div className="h-10 rounded-lg" style={{ background: PALETTE.accent }} />
-            <p className="text-[10px] font-mono text-slate-400 mt-1">{PALETTE.accent}</p>
+            <p className="text-xs text-slate-400 mb-1">Text accent</p>
+            <div
+              className="h-10 rounded-lg"
+              style={{ background: PALETTE.accent }}
+            />
+            <p className="text-[10px] font-mono text-slate-400 mt-1">
+              {PALETTE.accent}
+            </p>
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import type { ILLMPort } from "../domain/ports/ILLMPort";
 
 const MAX_CONTENT_CHARS = 12000;
 
-/** Use case : génère un résumé LLM à partir des chunks d'un document et le persiste en base. */
+/** Use case: generates an LLM summary from a document's chunks and persists it in the database. */
 export class SummarizeDocument {
   constructor(
     private readonly documentRepo: IDocumentRepository,

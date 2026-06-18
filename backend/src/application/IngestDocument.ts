@@ -17,7 +17,7 @@ import type { ChunkingConfig } from "./AppSettingsService";
 
 const BATCH_SIZE = 20;
 
-/** Use case : parse, découpe en chunks et génère les embeddings d'un document pour le rendre interrogeable. */
+/** Use case: parses, chunks, and generates embeddings for a document to make it queryable. */
 export class IngestDocument {
   constructor(
     private readonly documentRepo: IDocumentRepository,

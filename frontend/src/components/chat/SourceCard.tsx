@@ -86,7 +86,7 @@ export default function SourceCard({ source }: { source: SourceCitation }) {
               type="button"
               onClick={() => setOpen((v) => !v)}
               className="flex-shrink-0 ml-auto text-slate-300 hover:text-slate-500 transition-colors"
-              title="Détails techniques"
+              title="Technical details"
             >
               <ChevronDown
                 className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`}

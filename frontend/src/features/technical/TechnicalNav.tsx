@@ -1,11 +1,18 @@
-import { ArrowUpDown, Brain, Combine, FlaskConical, Gauge, ShieldCheck } from "lucide-react";
+import {
+  ArrowUpDown,
+  Brain,
+  Combine,
+  FlaskConical,
+  Gauge,
+  ShieldCheck,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const pages = [
   { to: "/technical", label: "RAG Core", icon: FlaskConical, end: true },
   { to: "/technical/hybrid-search", label: "Hybrid Search", icon: Combine },
   { to: "/technical/reranking", label: "Re-ranking", icon: ArrowUpDown },
-  { to: "/technical/llm-models", label: "Modèles LLM", icon: Brain },
+  { to: "/technical/llm-models", label: "LLM Models", icon: Brain },
   {
     to: "/technical/response-grounding",
     label: "Response Grounding",

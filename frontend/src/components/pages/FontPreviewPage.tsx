@@ -6,80 +6,80 @@ const FONTS: {
   weight: number;
   category: string;
 }[] = [
-  // Géométrique — proches du logo
+  // Geometric — proches du logo
   {
     name: "Montserrat 600",
     family: "Montserrat",
     weight: 600,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Montserrat 700",
     family: "Montserrat",
     weight: 700,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Raleway 600",
     family: "Raleway",
     weight: 600,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Raleway 700",
     family: "Raleway",
     weight: 700,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Josefin Sans",
     family: "Josefin Sans",
     weight: 600,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Poppins 600",
     family: "Poppins",
     weight: 600,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Outfit 600",
     family: "Outfit",
     weight: 600,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Outfit 700",
     family: "Outfit",
     weight: 700,
-    category: "Géométrique",
+    category: "Geometric",
   },
-  { name: "Syne 700", family: "Syne", weight: 700, category: "Géométrique" },
-  { name: "Syne 800", family: "Syne", weight: 800, category: "Géométrique" },
+  { name: "Syne 700", family: "Syne", weight: 700, category: "Geometric" },
+  { name: "Syne 800", family: "Syne", weight: 800, category: "Geometric" },
   {
     name: "Space Grotesk",
     family: "Space Grotesk",
     weight: 700,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Plus Jakarta Sans",
     family: "Plus Jakarta Sans",
     weight: 700,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "DM Sans 700",
     family: "DM Sans",
     weight: 700,
-    category: "Géométrique",
+    category: "Geometric",
   },
   {
     name: "Nunito 700",
     family: "Nunito",
     weight: 700,
-    category: "Géométrique",
+    category: "Geometric",
   },
   // Tech / futuriste
   { name: "Orbitron 700", family: "Orbitron", weight: 700, category: "Tech" },
@@ -89,20 +89,20 @@ const FONTS: {
   { name: "Rajdhani 600", family: "Rajdhani", weight: 600, category: "Tech" },
   { name: "Saira 600", family: "Saira", weight: 600, category: "Tech" },
   { name: "Teko 500", family: "Teko", weight: 500, category: "Tech" },
-  // Élégant / serif
-  { name: "Cinzel 600", family: "Cinzel", weight: 600, category: "Élégant" },
-  { name: "Cinzel 700", family: "Cinzel", weight: 700, category: "Élégant" },
+  // Elegant / serif
+  { name: "Cinzel 600", family: "Cinzel", weight: 600, category: "Elegant" },
+  { name: "Cinzel 700", family: "Cinzel", weight: 700, category: "Elegant" },
   {
     name: "Cormorant 700",
     family: "Cormorant",
     weight: 700,
-    category: "Élégant",
+    category: "Elegant",
   },
   {
     name: "Playfair Display",
     family: "Playfair Display",
     weight: 700,
-    category: "Élégant",
+    category: "Elegant",
   },
   // Display / Impact
   {
@@ -140,9 +140,9 @@ function buildGoogleFontsUrl(fonts: typeof FONTS) {
 const CATEGORIES = [...new Set(FONTS.map((f) => f.category))];
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Géométrique: "bg-yellow-100 text-yellow-700",
+  Geometric: "bg-yellow-100 text-yellow-700",
   Tech: "bg-slate-200 text-slate-700",
-  Élégant: "bg-amber-100 text-amber-700",
+  Elegant: "bg-amber-100 text-amber-700",
   Display: "bg-amber-200 text-amber-800",
 };
 
@@ -167,8 +167,10 @@ export default function FontPreviewPage() {
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             Page cachée accessible via{" "}
-            <code className="bg-slate-200 px-1.5 py-0.5 rounded text-xs">/font-preview</code> —
-            choisir la police la plus proche du logo.
+            <code className="bg-slate-200 px-1.5 py-0.5 rounded text-xs">
+              /font-preview
+            </code>{" "}
+            — choisir la police la plus proche du logo.
           </p>
           <div className="flex gap-2 mt-3 flex-wrap">
             {CATEGORIES.map((cat) => (
@@ -200,17 +202,23 @@ export default function FontPreviewPage() {
                   <div
                     className="flex flex-col items-center justify-center gap-3 py-5 px-3"
                     style={{
-                      background: "linear-gradient(135deg, #0c1a2e 0%, #0d2d5e 60%, #0c3875 100%)",
+                      background:
+                        "linear-gradient(135deg, #0c1a2e 0%, #0d2d5e 60%, #0c3875 100%)",
                     }}
                   >
-                    <img src="/logo-argos.jpg" alt="Argos" className="h-12 w-auto rounded-lg" />
+                    <img
+                      src="/logo-argos.jpg"
+                      alt="Argos"
+                      className="h-12 w-auto rounded-lg"
+                    />
                     <span
                       style={{
                         fontFamily: `'${font.family}', sans-serif`,
                         fontWeight: font.weight,
                         letterSpacing: "0.15em",
                         fontSize: "1.35rem",
-                        background: "linear-gradient(90deg, #92400e 0%, #d97706 50%, #fcd34d 100%)",
+                        background:
+                          "linear-gradient(90deg, #92400e 0%, #d97706 50%, #fcd34d 100%)",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                       }}
@@ -223,7 +231,9 @@ export default function FontPreviewPage() {
                     <span className="text-xs font-medium text-slate-700 truncate">
                       {font.family}
                     </span>
-                    <span className="text-[10px] text-slate-400 shrink-0 ml-1">{font.weight}</span>
+                    <span className="text-[10px] text-slate-400 shrink-0 ml-1">
+                      {font.weight}
+                    </span>
                   </div>
                 </div>
               ))}

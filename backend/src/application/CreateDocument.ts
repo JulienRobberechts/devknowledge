@@ -21,7 +21,7 @@ function sourceTypeFromMime(
   return "text";
 }
 
-/** Use case : upload le fichier brut en storage et persiste l'entrée document en base (statut "pending", avant ingestion). */
+/** Use case: uploads the raw file to storage and persists the document entry in the database (status "pending", before ingestion). */
 export class CreateDocument {
   constructor(
     private readonly documentRepo: IDocumentRepository,

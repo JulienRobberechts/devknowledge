@@ -16,78 +16,82 @@ function makeChunkResult(content: string): ChunkSearchResult {
 }
 
 describe("parseCitationForcingResult", () => {
-  it("parse claims avec marker avant le point [SOURCE N].", () => {
+  it("parses claims with marker before period [SOURCE N].", () => {
     const raw =
-      "L'Orient Express a été créé en 1883 [SOURCE 1]. Il est connu pour son luxe [SOURCE 2].";
+      "The Orient Express was created in 1883 [SOURCE 1]. It is known for its luxury [SOURCE 2].";
     const chunks = [
-      makeChunkResult("fondé en 1883"),
-      makeChunkResult("train luxueux"),
+      makeChunkResult("founded in 1883"),
+      makeChunkResult("luxurious train"),
     ];
 
     const { cleanContent, result } = parseCitationForcingResult(raw, chunks);
 
     expect(result.claims).toHaveLength(2);
-    expect(result.claims[0].claim).toBe("L'Orient Express a été créé en 1883");
+    expect(result.claims[0].claim).toBe(
+      "The Orient Express was created in 1883",
+    );
     expect(result.claims[0].status).toBe("SUPPORTED");
-    expect(result.claims[1].claim).toBe("Il est connu pour son luxe");
+    expect(result.claims[1].claim).toBe("It is known for its luxury");
     expect(result.claims[1].status).toBe("SUPPORTED");
     expect(cleanContent).not.toContain("[SOURCE");
     expect(result.score).toBe(1);
   });
 
-  it("parse claims avec marker après le point. [SOURCE N]", () => {
+  it("parses claims with marker after period. [SOURCE N]", () => {
     const raw =
-      "L'Orient Express a été créé en 1883. [SOURCE 1] Il est connu pour son luxe. [SOURCE 2]";
+      "The Orient Express was created in 1883. [SOURCE 1] It is known for its luxury. [SOURCE 2]";
     const chunks = [
-      makeChunkResult("fondé en 1883"),
-      makeChunkResult("train luxueux"),
+      makeChunkResult("founded in 1883"),
+      makeChunkResult("luxurious train"),
     ];
 
     const { result } = parseCitationForcingResult(raw, chunks);
 
     expect(result.claims).toHaveLength(2);
-    expect(result.claims[0].claim).toBe("L'Orient Express a été créé en 1883");
+    expect(result.claims[0].claim).toBe(
+      "The Orient Express was created in 1883",
+    );
     expect(result.claims[0].status).toBe("SUPPORTED");
-    expect(result.claims[1].claim).toBe("Il est connu pour son luxe");
+    expect(result.claims[1].claim).toBe("It is known for its luxury");
     expect(result.claims[1].status).toBe("SUPPORTED");
     expect(result.score).toBe(1);
   });
 
-  it("parse claims OWN KNOWLEDGE", () => {
-    const raw = "L'Orient Express est unique [OWN KNOWLEDGE].";
+  it("parses claims OWN KNOWLEDGE", () => {
+    const raw = "The Orient Express is unique [OWN KNOWLEDGE].";
 
     const { result } = parseCitationForcingResult(raw, []);
 
     expect(result.claims).toHaveLength(1);
-    expect(result.claims[0].claim).toBe("L'Orient Express est unique");
+    expect(result.claims[0].claim).toBe("The Orient Express is unique");
     expect(result.claims[0].status).toBe("UNSUPPORTED");
     expect(result.score).toBe(0);
     expect(result.warning).toBeDefined();
   });
 
-  it("parse un mélange SOURCE et OWN KNOWLEDGE dans la même réponse", () => {
+  it("parses a mix of SOURCE and OWN KNOWLEDGE in the same response", () => {
     const raw =
-      "Fondé en 1883. [SOURCE 1] Luxueux. [OWN KNOWLEDGE] Actif aujourd'hui [SOURCE 2].";
+      "Founded in 1883. [SOURCE 1] Luxurious. [OWN KNOWLEDGE] Still active today [SOURCE 2].";
     const chunks = [
-      makeChunkResult("fondé en 1883"),
-      makeChunkResult("toujours actif"),
+      makeChunkResult("founded in 1883"),
+      makeChunkResult("still active"),
     ];
 
     const { result } = parseCitationForcingResult(raw, chunks);
 
     expect(result.claims).toHaveLength(3);
     expect(result.claims.find((c) => c.status === "UNSUPPORTED")?.claim).toBe(
-      "Luxueux",
+      "Luxurious",
     );
     expect(result.score).toBe(2 / 3);
   });
 
-  it("parse claims dans une liste markdown", () => {
+  it("parses claims in a markdown list", () => {
     const raw =
-      "- L'Orient Express a été créé en 1883 [SOURCE 1]\n- Il est connu pour son luxe [SOURCE 2]";
+      "- The Orient Express was created in 1883 [SOURCE 1]\n- It is known for its luxury [SOURCE 2]";
     const chunks = [
-      makeChunkResult("fondé en 1883"),
-      makeChunkResult("train luxueux"),
+      makeChunkResult("founded in 1883"),
+      makeChunkResult("luxurious train"),
     ];
 
     const { result } = parseCitationForcingResult(raw, chunks);
@@ -97,28 +101,28 @@ describe("parseCitationForcingResult", () => {
     expect(result.claims[1].status).toBe("SUPPORTED");
   });
 
-  it("retourne score 1 sans warning quand pas de claims", () => {
-    const { result } = parseCitationForcingResult("Aucun marqueur ici.", []);
+  it("returns score 1 without warning when no claims", () => {
+    const { result } = parseCitationForcingResult("No markers here.", []);
 
     expect(result.claims).toHaveLength(0);
     expect(result.score).toBe(1);
     expect(result.warning).toBeUndefined();
   });
 
-  it("associe correctement le documentId depuis le chunk indexé", () => {
-    const raw = "Fait important [SOURCE 1].";
-    const chunk = makeChunkResult("contenu source");
-    const titleById = new Map([["doc-1", "Mon Document"]]);
+  it("correctly associates documentId from indexed chunk", () => {
+    const raw = "Important fact [SOURCE 1].";
+    const chunk = makeChunkResult("source content");
+    const titleById = new Map([["doc-1", "My Document"]]);
 
     const { result } = parseCitationForcingResult(raw, [chunk], titleById);
 
     expect(result.claims[0].documentId).toBe("doc-1");
-    expect(result.claims[0].documentTitle).toBe("Mon Document");
+    expect(result.claims[0].documentTitle).toBe("My Document");
   });
 
-  it("gère un SOURCE N hors plage — claim SUPPORTED sans documentId", () => {
-    const raw = "Fait important [SOURCE 5].";
-    const chunks = [makeChunkResult("un seul chunk")];
+  it("handles a SOURCE N out of range — claim SUPPORTED without documentId", () => {
+    const raw = "Important fact [SOURCE 5].";
+    const chunks = [makeChunkResult("a single chunk")];
 
     const { result } = parseCitationForcingResult(raw, chunks);
 
@@ -127,15 +131,15 @@ describe("parseCitationForcingResult", () => {
     expect(result.claims[0].documentId).toBeUndefined();
   });
 
-  it("nettoie tous les marqueurs du contenu affiché", () => {
-    const raw = "Fait A [SOURCE 1]. Fait B [OWN KNOWLEDGE].";
-    const chunks = [makeChunkResult("fait A")];
+  it("cleans all markers from displayed content", () => {
+    const raw = "Fact A [SOURCE 1]. Fact B [OWN KNOWLEDGE].";
+    const chunks = [makeChunkResult("fact A")];
 
     const { cleanContent } = parseCitationForcingResult(raw, chunks);
 
     expect(cleanContent).not.toContain("[SOURCE");
     expect(cleanContent).not.toContain("[OWN KNOWLEDGE]");
-    expect(cleanContent).toContain("Fait A");
-    expect(cleanContent).toContain("Fait B");
+    expect(cleanContent).toContain("Fact A");
+    expect(cleanContent).toContain("Fact B");
   });
 });

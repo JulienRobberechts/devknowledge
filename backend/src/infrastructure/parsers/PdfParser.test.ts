@@ -4,7 +4,10 @@ import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { PdfParser } from "./PdfParser";
 
-const ORIENT_EXPRESS_DIR = join(__dirname, "../../../tests/DOCUMENTS/Orient-Express");
+const ORIENT_EXPRESS_DIR = join(
+  __dirname,
+  "../../../tests/DOCUMENTS/Orient-Express",
+);
 
 let tmpDir: string;
 
@@ -29,9 +32,12 @@ describe("PdfParser", () => {
   });
 });
 
-// Ces tests documentent les défauts connus de pdf-parse (échecs attendus).
-describe.skip("PdfParser - qualité du texte extrait (PDFs Orient-Express)", () => {
-  const PDF = join(ORIENT_EXPRESS_DIR, "Luxe - VSOE par Discovery Trains-p3.pdf");
+// These tests document known defects of pdf-parse (expected failures).
+describe.skip("PdfParser - extracted text quality (Orient-Express PDFs)", () => {
+  const PDF = join(
+    ORIENT_EXPRESS_DIR,
+    "Luxe - VSOE par Discovery Trains-p3.pdf",
+  );
   const DEBUG_FILE = PDF.replace(/\.pdf$/, ".debug.txt");
 
   let parsedText: string;
@@ -42,23 +48,23 @@ describe.skip("PdfParser - qualité du texte extrait (PDFs Orient-Express)", () 
     await writeFile(DEBUG_FILE, parsedText, "utf-8");
   });
 
-  it("ne devrait pas fusionner des mots en supprimant les espaces", () => {
+  it("should not merge words by removing spaces", () => {
     const text = parsedText;
-    // pdf-parse supprime l'espace typographique entre colonnes :
-    // "Venice Simplon-Orient-Express" devient "VeniceSimplon-Orient-Express"
+    // pdf-parse removes the typographic space between columns:
+    // "Venice Simplon-Orient-Express" becomes "VeniceSimplon-Orient-Express"
     expect(text).not.toContain("VeniceSimplon");
     expect(text).toContain("Venice Simplon");
   });
 
-  it("ne devrait pas décomposer les ligatures (fi, fl) en sauts de ligne", () => {
+  it("should not break ligatures (fi, fl) into line breaks", () => {
     const text = parsedText;
-    // pdf-parse fragmente la ligature «fi» : "défilent" → "dé\nfi\nlent"
+    // pdf-parse fragments the «fi» ligature: "défilent" → "dé\nfi\nlent"
     expect(text).toContain("défilent");
   });
 
-  it("ne devrait pas conserver les césures de fin de ligne dans les mots", () => {
+  it("should not preserve end-of-line hyphens in words", () => {
     const text = parsedText;
-    // pdf-parse conserve le tiret de césure : "rencontres" → "ren-\ncontres"
+    // pdf-parse preserves the hyphenation dash: "rencontres" → "ren-\ncontres"
     expect(text).toContain("rencontres");
     expect(text).not.toMatch(/ren\s*-\s*\ncontres/);
   });

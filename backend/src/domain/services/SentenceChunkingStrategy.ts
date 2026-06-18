@@ -40,7 +40,7 @@ function countTokens(text: string): number {
   return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
 }
 
-/** Découpe par fenêtre glissante sur des phrases (séparées par regex), avec overlap en nombre de phrases. */
+/** Sliding-window chunking over sentences (split by regex), with overlap measured in sentence count. */
 export class SentenceChunkingStrategy implements IChunkingStrategy {
   chunk(text: string, config: ChunkConfig): ChunkResult[] {
     const { chunkSize, chunkOverlap } = config;

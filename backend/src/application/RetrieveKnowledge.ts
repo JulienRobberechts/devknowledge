@@ -1,10 +1,13 @@
-import type { ChunkSearchResult, IChunkRepository } from "../domain/ports/IChunkRepository";
+import type {
+  ChunkSearchResult,
+  IChunkRepository,
+} from "../domain/ports/IChunkRepository";
 import type { ILogger } from "../domain/ports/ILogger";
 import type { IRerankPort } from "../domain/ports/IRerankPort";
 import type { ITextEncoder } from "../domain/ports/ITextEncoder";
 import type { IRetrieveKnowledge } from "../domain/ports/IRetrieveKnowledge";
 
-/** Use case : recherche les chunks les plus pertinents par vecteur ou en mode hybride, avec reranking optionnel. */
+/** Use case: retrieves the most relevant chunks by vector or hybrid search, with optional reranking. */
 export class RetrieveKnowledge implements IRetrieveKnowledge {
   constructor(
     private readonly chunkRepo: IChunkRepository,
@@ -34,7 +37,7 @@ export class RetrieveKnowledge implements IRetrieveKnowledge {
         ? rerankOptions.enabled && this.reranker !== null
         : this.reranker !== null;
 
-    // Reranking nécessite un pool de candidats plus large que le limit final
+    // Reranking requires a wider candidate pool than the final limit
     const candidateLimit = useRerank
       ? limit * (rerankOptions?.candidateMultiplier ?? this.candidateMultiplier)
       : limit;
@@ -42,8 +45,17 @@ export class RetrieveKnowledge implements IRetrieveKnowledge {
 
     const candidates =
       effectiveMode === "hybrid"
-        ? await this.chunkRepo.searchHybrid(query, vector, candidateLimit, candidateMinScore)
-        : await this.chunkRepo.searchByVector(vector, candidateLimit, candidateMinScore);
+        ? await this.chunkRepo.searchHybrid(
+            query,
+            vector,
+            candidateLimit,
+            candidateMinScore,
+          )
+        : await this.chunkRepo.searchByVector(
+            vector,
+            candidateLimit,
+            candidateMinScore,
+          );
 
     if (candidates.length === 0) {
       this.logger.warn("No results found", {

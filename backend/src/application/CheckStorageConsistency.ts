@@ -16,7 +16,7 @@ function toKey(filePath: string): string {
   return path.basename(filePath);
 }
 
-/** Use case : détecte les fichiers orphelins (storage sans entrée DB) et les fichiers manquants (entrée DB sans fichier). */
+/** Use case: detects orphan files (storage without DB entry) and missing files (DB entry without file). */
 export class CheckStorageConsistency {
   constructor(
     private readonly documentRepo: IDocumentRepository,

@@ -1,7 +1,7 @@
 import type { IFileStoragePort } from "../../domain/ports/IFileStoragePort";
 import type { StorageBackends } from "./createFileStorage";
 
-/** Dispatche chaque opération vers le backend de stockage actif (local ou R2) en lisant la config à l'exécution. */
+/** Dispatches each operation to the active storage backend (local or R2) by reading the config at runtime. */
 export class DynamicFileStorage implements IFileStoragePort {
   constructor(
     private readonly getProvider: () => Promise<string>,
