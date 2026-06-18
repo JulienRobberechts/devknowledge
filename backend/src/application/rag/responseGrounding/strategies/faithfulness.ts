@@ -1,13 +1,13 @@
 import type {
   ResponseGroundingResult,
   KnowledgeClaim,
-} from "../../../domain/entities/Message";
-import type { ChunkSearchResult } from "../../../infra-ports/IChunkRepository";
-import type { ILogger } from "../../../infra-ports/ILogger";
+} from "../../../../domain/entities/Message";
+import type { ChunkSearchResult } from "../../../../infra-ports/IChunkRepository";
+import type { ILogger } from "../../../../infra-ports/ILogger";
 import {
   LLMStreamOptions,
   type ILLMPort,
-} from "../../../infra-ports/ILLMPort";
+} from "../../../../infra-ports/ILLMPort";
 import { extractJSON } from "./extractJSON";
 
 function buildFaithfulnessPrompt(

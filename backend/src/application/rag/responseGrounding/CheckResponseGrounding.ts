@@ -1,10 +1,10 @@
 import type {
   ResponseGroundingResult,
   ResponseGroundingStrategy,
-} from "../../domain/entities/Message";
-import type { ChunkSearchResult } from "../../infra-ports/IChunkRepository";
-import type { ILogger } from "../../infra-ports/ILogger";
-import type { ILLMPort } from "../../infra-ports/ILLMPort";
+} from "../../../domain/entities/Message";
+import type { ChunkSearchResult } from "../../../infra-ports/IChunkRepository";
+import type { ILogger } from "../../../infra-ports/ILogger";
+import type { ILLMPort } from "../../../infra-ports/ILLMPort";
 import { checkCitationForcing } from "./strategies/citationForcing";
 import { checkCounterfactual } from "./strategies/counterfactual";
 import { checkFaithfulness } from "./strategies/faithfulness";

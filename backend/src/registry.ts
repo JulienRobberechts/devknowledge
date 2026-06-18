@@ -6,7 +6,7 @@ import { CreateDocument } from "./application/knowledgeBase/CreateDocument";
 import { GenerateQuiz } from "./application/quiz/GenerateQuiz";
 import { IngestDocument } from "./application/knowledgeBase/IngestDocument";
 import { ResetAll } from "./application/admin/ResetAll";
-import { CheckResponseGrounding } from "./application/responseChecks/CheckResponseGrounding";
+import { CheckResponseGrounding } from "./application/rag/responseGrounding/CheckResponseGrounding";
 import { RetrieveKnowledge } from "./application/rag/RetrieveKnowledge";
 import { SourceCitationResolver } from "./application/rag/SourceCitationResolver";
 import { SummarizeDocument } from "./application/knowledgeBase/SummarizeDocument";

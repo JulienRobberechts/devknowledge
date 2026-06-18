@@ -1,5 +1,5 @@
-import type { ResponseGroundingResult } from "../../../domain/entities/Message";
-import type { ILLMPort } from "../../../infra-ports/ILLMPort";
+import type { ResponseGroundingResult } from "../../../../domain/entities/Message";
+import type { ILLMPort } from "../../../../infra-ports/ILLMPort";
 import { extractJSON } from "./extractJSON";
 
 export async function checkCounterfactual(

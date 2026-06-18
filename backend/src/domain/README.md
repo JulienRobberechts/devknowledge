@@ -1,9 +1,8 @@
 # domain
 
-Cœur métier, sans dépendance framework/infra.
+Business core, with no framework or infrastructure dependencies.
 
 - `entities/` — `Document`, `Chunk`, `Conversation`, `Message`, `DocumentSummary`
-- `ports/` — interfaces (repositories, `ILLMPort`, `IEmbeddingPort`, `IRerankPort`, `IFileStoragePort`, `IFileParserPort`) implémentées dans `../infrastructure`
-- `services/` — logique de chunking (`ChunkingStrategy`, `RecursiveChunkingStrategy`, `SentenceChunkingStrategy`), voir `ChunkingStrategy.md`
+- `services/` — chunking logic (`ChunkingStrategy`, `RecursiveChunkingStrategy`, `SentenceChunkingStrategy`), see `ChunkingStrategy.md`
 
-Aucune dépendance vers `api`, `application` ou `infrastructure`.
+No dependencies on `api`, `application`, or `infrastructure`.

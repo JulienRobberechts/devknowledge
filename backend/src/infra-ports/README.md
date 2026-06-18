@@ -1,15 +1,15 @@
-# ports
+# infra-ports
 
-Interfaces (architecture hexagonale) définissant les contrats entre le domaine et l'infrastructure. Convention de nommage : préfixe `I`.
+Interfaces (hexagonal architecture) defining contracts between the domain and infrastructure. Naming convention: `I` prefix.
 
-- `IChunkRepository` — persistance et recherche (vectorielle/hybride) des chunks
-- `IConversationRepository` — persistance des conversations et messages
-- `IDocumentRepository` — persistance des documents
-- `IDocumentSummaryRepository` — persistance des résumés de documents
-- `IEmbeddingPort` — génération d'embeddings
-- `IFileParserPort` — extraction de texte depuis un fichier
-- `IFileStoragePort` — stockage de fichiers (upload/download/delete)
-- `ILLMPort` — appel au LLM (streaming)
-- `IRerankPort` — reranking de résultats de recherche
+- `IChunkRepository` — persistence and search (vector/hybrid) of chunks
+- `IConversationRepository` — persistence of conversations and messages
+- `IDocumentRepository` — persistence of documents
+- `IDocumentSummaryRepository` — persistence of document summaries
+- `IEmbeddingPort` — embedding generation
+- `IFileParserPort` — text extraction from a file
+- `IFileStoragePort` — file storage (upload/download/delete)
+- `ILLMPort` — LLM call (streaming)
+- `IRerankPort` — reranking of search results
 
-Chaque port est implémenté par un ou plusieurs adaptateurs dans `../../infrastructure`.
+Each port is implemented by one or more adapters in `../../infrastructure`.

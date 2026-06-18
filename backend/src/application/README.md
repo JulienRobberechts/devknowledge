@@ -1,40 +1,47 @@
 # application
 
-Use cases orchestrant le `domain` via les ports, sans détail d'implémentation infra.
+Use cases orchestrating the `domain` via ports, with no infrastructure implementation details.
 
-Appelé par `../api`, dépend des ports définis dans `../domain/ports` (implémentés par `../infrastructure`).
+Called by `../api`, depends on ports defined in `../infra-ports` (implemented by `../infrastructure`).
 
 ---
 
 ## Documents
 
-| Classe | Description |
+| Class | Description |
 |---|---|
-| `CreateDocument` | Upload le fichier brut en storage et persiste l'entrée document en base (statut `pending`, avant ingestion). |
-| `IngestDocument` | Parse, découpe en chunks et génère les embeddings d'un document pour le rendre interrogeable. |
-| `SummarizeDocument` | Génère un résumé LLM à partir des chunks d'un document et le persiste en base. |
+| `CreateDocument` | Uploads the raw file to storage and persists the document entry in the database (status `pending`, before ingestion). |
+| `IngestDocument` | Parses, splits into chunks, and generates embeddings for a document to make it queryable. |
+| `SummarizeDocument` | Generates an LLM summary from a document's chunks and persists it in the database. |
 
-## Recherche & Question
+## RAG (`rag/`)
 
-| Classe | Description |
+| Class | Description |
 |---|---|
-| `SearchKnowledge` | Recherche les chunks les plus pertinents par vecteur ou en mode hybride, avec reranking optionnel. |
-| `AskQuestion` | Répond à une question utilisateur via RAG — récupère les chunks pertinents, streame la réponse LLM et applique les vérifications de qualité configurées. |
-| `GenerateQuiz` | Génère des questions à choix multiples à partir du contenu de documents via le LLM. |
+| `RetrieveKnowledge` | Searches for the most relevant chunks by vector or in hybrid mode, with optional reranking. |
+| `AskQuestion` | Answers a user question via RAG — retrieves relevant chunks, streams the LLM response, and applies the configured quality checks. |
+| `SourceCitationResolver` | Resolves chunk references into document sources (title, URL) to enrich messages. |
+| `ConversationTitleGenerator` | Generates a short title for a conversation from the first question/answer pair. |
 
-## Vérification de réponses (`responseChecks/`)
+### Response grounding (`rag/responseGrounding/`)
 
-| Classe / Stratégie | Description |
+| Class / Strategy | Description |
 |---|---|
-| `CheckResponseGrounding` | Orchestre les stratégies de vérification et agrège leurs résultats. |
-| `faithfulness` | Évalue si chaque affirmation de la réponse est ancrée dans les chunks récupérés. |
-| `citationForcing` | Force le LLM à citer ses sources inline, puis parse les citations pour scorer l'ancrage. |
-| `counterfactual` | Détecte la valeur ajoutée du RAG en comparant la réponse avec et sans contexte. |
+| `CheckResponseGrounding` | Orchestrates grounding strategies and aggregates their results. |
+| `faithfulness` | Evaluates whether each claim in the response is grounded in the retrieved chunks. |
+| `citationForcing` | Forces the LLM to cite sources inline, then parses the citations to score grounding. |
+| `counterfactual` | Detects the added value of RAG by comparing the response with and without context. |
+
+## Quiz
+
+| Class | Description |
+|---|---|
+| `GenerateQuiz` | Generates multiple-choice questions from document content via the LLM. |
 
 ## Administration
 
-| Classe | Description |
+| Class | Description |
 |---|---|
-| `AppSettingsService` | Lit et met à jour la configuration runtime (provider d'embedding, storage, stratégie de chunking) persistée en base. |
-| `CheckStorageConsistency` | Détecte les fichiers orphelins (storage sans entrée DB) et les fichiers manquants (entrée DB sans fichier). |
-| `ResetAll` | Supprime tous les fichiers du storage et tronque toutes les tables, puis applique les nouveaux paramètres si fournis. |
+| `AppSettingsService` | Reads and updates the runtime configuration (embedding provider, storage, chunking strategy) persisted in the database. |
+| `CheckStorageConsistency` | Detects orphaned files (storage entry without DB record) and missing files (DB record without file). |
+| `ResetAll` | Deletes all files from storage and truncates all tables, then applies new settings if provided. |

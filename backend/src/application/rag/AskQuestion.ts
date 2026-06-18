@@ -11,8 +11,8 @@ import type { ILogger } from "../../infra-ports/ILogger";
 import type { IRetrieveKnowledge } from "../../app-ports/rag/IRetrieveKnowledge";
 import type { IAskQuestion } from "../../app-ports/rag/IAskQuestion";
 import type { ConversationTitleGenerator } from "./ConversationTitleGenerator";
-import type { CheckResponseGrounding } from "../responseChecks/CheckResponseGrounding";
-import { parseCitationForcingResult } from "../responseChecks/strategies/citationForcing";
+import type { CheckResponseGrounding } from "./responseGrounding/CheckResponseGrounding";
+import { parseCitationForcingResult } from "./responseGrounding/strategies/citationForcing";
 import { buildRagPrompt } from "../../domain/services/ragPrompt";
 import type { SourceCitationResolver } from "./SourceCitationResolver";
 

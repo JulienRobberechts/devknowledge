@@ -1,9 +1,9 @@
 # api
 
-Couche d'entrée HTTP. Expose les routes, gère l'auth, la validation et le mapping vers la couche `application`.
+HTTP entry layer. Exposes routes, handles auth, validation, and mapping to the `application` layer.
 
 - `routes/` — endpoints (auth, documents, search, conversations, quizzes, config, admin)
 - `middleware/` — `apiKeyAuth`, `errorHandler`
-- `dto/` — objets de transfert (ex: `document.dto.ts`)
+- `dto/` — transfer objects (e.g. `document.dto.ts`)
 
-Ne contient pas de logique métier : délègue aux use cases de `../application`.
+Contains no business logic: delegates to use cases in `../application`.
