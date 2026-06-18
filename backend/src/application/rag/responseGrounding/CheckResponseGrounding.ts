@@ -2,7 +2,7 @@ import type {
   ResponseGroundingResult,
   ResponseGroundingStrategy,
 } from "../../../domain/entities/Message";
-import type { ChunkSearchResult } from "../../../infra-ports/IChunkRepository";
+import type { ChunkSearchResult } from "../../../domain/entities/ChunkSearchResult";
 import type { ILogger } from "../../../infra-ports/ILogger";
 import type { ILLMPort } from "../../../infra-ports/ILLMPort";
 import { checkCitationForcing } from "./strategies/citationForcing";

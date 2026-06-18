@@ -2,7 +2,7 @@ import type {
   ResponseGroundingResult,
   KnowledgeClaim,
 } from "../../../../domain/entities/Message";
-import type { ChunkSearchResult } from "../../../../infra-ports/IChunkRepository";
+import type { ChunkSearchResult } from "../../../../domain/entities/ChunkSearchResult";
 import type { ILLMPort } from "../../../../infra-ports/ILLMPort";
 import { extractJSON } from "./extractJSON";
 

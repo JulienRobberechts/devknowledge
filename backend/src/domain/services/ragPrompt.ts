@@ -1,4 +1,4 @@
-import type { ChunkSearchResult } from "../../infra-ports/IChunkRepository";
+import type { ChunkSearchResult } from "../entities/ChunkSearchResult";
 import type { Message } from "../entities/Message";
 
 const SLIDING_WINDOW_EXCHANGES = 4;

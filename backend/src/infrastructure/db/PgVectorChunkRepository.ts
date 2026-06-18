@@ -1,5 +1,6 @@
 import type { Chunk } from "../../domain/entities/Chunk";
-import type { ChunkSearchResult, IChunkRepository } from "../../infra-ports/IChunkRepository";
+import type { ChunkSearchResult } from "../../domain/entities/ChunkSearchResult";
+import type { IChunkRepository } from "../../infra-ports/IChunkRepository";
 import pool from "./pool";
 
 export class PgVectorChunkRepository implements IChunkRepository {
@@ -143,7 +144,10 @@ export class PgVectorChunkRepository implements IChunkRepository {
     textRows: Record<string, unknown>[],
     k = 60,
   ): Map<string, { row: Record<string, unknown>; score: number }> {
-    const scores = new Map<string, { row: Record<string, unknown>; score: number }>();
+    const scores = new Map<
+      string,
+      { row: Record<string, unknown>; score: number }
+    >();
     for (const row of vectorRows) {
       const id = row.id as string;
       scores.set(id, { row, score: 1 / (k + Number(row.rank)) });

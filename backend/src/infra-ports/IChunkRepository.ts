@@ -1,9 +1,7 @@
 import type { Chunk } from "../domain/entities/Chunk";
+import type { ChunkSearchResult } from "../domain/entities/ChunkSearchResult";
 
-export interface ChunkSearchResult {
-  chunk: Chunk;
-  score: number;
-}
+export type { ChunkSearchResult };
 
 /** Stores and retrieves text chunks with their embeddings. Supports vector and hybrid search. */
 export interface IChunkRepository {

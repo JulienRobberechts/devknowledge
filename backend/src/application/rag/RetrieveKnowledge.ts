@@ -1,7 +1,5 @@
-import type {
-  ChunkSearchResult,
-  IChunkRepository,
-} from "../../infra-ports/IChunkRepository";
+import type { ChunkSearchResult } from "../../domain/entities/ChunkSearchResult";
+import type { IChunkRepository } from "../../infra-ports/IChunkRepository";
 import type { ILogger } from "../../infra-ports/ILogger";
 import type { IRerankPort } from "../../infra-ports/IRerankPort";
 import type { ITextEncoder } from "../../infra-ports/ITextEncoder";

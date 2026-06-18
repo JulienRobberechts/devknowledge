@@ -1,6 +1,6 @@
 import type { SourceType } from "../../domain/entities/Document";
 import { SourceCitation } from "../../domain/entities/Message";
-import type { ChunkSearchResult } from "../../infra-ports/IChunkRepository";
+import type { ChunkSearchResult } from "../../domain/entities/ChunkSearchResult";
 import type { IDocumentRepository } from "../../infra-ports/IDocumentRepository";
 import type {
   CitationResolution,

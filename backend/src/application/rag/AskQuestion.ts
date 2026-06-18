@@ -4,7 +4,7 @@ import type {
   ResponseGroundingStrategy,
   Message,
 } from "../../domain/entities/Message";
-import type { ChunkSearchResult } from "../../infra-ports/IChunkRepository";
+import type { ChunkSearchResult } from "../../domain/entities/ChunkSearchResult";
 import type { IConversationRepository } from "../../infra-ports/IConversationRepository";
 import { LLMStreamOptions, type ILLMPort } from "../../infra-ports/ILLMPort";
 import type { ILogger } from "../../infra-ports/ILogger";
