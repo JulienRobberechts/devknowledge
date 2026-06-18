@@ -1,7 +1,4 @@
-import type {
-  ChunkSearchResult,
-  IChunkRepository,
-} from "../domain/ports/IChunkRepository";
+import type { ChunkSearchResult, IChunkRepository } from "../domain/ports/IChunkRepository";
 import type { ILogger } from "../domain/ports/ILogger";
 import type { IRerankPort } from "../domain/ports/IRerankPort";
 import type { ITextEncoder } from "../domain/ports/ITextEncoder";
@@ -36,18 +33,20 @@ export class RetrieveKnowledge implements IRetrieveKnowledge {
         ? rerankOptions.enabled && this.reranker !== null
         : this.reranker !== null;
 
+    const effectiveMode = searchMode ?? this.searchMode;
+
     if (useRerank) {
       return this.executeWithRerank(
         query,
         vector,
         limit,
         minScore,
+        effectiveMode,
         rerankOptions?.candidateMultiplier,
         rerankOptions?.model,
       );
     }
 
-    const effectiveMode = searchMode ?? this.searchMode;
     const results =
       effectiveMode === "hybrid"
         ? await this.chunkRepo.searchHybrid(query, vector, limit, minScore)
@@ -68,16 +67,15 @@ export class RetrieveKnowledge implements IRetrieveKnowledge {
     vector: number[],
     limit: number,
     minScore: number,
+    searchMode: "vector" | "hybrid",
     candidateMultiplier?: number,
     model?: string,
   ): Promise<ChunkSearchResult[]> {
-    const candidateLimit =
-      limit * (candidateMultiplier ?? this.candidateMultiplier);
-    const candidates = await this.chunkRepo.searchByVector(
-      vector,
-      candidateLimit,
-      minScore * 0.5,
-    );
+    const candidateLimit = limit * (candidateMultiplier ?? this.candidateMultiplier);
+    const candidates =
+      searchMode === "hybrid"
+        ? await this.chunkRepo.searchHybrid(query, vector, candidateLimit, minScore * 0.5)
+        : await this.chunkRepo.searchByVector(vector, candidateLimit, minScore * 0.5);
 
     if (candidates.length === 0) {
       this.logger.warn("No candidates found for reranking", {
