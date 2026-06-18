@@ -5,6 +5,7 @@ interface LLMStreamOptionsProps {
   systemPrompt?: string;
 }
 
+/** Value Object : options de surcharge ponctuelles pour un appel LLM (model, temperature, maxTokens, systemPrompt). */
 export class LLMStreamOptions {
   declare private readonly _brand: void;
 

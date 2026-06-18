@@ -8,6 +8,7 @@ export interface CitationResolution {
   titleById: Map<string, string>;
 }
 
+/** Enrichit les résultats de recherche bruts avec les métadonnées de document (titre, sourceType) pour construire des SourceCitation. */
 export class SourceCitationResolver {
   constructor(private readonly documentRepo: IDocumentRepository) {}
 
