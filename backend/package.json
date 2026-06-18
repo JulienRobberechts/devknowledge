@@ -1,6 +1,6 @@
 {
   "name": "argos-backend",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.build.json && cp -r src/infrastructure/db/migrations dist/infrastructure/db/",
