@@ -13,9 +13,7 @@ RAG application (Retrieval-Augmented Generation) for internal knowledge manageme
 
 ## Domain Language
 
-- `docs/glossary.md` is the authoritative source for domain terms — keep it up to date with precise definitions.
-- Always use domain language in code and documentation; never invent synonyms for defined terms.
-- When a new term is needed, propose several options to the user before adding it to the glossary.
+- Glossary: `docs/glossary.md`
 
 ## Tests
 

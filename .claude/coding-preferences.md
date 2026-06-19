@@ -52,6 +52,12 @@ Rules:
 - **Delete dead code**: never comment out code — delete it. Git history preserves it.
 - **Consistent abstraction level**: a function body should operate at one level of abstraction (don't mix high-level orchestration with low-level string manipulation).
 
+## Domain Language
+
+- Every project has a glossary file (location defined in project context) — it is the authoritative source for domain terms; keep it up to date with precise definitions.
+- Always use domain language in code and documentation; never invent synonyms for defined terms.
+- When a new term is needed, propose several options to the user before adding it to the glossary.
+
 ## Commit Policy
 
 - **Commit often**: one logical change per commit — never bundle unrelated changes.
