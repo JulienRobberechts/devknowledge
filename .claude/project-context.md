@@ -17,14 +17,14 @@ RAG application (Retrieval-Augmented Generation) for internal knowledge manageme
 
 ## Architecture Decisions
 
-- ADRs: `docs/decisions/` — technical choices with context and trade-offs
+- ADRs: `docs/decisions/`
 
 ## Tests
 
-Runner: Vitest. File locations:
+Runner: Vitest.
 - Unit: `src/**/*.test.ts` — fakes in `tests/fakes/`
-- Integration: `tests/integration/**` — against PostgreSQL; excluded from CI
-- E2E: `tests/retrieval/**` — RAG quality checks; excluded from CI
+- Integration: `tests/integration/` — against PostgreSQL; excluded from CI
+- E2E: `tests/retrieval/` — RAG quality checks; excluded from CI
 
 ## Common Commands
 

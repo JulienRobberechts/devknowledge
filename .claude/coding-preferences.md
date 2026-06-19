@@ -1,101 +1,57 @@
 # Coding Preferences
 
-## Prefered Stack
-
-This is a default stack in case of new projet, but feel free to suggest alterntives tools:
-
-- **Backend**: Node.js / TypeScript, Express, Vitest, Biome. Uses Hexagonal Architecture.
-- **Frontend**: React/ TypeScript, Vite, Biome
-- **DB**: PostgreSQL
-- **Storage**: Cloudflare R2 (compatible AWS S3)
-- **AI**: Anthropic SDK (`@anthropic-ai/sdk`)
-- **Infra**: Docker Compose in dev, Docker in prod on Railway
-- **Deployment Plaform**: Railway
-
 ## Hexagonal Architecture
 
-By default, except different instructions in the project, a backend server should follow **hexagonal architecture** (ports & adapters).
-
-The prefered file hierarchy should be:
-
-Input adapters
+Backend follows **hexagonal architecture** (ports & adapters):
 
 ```
-api/             → for any REST server as input adapter — depends only on app-ports
-cli/             → for any cli — depends only on app-ports
-```
-
-Core
-``` 
-app-ports/       → application port interfaces (use-case contracts)
-app/     → use-case implementations — depends only on ports, never on infrastructure
-domain/          → entities, value objects — no dependencies on other layers
-infra-ports/     → infrastructure port interfaces (DB, storage, LLM, etc.)
-```
-
-Infrastructure
-```
-infrastructure/  → adapter implementations of infra-ports
+api/             → REST input adapter
+cli/             → CLI input adapter
+app-ports/       → application port interfaces
+app/             → use-case implementations
+domain/          → entities, value objects
+infra-ports/     → infrastructure port interfaces
+infrastructure/  → adapter implementations
 ```
 
 Rules:
-- `domain` must not import from any other layer.
-- `application` must not import from `infrastructure` or `api`.
-- New use cases must define or reuse ports; never call infrastructure directly from `application`.
-- New infrastructure adapters must implement an existing `infra-ports` interface.
+- `domain` has no imports from other layers.
+- `app` must not import from `infrastructure` or `api`.
+- Use cases must go through ports — never call infrastructure directly.
+- Infrastructure adapters must implement an `infra-ports` interface.
 
-## Code Conventions
+## Code Style
 
-- All application interface classes and methods should have comments.
-- No unnecessary comments in method bodies. Only add a comment when the **why** is non-obvious.
-- No docstrings or multi-line comment blocks if possible.
-- Prefer explicit types over `any`.
-- No unused imports, variables, or dead code.
-
-## Clean Code
-
-- **Single responsibility**: each function/class does one thing. If you need "and" to describe it, split it.
-- **Small functions**: prefer functions under 20 lines. Extract when logic becomes nested or hard to name.
-- **Meaningful names**: names must reveal intent. Avoid abbreviations, `data`, `info`, `manager`, `handler` without context.
-- **No magic values**: extract constants with descriptive names.
-- **Avoid deep nesting**: use early returns and guard clauses instead of nested `if/else`.
-- **Pure functions preferred**: minimize side effects; isolate I/O and mutations at the edges.
-- **DRY but not over-abstracted**: extract duplication only when the abstraction has a clear name and single purpose. Three similar lines beat a premature abstraction.
-- **Delete dead code**: never comment out code — delete it. Git history preserves it.
-- **Consistent abstraction level**: a function body should operate at one level of abstraction (don't mix high-level orchestration with low-level string manipulation).
+- Interface methods must have comments. No body comments unless the **why** is non-obvious.
+- Explicit types over `any`; no unused imports, variables, or dead code.
+- One responsibility per function/class — split if "and" is needed to describe it.
+- Functions under 20 lines; extract nested or hard-to-name logic.
+- Names reveal intent — avoid `data`, `info`, `manager`, `handler` without context.
+- Named constants over magic values; early returns over nested `if/else`.
+- Isolate side effects and I/O at the edges; one abstraction level per function body.
+- Extract duplication only when the abstraction has a clear name and purpose.
+- Delete dead code — never comment it out.
+- **Consistent abstraction level**: a function body should operate at one level of abstraction.
 
 ## Tests
 
-Three test categories:
-
-- **Unit**: application and domain logic. Use in-memory fakes for repositories; use `vi.fn()` for external adapters. Never use real infrastructure.
-- **Integration**: infrastructure adapters against a real database. Excluded from CI.
-- **E2E**: end-to-end quality checks. Excluded from CI.
-
-Rules:
-- Place unit tests next to their source file.
-- Use factory functions (`makeXxx()`) for test data — never inline raw objects.
-- Application-layer tests must not import from `infrastructure/`.
-- Do not mock the database — use fakes or hit a real DB (integration tests).
+- **Unit**: app/domain logic; in-memory fakes for repos, `vi.fn()` for adapters. Next to source file.
+- **Integration**: real database. Excluded from CI.
+- **E2E**: quality checks. Excluded from CI.
+Factory functions (`makeXxx()`) for test data; app tests must not import from `infrastructure/`.
 
 ## Architecture Decisions
 
-- Every project has an ADR folder (`docs/decisions/`) — it is the authoritative record of technical choices.
-- When a significant technical decision is made (provider, architecture pattern, algorithm, trade-off), create or update an ADR.
-- ADR format: `ADR-NNN-short-title.md` with sections: Context, Options Considered, Decision, Consequences.
+Create or update an ADR for every significant technical decision.
+Format: `ADR-NNN-short-title.md` — sections: Context, Options Considered, Decision, Consequences.
 
 ## Domain Language
 
-- Every project has a glossary file (location defined in project context) — it is the authoritative source for domain terms; keep it up to date with precise definitions.
-- Always use domain language in code and documentation; never invent synonyms for defined terms.
-- When a new term is needed, propose several options to the user before adding it to the glossary.
+The glossary is the authoritative source — keep it up to date. Never invent synonyms; propose options before adding new terms.
 
 ## Commit Policy
 
-- **Commit often**: one logical change per commit — never bundle unrelated changes.
-- **Run checks before committing**: always run typecheck, lint, and tests in the affected package before committing.
-- **Fix errors before committing**: never commit with typecheck, lint, or test failures. Fix them first.
-- **Commit format**: `<type>: <short imperative description>` (e.g. `feat: add document ingestion use case`).
-  - Types: `feat`, `fix`, `refac`, `test`, `docs`, `chore`.
-- **Never commit**: `.env` files, secrets, credentials, or generated build artifacts.
-- **Prefer atomic commits over WIP**: if a task is too large, split it into independently-working commits rather than committing broken intermediate states.
+- One logical change per commit; split large tasks into independently-working commits.
+- Run typecheck, lint, and tests before committing — fix failures first.
+- Format: `<type>: <short imperative description>` — types: `feat`, `fix`, `refac`, `test`, `docs`, `chore`.
+- Never commit `.env`, secrets, credentials, or build artifacts.
