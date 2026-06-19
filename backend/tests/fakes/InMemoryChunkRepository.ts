@@ -69,9 +69,7 @@ export class InMemoryChunkRepository implements IChunkRepository {
     const textResults = Array.from(this.chunks.values())
       .map((chunk) => ({
         chunk,
-        matches: queryTerms.filter((t) =>
-          chunk.content.toLowerCase().includes(t),
-        ).length,
+        matches: queryTerms.filter((t) => chunk.content.toLowerCase().includes(t)).length,
       }))
       .filter((r) => r.matches > 0)
       .sort((a, b) => b.matches - a.matches)

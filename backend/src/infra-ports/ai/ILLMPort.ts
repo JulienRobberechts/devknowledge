@@ -7,7 +7,7 @@ interface LLMStreamOptionsProps {
 
 /** Value Object : options de surcharge ponctuelles pour un appel LLM (model, temperature, maxTokens, systemPrompt). */
 export class LLMStreamOptions {
-  declare private readonly _brand: void;
+  private declare readonly _brand: void;
 
   readonly model?: string;
   readonly temperature?: number;
@@ -22,10 +22,7 @@ export class LLMStreamOptions {
   }
 
   static create(props: LLMStreamOptionsProps): LLMStreamOptions {
-    if (
-      props.temperature !== undefined &&
-      (props.temperature < 0 || props.temperature > 1)
-    )
+    if (props.temperature !== undefined && (props.temperature < 0 || props.temperature > 1))
       throw new Error("LLMStreamOptions: temperature must be in [0, 1]");
     if (props.maxTokens !== undefined && props.maxTokens <= 0)
       throw new Error("LLMStreamOptions: maxTokens must be > 0");

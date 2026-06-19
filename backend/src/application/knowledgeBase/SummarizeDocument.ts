@@ -1,9 +1,9 @@
+import type { ISummarizeDocument } from "../../app-ports/knowledgeBase/ISummarizeDocument";
+import type { ILLMPort } from "../../infra-ports/ai/ILLMPort";
+import type { ILogger } from "../../infra-ports/ILogger";
 import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
 import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
 import type { IDocumentSummaryRepository } from "../../infra-ports/persistence/IDocumentSummaryRepository";
-import type { ILogger } from "../../infra-ports/ILogger";
-import type { ILLMPort } from "../../infra-ports/ai/ILLMPort";
-import type { ISummarizeDocument } from "../../app-ports/knowledgeBase/ISummarizeDocument";
 
 const MAX_CONTENT_CHARS = 12000;
 
@@ -34,9 +34,7 @@ export class SummarizeDocument implements ISummarizeDocument {
     this.logger.info(
       `Summarizing document ${documentId} with content length ${content.length} chars, max summary length ${maxChars} chars`,
     );
-    this.logger.debug(
-      `Summarizing document ${documentId} with content : ${content}`,
-    );
+    this.logger.debug(`Summarizing document ${documentId} with content : ${content}`);
 
     const prompt = [
       `Write a concise summary of the document titled "${doc.title}".`,

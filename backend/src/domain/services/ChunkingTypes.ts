@@ -5,7 +5,7 @@ export type ChunkingStrategyName = "recursive" | "sentence";
 /** Value Object: text splitting configuration — invariant: chunkOverlap < chunkSize. */
 export class ChunkConfig {
   /** Nominal branding: prevents accidental assignment between Value Objects of the same shape. */
-  declare private readonly _brand: void;
+  private declare readonly _brand: void;
 
   readonly chunkSize: number;
   readonly chunkOverlap: number;
@@ -17,18 +17,13 @@ export class ChunkConfig {
 
   static create(chunkSize: number, chunkOverlap: number): ChunkConfig {
     if (chunkSize <= 0) throw new Error("ChunkConfig: chunkSize must be > 0");
-    if (chunkOverlap < 0)
-      throw new Error("ChunkConfig: chunkOverlap must be >= 0");
-    if (chunkOverlap >= chunkSize)
-      throw new Error("ChunkConfig: chunkOverlap must be < chunkSize");
+    if (chunkOverlap < 0) throw new Error("ChunkConfig: chunkOverlap must be >= 0");
+    if (chunkOverlap >= chunkSize) throw new Error("ChunkConfig: chunkOverlap must be < chunkSize");
     return new ChunkConfig(chunkSize, chunkOverlap);
   }
 
   equals(other: ChunkConfig): boolean {
-    return (
-      this.chunkSize === other.chunkSize &&
-      this.chunkOverlap === other.chunkOverlap
-    );
+    return this.chunkSize === other.chunkSize && this.chunkOverlap === other.chunkOverlap;
   }
 }
 

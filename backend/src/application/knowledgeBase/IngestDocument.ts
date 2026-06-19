@@ -2,19 +2,19 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
-import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
-import type { IFileParserPort } from "../../infra-ports/storage/IFileParserPort";
-import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
-import type { ILogger } from "../../infra-ports/ILogger";
-import type { ITextEncoder } from "../../infra-ports/ai/ITextEncoder";
+import type { ChunkingConfig } from "../../app-ports/admin/IAppSettingsService";
+import type { IIngestDocument } from "../../app-ports/knowledgeBase/IIngestDocument";
 import {
   ChunkConfig,
   type ChunkingStrategyName,
   createChunkingStrategy,
 } from "../../domain/services/ChunkingStrategy";
-import type { ChunkingConfig } from "../../app-ports/admin/IAppSettingsService";
-import type { IIngestDocument } from "../../app-ports/knowledgeBase/IIngestDocument";
+import type { ITextEncoder } from "../../infra-ports/ai/ITextEncoder";
+import type { ILogger } from "../../infra-ports/ILogger";
+import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
+import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
+import type { IFileParserPort } from "../../infra-ports/storage/IFileParserPort";
+import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
 
 const BATCH_SIZE = 20;
 
@@ -34,11 +34,8 @@ export class IngestDocument implements IIngestDocument {
     const document = await this.documentRepo.findById(documentId);
     if (!document) throw new Error(`Document ${documentId} not found`);
 
-    const { strategy, chunkSize, chunkOverlap } =
-      await this.getChunkingConfig();
-    const chunkingStrategy = createChunkingStrategy(
-      strategy as ChunkingStrategyName,
-    );
+    const { strategy, chunkSize, chunkOverlap } = await this.getChunkingConfig();
+    const chunkingStrategy = createChunkingStrategy(strategy as ChunkingStrategyName);
 
     this.logger.info("Starting ingestion", {
       documentId,
@@ -65,9 +62,7 @@ export class IngestDocument implements IIngestDocument {
         chunks: chunkResults.length,
       });
 
-      const embeddings = await this.generateEmbeddingsBatched(
-        chunkResults.map((r) => r.content),
-      );
+      const embeddings = await this.generateEmbeddingsBatched(chunkResults.map((r) => r.content));
 
       const chunks = chunkResults.map((result, index) => ({
         id: randomUUID(),
@@ -84,18 +79,12 @@ export class IngestDocument implements IIngestDocument {
         chunks: chunks.length,
       });
     } catch (err) {
-      this.logger.error(
-        "Ingestion failed",
-        err instanceof Error ? err : new Error(String(err)),
-      );
+      this.logger.error("Ingestion failed", err instanceof Error ? err : new Error(String(err)));
       await this.documentRepo.updateStatus(documentId, "error");
     }
   }
 
-  private async downloadAndParseFile(
-    documentId: string,
-    key: string,
-  ): Promise<string> {
+  private async downloadAndParseFile(documentId: string, key: string): Promise<string> {
     const buffer = await this.fileStorage.download(key);
     const ext = path.extname(key);
     const tempPath = path.join(os.tmpdir(), `ingest-${documentId}${ext}`);
@@ -112,16 +101,11 @@ export class IngestDocument implements IIngestDocument {
     return rawText.replaceAll("\x00", "");
   }
 
-  private async generateEmbeddingsBatched(
-    contents: string[],
-  ): Promise<number[][]> {
+  private async generateEmbeddingsBatched(contents: string[]): Promise<number[][]> {
     const embeddings: number[][] = [];
     for (let i = 0; i < contents.length; i += BATCH_SIZE) {
       const batch = contents.slice(i, i + BATCH_SIZE);
-      const batchEmbeddings = await this.embeddingAdapter.embedMany(
-        batch,
-        "document",
-      );
+      const batchEmbeddings = await this.embeddingAdapter.embedMany(batch, "document");
       embeddings.push(...batchEmbeddings);
     }
     return embeddings;

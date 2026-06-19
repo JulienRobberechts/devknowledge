@@ -1,19 +1,17 @@
+import type { AppSettingsPatch } from "../../app-ports/admin/IAppSettingsService";
+import type { IResetAll } from "../../app-ports/admin/IResetAll";
+import type { ILogger } from "../../infra-ports/ILogger";
 import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
 import type { IConversationRepository } from "../../infra-ports/persistence/IConversationRepository";
 import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
 import type { IDocumentSummaryRepository } from "../../infra-ports/persistence/IDocumentSummaryRepository";
 import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
-import type { ILogger } from "../../infra-ports/ILogger";
-import type { AppSettingsPatch } from "../../app-ports/admin/IAppSettingsService";
-import type { IResetAll } from "../../app-ports/admin/IResetAll";
 
 /** Use case: deletes all storage files and truncates all tables, then applies new settings if provided. */
 export class ResetAll implements IResetAll {
   constructor(
     private readonly fileStorage: IFileStoragePort,
-    private readonly updateSettings: (
-      patch: AppSettingsPatch,
-    ) => Promise<unknown>,
+    private readonly updateSettings: (patch: AppSettingsPatch) => Promise<unknown>,
     private readonly chunkRepo: IChunkRepository,
     private readonly summaryRepo: IDocumentSummaryRepository,
     private readonly conversationRepo: IConversationRepository,

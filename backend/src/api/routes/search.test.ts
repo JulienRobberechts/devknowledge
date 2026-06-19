@@ -40,10 +40,7 @@ describe("searchRouter", () => {
       .send({ query: "test query" });
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
-    expect(mockRetrieveKnowledge.execute).toHaveBeenCalledWith(
-      "test query",
-      10,
-    );
+    expect(mockRetrieveKnowledge.execute).toHaveBeenCalledWith("test query", 10);
   });
 
   it("POST /search returns 400 for missing query", async () => {

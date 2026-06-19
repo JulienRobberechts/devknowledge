@@ -5,8 +5,5 @@ export interface QuizQuestion {
 }
 
 export interface IGenerateQuiz {
-  execute(
-    documentIds: string[],
-    questionCount: number,
-  ): Promise<QuizQuestion[]>;
+  execute(documentIds: string[], questionCount: number): Promise<QuizQuestion[]>;
 }

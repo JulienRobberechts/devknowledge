@@ -1,9 +1,5 @@
 import { ChunkMetadata } from "../entities/Chunk";
-import type {
-  ChunkConfig,
-  ChunkResult,
-  IChunkingStrategy,
-} from "./ChunkingTypes";
+import type { ChunkConfig, ChunkResult, IChunkingStrategy } from "./ChunkingTypes";
 
 interface Sentence {
   text: string;

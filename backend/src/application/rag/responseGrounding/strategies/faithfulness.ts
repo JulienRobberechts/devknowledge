@@ -1,13 +1,7 @@
-import type {
-  ResponseGroundingResult,
-  KnowledgeClaim,
-} from "../../../../domain/entities/Message";
 import type { ChunkSearchResult } from "../../../../domain/entities/ChunkSearchResult";
+import type { KnowledgeClaim, ResponseGroundingResult } from "../../../../domain/entities/Message";
+import { type ILLMPort, LLMStreamOptions } from "../../../../infra-ports/ai/ILLMPort";
 import type { ILogger } from "../../../../infra-ports/ILogger";
-import {
-  LLMStreamOptions,
-  type ILLMPort,
-} from "../../../../infra-ports/ai/ILLMPort";
 import { extractJSON } from "./extractJSON";
 
 function buildFaithfulnessPrompt(
@@ -40,9 +34,7 @@ function resolveKnowledgeClaim(
   let documentTitle: string | undefined;
   if (excerpt) {
     const needle = excerpt.slice(0, 60).toLowerCase();
-    const matched = chunks.find((ch) =>
-      ch.chunk.content.toLowerCase().includes(needle),
-    );
+    const matched = chunks.find((ch) => ch.chunk.content.toLowerCase().includes(needle));
     if (matched) {
       documentId = matched.chunk.documentId;
       documentTitle = titleById.get(documentId) ?? documentId;
@@ -88,12 +80,9 @@ export async function checkFaithfulness(
   });
 
   if (!raw.trimEnd().endsWith("}")) {
-    logger.warn(
-      "Faithfulness response appears truncated (does not end with '}')",
-      {
-        last50chars: JSON.stringify(raw.slice(-50)),
-      },
-    );
+    logger.warn("Faithfulness response appears truncated (does not end with '}')", {
+      last50chars: JSON.stringify(raw.slice(-50)),
+    });
   }
 
   const parsed = extractJSON(raw) as {
@@ -115,9 +104,6 @@ export async function checkFaithfulness(
     strategy: "faithfulness",
     score,
     claims,
-    warning:
-      score < 1
-        ? "Some claims are not grounded in the retrieved documents"
-        : undefined,
+    warning: score < 1 ? "Some claims are not grounded in the retrieved documents" : undefined,
   };
 }

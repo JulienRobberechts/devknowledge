@@ -10,11 +10,7 @@ export interface IChunkRepository {
   /** Persists multiple chunks in one operation. */
   saveMany(chunks: Chunk[]): Promise<void>;
   /** Searches chunks by vector similarity, filtered by minimum score. */
-  searchByVector(
-    vector: number[],
-    limit: number,
-    minScore: number,
-  ): Promise<ChunkSearchResult[]>;
+  searchByVector(vector: number[], limit: number, minScore: number): Promise<ChunkSearchResult[]>;
   /** Hybrid search combining full-text query and vector similarity. */
   searchHybrid(
     query: string,

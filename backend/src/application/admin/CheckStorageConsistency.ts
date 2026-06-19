@@ -1,10 +1,10 @@
 import path from "node:path";
-import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
-import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
 import type {
   ICheckStorageConsistency,
   StorageConsistencyResult,
 } from "../../app-ports/admin/ICheckStorageConsistency";
+import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
+import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
 
 export type { StorageConsistencyResult };
 
@@ -28,9 +28,7 @@ export class CheckStorageConsistency implements ICheckStorageConsistency {
       this.fileStorage.list(),
     ]);
 
-    const dbKeys = new Set(
-      docs.flatMap((d) => (d.filePath ? [toKey(d.filePath)] : [])),
-    );
+    const dbKeys = new Set(docs.flatMap((d) => (d.filePath ? [toKey(d.filePath)] : [])));
     const storageSet = new Set(storageKeys.map(toKey));
 
     return {

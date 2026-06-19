@@ -55,9 +55,7 @@ const envSchema = z
 
 const result = envSchema.safeParse(process.env);
 if (!result.success) {
-  const missing = result.error.issues
-    .map((e) => e.message || e.path.join("."))
-    .join("\n  ");
+  const missing = result.error.issues.map((e) => e.message || e.path.join(".")).join("\n  ");
   console.error(`Invalid configuration:\n  ${missing}`);
   process.exit(1);
 }
@@ -110,11 +108,7 @@ const config = {
     retrievalLimit: env.RETRIEVAL_LIMIT,
     retrievalMinScore: env.RETRIEVAL_MIN_SCORE,
     searchMode: env.SEARCH_MODE,
-    responseGroundingStrategies: [] as (
-      | "faithfulness"
-      | "counterfactual"
-      | "citation_forcing"
-    )[],
+    responseGroundingStrategies: [] as ("faithfulness" | "counterfactual" | "citation_forcing")[],
   },
   rerank: {
     enabled: env.RERANK_ENABLED !== "false",

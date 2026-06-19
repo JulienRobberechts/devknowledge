@@ -1,4 +1,4 @@
-import type { ResponseGroundingStrategy, Message } from "./Message";
+import type { Message, ResponseGroundingStrategy } from "./Message";
 
 export interface ConversationParamsProps {
   retrievalLimit: number;
@@ -16,7 +16,7 @@ export interface ConversationParamsProps {
 /** Value Object: immutable RAG parameters for a conversation (retrieval, reranking, LLM, grounding). */
 export class ConversationParams {
   /** Nominal branding: prevents accidental assignment between Value Objects of the same shape. */
-  declare private readonly _brand: void;
+  private declare readonly _brand: void;
 
   readonly retrievalLimit: number;
   readonly retrievalMinScore: number;
@@ -46,17 +46,12 @@ export class ConversationParams {
     if (props.llmTemperature < 0 || props.llmTemperature > 1)
       throw new Error("ConversationParams: llmTemperature must be in [0, 1]");
     if (props.retrievalMinScore < 0 || props.retrievalMinScore > 1)
-      throw new Error(
-        "ConversationParams: retrievalMinScore must be in [0, 1]",
-      );
+      throw new Error("ConversationParams: retrievalMinScore must be in [0, 1]");
     if (props.rerankCandidateMultiplier < 1)
-      throw new Error(
-        "ConversationParams: rerankCandidateMultiplier must be >= 1",
-      );
+      throw new Error("ConversationParams: rerankCandidateMultiplier must be >= 1");
     if (props.retrievalLimit <= 0)
       throw new Error("ConversationParams: retrievalLimit must be > 0");
-    if (props.llmMaxTokens <= 0)
-      throw new Error("ConversationParams: llmMaxTokens must be > 0");
+    if (props.llmMaxTokens <= 0) throw new Error("ConversationParams: llmMaxTokens must be > 0");
     return new ConversationParams(props);
   }
 
@@ -86,11 +81,8 @@ export class ConversationParams {
       this.llmTemperature === other.llmTemperature &&
       this.llmMaxTokens === other.llmMaxTokens &&
       this.searchMode === other.searchMode &&
-      this.responseGroundingStrategies.length ===
-        other.responseGroundingStrategies.length &&
-      this.responseGroundingStrategies.every(
-        (s, i) => s === other.responseGroundingStrategies[i],
-      )
+      this.responseGroundingStrategies.length === other.responseGroundingStrategies.length &&
+      this.responseGroundingStrategies.every((s, i) => s === other.responseGroundingStrategies[i])
     );
   }
 }

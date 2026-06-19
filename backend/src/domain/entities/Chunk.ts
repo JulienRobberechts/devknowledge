@@ -1,7 +1,7 @@
 /** Value Object: ordinal position and character range of a chunk within the source document. */
 export class ChunkMetadata {
   /** Nominal branding: prevents accidental assignment between Value Objects of the same shape. */
-  declare private readonly _brand: void;
+  private declare readonly _brand: void;
 
   readonly position: number;
   readonly startChar: number;
@@ -13,15 +13,10 @@ export class ChunkMetadata {
     this.endChar = endChar;
   }
 
-  static create(
-    position: number,
-    startChar: number,
-    endChar: number,
-  ): ChunkMetadata {
+  static create(position: number, startChar: number, endChar: number): ChunkMetadata {
     if (position < 0) throw new Error("ChunkMetadata: position must be >= 0");
     if (startChar < 0) throw new Error("ChunkMetadata: startChar must be >= 0");
-    if (endChar < startChar)
-      throw new Error("ChunkMetadata: endChar must be >= startChar");
+    if (endChar < startChar) throw new Error("ChunkMetadata: endChar must be >= startChar");
     return new ChunkMetadata(position, startChar, endChar);
   }
 

@@ -1,8 +1,5 @@
-import type {
-  ResponseGroundingResult,
-  KnowledgeClaim,
-} from "../../../../domain/entities/Message";
 import type { ChunkSearchResult } from "../../../../domain/entities/ChunkSearchResult";
+import type { KnowledgeClaim, ResponseGroundingResult } from "../../../../domain/entities/Message";
 import type { ILLMPort } from "../../../../infra-ports/ai/ILLMPort";
 import { extractJSON } from "./extractJSON";
 
@@ -32,7 +29,7 @@ export function parseCitationForcingResult(
       .replace(/[.!?]+$/, "")
       .trim();
 
-  const sourceRegex = /([^\[\]\n]+?)\s*\[SOURCE\s+(\d+)\]/g;
+  const sourceRegex = /([^[\]\n]+?)\s*\[SOURCE\s+(\d+)\]/g;
   for (const match of raw.matchAll(sourceRegex)) {
     const claim = cleanClaim(match[1]);
     const sourceIndex = parseInt(match[2], 10) - 1;
@@ -52,7 +49,7 @@ export function parseCitationForcingResult(
     }
   }
 
-  const ownKnowledgeRegex = /([^\[\]\n]+?)\s*\[OWN KNOWLEDGE\]/g;
+  const ownKnowledgeRegex = /([^[\]\n]+?)\s*\[OWN KNOWLEDGE\]/g;
   for (const match of raw.matchAll(ownKnowledgeRegex)) {
     const claim = cleanClaim(match[1]);
     if (claim.length > 0) {
@@ -60,9 +57,7 @@ export function parseCitationForcingResult(
     }
   }
 
-  const cleanContent = raw
-    .replace(/\s*\[SOURCE\s+\d+\]/g, "")
-    .replace(/\s*\[OWN KNOWLEDGE\]/g, "");
+  const cleanContent = raw.replace(/\s*\[SOURCE\s+\d+\]/g, "").replace(/\s*\[OWN KNOWLEDGE\]/g, "");
 
   const supported = claims.filter((c) => c.status === "SUPPORTED").length;
   const total = claims.length;
@@ -88,9 +83,7 @@ export async function checkCitationForcing(
   chunks: ChunkSearchResult[],
   titleById: Map<string, string> = new Map(),
 ): Promise<ResponseGroundingResult> {
-  const sourcesText = chunks
-    .map((c, i) => `SOURCE ${i + 1}:\n${c.chunk.content}`)
-    .join("\n\n");
+  const sourcesText = chunks.map((c, i) => `SOURCE ${i + 1}:\n${c.chunk.content}`).join("\n\n");
 
   const prompt = [
     `Question: ${query}`,
@@ -120,9 +113,7 @@ export async function checkCitationForcing(
       return { claim: c.claim, status: "UNSUPPORTED" as const };
     }
     const excerpt = c.sourceExcerpt;
-    const matchedChunk = chunks.find((ch) =>
-      ch.chunk.content.includes(excerpt.slice(0, 40)),
-    );
+    const matchedChunk = chunks.find((ch) => ch.chunk.content.includes(excerpt.slice(0, 40)));
     if (!matchedChunk) {
       return { claim: c.claim, status: "UNSUPPORTED" as const };
     }
@@ -143,9 +134,6 @@ export async function checkCitationForcing(
     strategy: "citation_forcing",
     score,
     claims,
-    warning:
-      score < 1
-        ? "Some claims could not be traced to the retrieved documents"
-        : undefined,
+    warning: score < 1 ? "Some claims could not be traced to the retrieved documents" : undefined,
   };
 }

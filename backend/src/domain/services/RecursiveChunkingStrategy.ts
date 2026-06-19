@@ -1,9 +1,5 @@
 import { ChunkMetadata } from "../entities/Chunk";
-import type {
-  ChunkConfig,
-  ChunkResult,
-  IChunkingStrategy,
-} from "./ChunkingTypes";
+import type { ChunkConfig, ChunkResult, IChunkingStrategy } from "./ChunkingTypes";
 
 interface Token {
   start: number;
@@ -19,11 +15,7 @@ function tokenize(text: string): Token[] {
   return tokens;
 }
 
-function findBestSplit(
-  text: string,
-  searchFrom: number,
-  maxEnd: number,
-): number {
+function findBestSplit(text: string, searchFrom: number, maxEnd: number): number {
   for (let i = maxEnd - 2; i >= searchFrom; i--) {
     if (text[i] === "\n" && text[i + 1] === "\n") return i + 2;
   }
@@ -69,9 +61,7 @@ export class RecursiveChunkingStrategy implements IChunkingStrategy {
       if (tokenEnd >= tokens.length) {
         charEnd = text.length;
       } else {
-        const searchFrom = Math.floor(
-          charStart + (maxCharEnd - charStart) * 0.5,
-        );
+        const searchFrom = Math.floor(charStart + (maxCharEnd - charStart) * 0.5);
         charEnd = findBestSplit(text, searchFrom, maxCharEnd);
       }
 

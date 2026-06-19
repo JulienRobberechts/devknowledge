@@ -1,9 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { beforeEach, describe, expect, it } from "vitest";
-import {
-  ConversationParams,
-  type Conversation,
-} from "../../src/domain/entities/Conversation";
+import { type Conversation, ConversationParams } from "../../src/domain/entities/Conversation";
 import type { Message } from "../../src/domain/entities/Message";
 import { PgConversationRepository } from "../../src/infrastructure/persistence/db/PgConversationRepository";
 import pool from "../../src/infrastructure/persistence/db/pool";
@@ -34,10 +31,7 @@ function makeConversation(overrides?: Partial<Conversation>): Conversation {
   };
 }
 
-function makeMessage(
-  conversationId: string,
-  overrides?: Partial<Message>,
-): Message {
+function makeMessage(conversationId: string, overrides?: Partial<Message>): Message {
   return {
     id: randomUUID(),
     conversationId,
@@ -123,10 +117,7 @@ describe("PgConversationRepository", () => {
     await repo.addMessage(conv.id, makeMessage(conv.id));
     await repo.delete(conv.id);
     expect(await repo.findById(conv.id)).toBeNull();
-    const msgs = await pool.query(
-      "SELECT id FROM messages WHERE conversation_id = $1",
-      [conv.id],
-    );
+    const msgs = await pool.query("SELECT id FROM messages WHERE conversation_id = $1", [conv.id]);
     expect(msgs.rows).toHaveLength(0);
   });
 });

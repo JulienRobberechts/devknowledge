@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InMemoryChunkRepository } from "../../../tests/fakes/InMemoryChunkRepository";
-import { ChunkMetadata, type Chunk } from "../../domain/entities/Chunk";
 import { nullLogger } from "../../../tests/fakes/NullLogger";
+import { type Chunk, ChunkMetadata } from "../../domain/entities/Chunk";
 import { RetrieveKnowledge } from "./RetrieveKnowledge";
 
 function makeChunk(embedding: number[], overrides?: Partial<Chunk>): Chunk {
@@ -45,9 +45,7 @@ describe("RetrieveKnowledge", () => {
     const queryVec = unitVec(1024, 0);
     const chunk1 = makeChunk(unitVec(1024, 0), { content: "best match" });
     const chunk2 = makeChunk(
-      Array.from({ length: 1024 }, (_, i) =>
-        i === 0 ? 0.6 : i === 1 ? 0.8 : 0,
-      ),
+      Array.from({ length: 1024 }, (_, i) => (i === 0 ? 0.6 : i === 1 ? 0.8 : 0)),
       { content: "partial match" },
     );
     const chunk3 = makeChunk(unitVec(1024, 1), { content: "poor match" });
@@ -223,8 +221,7 @@ describe("RetrieveKnowledge", () => {
 
     it("fetches candidateLimit = limit × multiplier candidates before reranking", async () => {
       const queryVec = unitVec(1024, 0);
-      for (let i = 0; i < 9; i++)
-        await chunkRepo.save(makeChunk(unitVec(1024, 0)));
+      for (let i = 0; i < 9; i++) await chunkRepo.save(makeChunk(unitVec(1024, 0)));
 
       const searchByVector = vi.spyOn(chunkRepo, "searchByVector");
       const reranker = makeReranker([0, 1, 2]);
@@ -237,11 +234,7 @@ describe("RetrieveKnowledge", () => {
         "vector",
       );
       await search.execute("query", 3, 0); // limit=3, multiplier=3 → candidateLimit=9
-      expect(searchByVector).toHaveBeenCalledWith(
-        queryVec,
-        9,
-        expect.any(Number),
-      );
+      expect(searchByVector).toHaveBeenCalledWith(queryVec, 9, expect.any(Number));
     });
 
     it("logs a warning and returns raw candidates if the reranker throws an error", async () => {

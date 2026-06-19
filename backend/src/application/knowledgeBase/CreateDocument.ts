@@ -1,19 +1,16 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import type { Document } from "../../domain/entities/Document";
-import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
-import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
 import type {
   CreateDocumentInput,
   ICreateDocument,
 } from "../../app-ports/knowledgeBase/ICreateDocument";
+import type { Document } from "../../domain/entities/Document";
+import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
+import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
 
 export type { CreateDocumentInput };
 
-function sourceTypeFromMime(
-  mimetype: string,
-  originalname: string,
-): "pdf" | "markdown" | "text" {
+function sourceTypeFromMime(mimetype: string, originalname: string): "pdf" | "markdown" | "text" {
   if (mimetype === "application/pdf") return "pdf";
   const ext = path.extname(originalname).toLowerCase();
   if (ext === ".md" || ext === ".markdown") return "markdown";

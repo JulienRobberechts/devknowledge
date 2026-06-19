@@ -1,8 +1,8 @@
 import { z } from "zod";
-import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
-import type { ILogger } from "../../infra-ports/ILogger";
-import type { ILLMPort } from "../../infra-ports/ai/ILLMPort";
 import type { IGenerateQuiz, QuizQuestion } from "../../app-ports/quiz/IGenerateQuiz";
+import type { ILLMPort } from "../../infra-ports/ai/ILLMPort";
+import type { ILogger } from "../../infra-ports/ILogger";
+import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
 
 const MAX_CHUNKS = 15;
 const MAX_CHUNK_LENGTH = 800;
@@ -27,10 +27,7 @@ export class GenerateQuiz implements IGenerateQuiz {
     private readonly logger: ILogger,
   ) {}
 
-  async execute(
-    documentIds: string[],
-    questionCount: number,
-  ): Promise<QuizQuestion[]> {
+  async execute(documentIds: string[], questionCount: number): Promise<QuizQuestion[]> {
     const chunkArrays = await Promise.all(
       documentIds.map((id) => this.chunkRepo.findByDocumentId(id)),
     );
@@ -41,9 +38,7 @@ export class GenerateQuiz implements IGenerateQuiz {
     }
 
     const selected = chunks.slice(0, MAX_CHUNKS);
-    const context = selected
-      .map((c) => c.content.slice(0, MAX_CHUNK_LENGTH))
-      .join("\n\n---\n\n");
+    const context = selected.map((c) => c.content.slice(0, MAX_CHUNK_LENGTH)).join("\n\n---\n\n");
 
     const prompt = this.buildPrompt(context, questionCount);
 
@@ -96,9 +91,7 @@ export class GenerateQuiz implements IGenerateQuiz {
     try {
       parsed = JSON.parse(cleaned);
     } catch {
-      throw new Error(
-        `LLM returned invalid JSON for quiz: ${cleaned.slice(0, 200)}`,
-      );
+      throw new Error(`LLM returned invalid JSON for quiz: ${cleaned.slice(0, 200)}`);
     }
     const result = responseSchema.parse(parsed);
     return result.questions.slice(0, expectedCount);

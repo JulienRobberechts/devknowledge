@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { parseCitationForcingResult } from "./citationForcing";
-import type { ChunkSearchResult } from "../../../../domain/entities/ChunkSearchResult";
-import { ChunkMetadata, type Chunk } from "../../../../domain/entities/Chunk";
 import { randomUUID } from "node:crypto";
+import { describe, expect, it } from "vitest";
+import { type Chunk, ChunkMetadata } from "../../../../domain/entities/Chunk";
+import type { ChunkSearchResult } from "../../../../domain/entities/ChunkSearchResult";
+import { parseCitationForcingResult } from "./citationForcing";
 
 function makeChunkResult(content: string): ChunkSearchResult {
   const chunk: Chunk = {
@@ -19,17 +19,12 @@ describe("parseCitationForcingResult", () => {
   it("parses claims with marker before period [SOURCE N].", () => {
     const raw =
       "The Orient Express was created in 1883 [SOURCE 1]. It is known for its luxury [SOURCE 2].";
-    const chunks = [
-      makeChunkResult("founded in 1883"),
-      makeChunkResult("luxurious train"),
-    ];
+    const chunks = [makeChunkResult("founded in 1883"), makeChunkResult("luxurious train")];
 
     const { cleanContent, result } = parseCitationForcingResult(raw, chunks);
 
     expect(result.claims).toHaveLength(2);
-    expect(result.claims[0].claim).toBe(
-      "The Orient Express was created in 1883",
-    );
+    expect(result.claims[0].claim).toBe("The Orient Express was created in 1883");
     expect(result.claims[0].status).toBe("SUPPORTED");
     expect(result.claims[1].claim).toBe("It is known for its luxury");
     expect(result.claims[1].status).toBe("SUPPORTED");
@@ -40,17 +35,12 @@ describe("parseCitationForcingResult", () => {
   it("parses claims with marker after period. [SOURCE N]", () => {
     const raw =
       "The Orient Express was created in 1883. [SOURCE 1] It is known for its luxury. [SOURCE 2]";
-    const chunks = [
-      makeChunkResult("founded in 1883"),
-      makeChunkResult("luxurious train"),
-    ];
+    const chunks = [makeChunkResult("founded in 1883"), makeChunkResult("luxurious train")];
 
     const { result } = parseCitationForcingResult(raw, chunks);
 
     expect(result.claims).toHaveLength(2);
-    expect(result.claims[0].claim).toBe(
-      "The Orient Express was created in 1883",
-    );
+    expect(result.claims[0].claim).toBe("The Orient Express was created in 1883");
     expect(result.claims[0].status).toBe("SUPPORTED");
     expect(result.claims[1].claim).toBe("It is known for its luxury");
     expect(result.claims[1].status).toBe("SUPPORTED");
@@ -72,27 +62,19 @@ describe("parseCitationForcingResult", () => {
   it("parses a mix of SOURCE and OWN KNOWLEDGE in the same response", () => {
     const raw =
       "Founded in 1883. [SOURCE 1] Luxurious. [OWN KNOWLEDGE] Still active today [SOURCE 2].";
-    const chunks = [
-      makeChunkResult("founded in 1883"),
-      makeChunkResult("still active"),
-    ];
+    const chunks = [makeChunkResult("founded in 1883"), makeChunkResult("still active")];
 
     const { result } = parseCitationForcingResult(raw, chunks);
 
     expect(result.claims).toHaveLength(3);
-    expect(result.claims.find((c) => c.status === "UNSUPPORTED")?.claim).toBe(
-      "Luxurious",
-    );
+    expect(result.claims.find((c) => c.status === "UNSUPPORTED")?.claim).toBe("Luxurious");
     expect(result.score).toBe(2 / 3);
   });
 
   it("parses claims in a markdown list", () => {
     const raw =
       "- The Orient Express was created in 1883 [SOURCE 1]\n- It is known for its luxury [SOURCE 2]";
-    const chunks = [
-      makeChunkResult("founded in 1883"),
-      makeChunkResult("luxurious train"),
-    ];
+    const chunks = [makeChunkResult("founded in 1883"), makeChunkResult("luxurious train")];
 
     const { result } = parseCitationForcingResult(raw, chunks);
 

@@ -1,19 +1,19 @@
 import { randomUUID } from "node:crypto";
+import type { IAskQuestion } from "../../app-ports/rag/IAskQuestion";
+import type { IRetrieveKnowledge } from "../../app-ports/rag/IRetrieveKnowledge";
+import type { ChunkSearchResult } from "../../domain/entities/ChunkSearchResult";
 import type {
+  Message,
   ResponseGroundingResult,
   ResponseGroundingStrategy,
-  Message,
 } from "../../domain/entities/Message";
-import type { ChunkSearchResult } from "../../domain/entities/ChunkSearchResult";
-import type { IConversationRepository } from "../../infra-ports/persistence/IConversationRepository";
-import { LLMStreamOptions, type ILLMPort } from "../../infra-ports/ai/ILLMPort";
+import { buildRagPrompt } from "../../domain/services/ragPrompt";
+import { type ILLMPort, LLMStreamOptions } from "../../infra-ports/ai/ILLMPort";
 import type { ILogger } from "../../infra-ports/ILogger";
-import type { IRetrieveKnowledge } from "../../app-ports/rag/IRetrieveKnowledge";
-import type { IAskQuestion } from "../../app-ports/rag/IAskQuestion";
+import type { IConversationRepository } from "../../infra-ports/persistence/IConversationRepository";
 import type { ConversationTitleGenerator } from "./ConversationTitleGenerator";
 import type { CheckResponseGrounding } from "./responseGrounding/CheckResponseGrounding";
 import { parseCitationForcingResult } from "./responseGrounding/strategies/citationForcing";
-import { buildRagPrompt } from "../../domain/services/ragPrompt";
 import type { SourceCitationResolver } from "./SourceCitationResolver";
 
 const NO_INFO_RESPONSE =
@@ -92,8 +92,7 @@ export class AskQuestion implements IAskQuestion {
       return noInfoMessage;
     }
 
-    const strategies: ResponseGroundingStrategy[] =
-      params?.responseGroundingStrategies ?? [];
+    const strategies: ResponseGroundingStrategy[] = params?.responseGroundingStrategies ?? [];
     const prompt = buildRagPrompt(
       userContent,
       searchResults,
@@ -142,8 +141,7 @@ export class AskQuestion implements IAskQuestion {
           model: llmOptions?.model,
           temperature: llmOptions?.temperature,
           maxTokens: llmOptions?.maxTokens,
-          systemPrompt:
-            "Always respond in the same language as the user's question.",
+          systemPrompt: "Always respond in the same language as the user's question.",
         }),
       );
       this.logger.info("LLM response complete", { conversationId });
@@ -174,17 +172,15 @@ export class AskQuestion implements IAskQuestion {
     conversationId: string,
     history: Message[],
   ): Promise<Message> {
-    const { sources, titleById } =
-      await this.citationResolver.resolve(searchResults);
+    const { sources, titleById } = await this.citationResolver.resolve(searchResults);
 
-    const { assistantContent, responseGrounding } =
-      await this.applyResponseGrounding(
-        rawContent,
-        userContent,
-        searchResults,
-        strategies,
-        titleById,
-      );
+    const { assistantContent, responseGrounding } = await this.applyResponseGrounding(
+      rawContent,
+      userContent,
+      searchResults,
+      strategies,
+      titleById,
+    );
 
     this.logger.info("Response grounding complete", {
       conversationId,
@@ -198,17 +194,13 @@ export class AskQuestion implements IAskQuestion {
       role: "assistant",
       content: assistantContent,
       sources,
-      responseGrounding:
-        responseGrounding.length > 0 ? responseGrounding : undefined,
+      responseGrounding: responseGrounding.length > 0 ? responseGrounding : undefined,
       createdAt: new Date(),
     };
     await this.conversationRepo.addMessage(conversationId, assistantMessage);
 
     if (history.length === 0) {
-      const title = await this.titleGenerator.generate(
-        userContent,
-        assistantContent,
-      );
+      const title = await this.titleGenerator.generate(userContent, assistantContent);
       await this.conversationRepo.updateTitle(conversationId, title);
     }
 
@@ -230,11 +222,7 @@ export class AskQuestion implements IAskQuestion {
     let inlineCitationResult: ResponseGroundingResult | undefined;
 
     if (useCitationForcing) {
-      const parsed = parseCitationForcingResult(
-        rawContent,
-        searchResults,
-        titleById,
-      );
+      const parsed = parseCitationForcingResult(rawContent, searchResults, titleById);
       assistantContent = parsed.cleanContent;
       inlineCitationResult = parsed.result;
     }
@@ -253,10 +241,7 @@ export class AskQuestion implements IAskQuestion {
 
     return {
       assistantContent,
-      responseGrounding: [
-        ...(inlineCitationResult ? [inlineCitationResult] : []),
-        ...otherChecks,
-      ],
+      responseGrounding: [...(inlineCitationResult ? [inlineCitationResult] : []), ...otherChecks],
     };
   }
 }

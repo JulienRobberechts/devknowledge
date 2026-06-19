@@ -7,8 +7,8 @@ import { RetrieveKnowledge } from "../../src/application/rag/RetrieveKnowledge";
 import { VoyageEmbeddingAdapter } from "../../src/infrastructure/ai/embeddings/VoyageEmbeddingAdapter";
 import { MarkdownParser } from "../../src/infrastructure/storage/parsers/MarkdownParser";
 import { InMemoryChunkRepository } from "../fakes/InMemoryChunkRepository";
-import { nullLogger } from "../fakes/NullLogger";
 import { InMemoryDocumentRepository } from "../fakes/InMemoryDocumentRepository";
+import { nullLogger } from "../fakes/NullLogger";
 
 const diskFileStorage = {
   upload: async (key: string) => key,

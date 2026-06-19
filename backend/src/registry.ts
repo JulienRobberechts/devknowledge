@@ -1,29 +1,29 @@
 import { AppSettingsService } from "./application/admin/AppSettingsService";
-import { AskQuestion } from "./application/rag/AskQuestion";
 import { CheckStorageConsistency } from "./application/admin/CheckStorageConsistency";
-import { ConversationTitleGenerator } from "./application/rag/ConversationTitleGenerator";
-import { CreateDocument } from "./application/knowledgeBase/CreateDocument";
-import { GenerateQuiz } from "./application/quiz/GenerateQuiz";
-import { IngestDocument } from "./application/knowledgeBase/IngestDocument";
 import { ResetAll } from "./application/admin/ResetAll";
-import { CheckResponseGrounding } from "./application/rag/responseGrounding/CheckResponseGrounding";
-import { RetrieveKnowledge } from "./application/rag/RetrieveKnowledge";
-import { SourceCitationResolver } from "./application/rag/SourceCitationResolver";
+import { CreateDocument } from "./application/knowledgeBase/CreateDocument";
+import { IngestDocument } from "./application/knowledgeBase/IngestDocument";
 import { SummarizeDocument } from "./application/knowledgeBase/SummarizeDocument";
-import { ConversationParams } from "./domain/entities/Conversation";
+import { GenerateQuiz } from "./application/quiz/GenerateQuiz";
+import { AskQuestion } from "./application/rag/AskQuestion";
+import { ConversationTitleGenerator } from "./application/rag/ConversationTitleGenerator";
+import { RetrieveKnowledge } from "./application/rag/RetrieveKnowledge";
+import { CheckResponseGrounding } from "./application/rag/responseGrounding/CheckResponseGrounding";
+import { SourceCitationResolver } from "./application/rag/SourceCitationResolver";
 import config from "./config";
+import { ConversationParams } from "./domain/entities/Conversation";
+import { VoyageEmbeddingAdapter } from "./infrastructure/ai/embeddings/VoyageEmbeddingAdapter";
+import { AnthropicLLMAdapter } from "./infrastructure/ai/llm/AnthropicLLMAdapter";
+import { VoyageRerankAdapter } from "./infrastructure/ai/reranking/VoyageRerankAdapter";
+import { Logger } from "./infrastructure/logger/Logger";
 import { PgAppSettingsRepository } from "./infrastructure/persistence/db/PgAppSettingsRepository";
 import { PgConversationRepository } from "./infrastructure/persistence/db/PgConversationRepository";
 import { PgDocumentRepository } from "./infrastructure/persistence/db/PgDocumentRepository";
 import { PgDocumentSummaryRepository } from "./infrastructure/persistence/db/PgDocumentSummaryRepository";
 import { PgVectorChunkRepository } from "./infrastructure/persistence/db/PgVectorChunkRepository";
-import { VoyageEmbeddingAdapter } from "./infrastructure/ai/embeddings/VoyageEmbeddingAdapter";
-import { Logger } from "./infrastructure/logger/Logger";
-import { AnthropicLLMAdapter } from "./infrastructure/ai/llm/AnthropicLLMAdapter";
-import { MultiFileParser } from "./infrastructure/storage/parsers/MultiFileParser";
-import { VoyageRerankAdapter } from "./infrastructure/ai/reranking/VoyageRerankAdapter";
 import { createStorageBackends } from "./infrastructure/storage/files/createFileStorage";
 import { DynamicFileStorage } from "./infrastructure/storage/files/DynamicFileStorage";
+import { MultiFileParser } from "./infrastructure/storage/parsers/MultiFileParser";
 
 export const documentRepo = new PgDocumentRepository();
 export const chunkRepo = new PgVectorChunkRepository();
@@ -85,11 +85,7 @@ export const askQuestion = new AskQuestion(
   new Logger("AskQuestion"),
   responseGrounder,
 );
-export const generateQuiz = new GenerateQuiz(
-  chunkRepo,
-  llmAdapter,
-  new Logger("GenerateQuiz"),
-);
+export const generateQuiz = new GenerateQuiz(chunkRepo, llmAdapter, new Logger("GenerateQuiz"));
 export const summaryRepo = new PgDocumentSummaryRepository();
 export const summarizeDocument = new SummarizeDocument(
   documentRepo,
@@ -98,10 +94,7 @@ export const summarizeDocument = new SummarizeDocument(
   llmAdapter,
   new Logger("SummarizeDocument"),
 );
-export const checkStorageConsistency = new CheckStorageConsistency(
-  documentRepo,
-  fileStorage,
-);
+export const checkStorageConsistency = new CheckStorageConsistency(documentRepo, fileStorage);
 export const resetAll = new ResetAll(
   fileStorage,
   (patch) => appSettingsService.updateSettings(patch),

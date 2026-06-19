@@ -1,9 +1,4 @@
-import {
-  type NextFunction,
-  type Request,
-  type Response,
-  Router,
-} from "express";
+import { type NextFunction, type Request, type Response, Router } from "express";
 import { z } from "zod";
 import type {
   AppSettingsPatch,
@@ -36,8 +31,7 @@ export function adminRouter(
     async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const result = await checkConsistency.execute();
-        const ok =
-          result.orphanFiles.length === 0 && result.missingFiles.length === 0;
+        const ok = result.orphanFiles.length === 0 && result.missingFiles.length === 0;
         res.json({ ok, ...result });
       } catch (err) {
         next(err);
@@ -63,9 +57,7 @@ export function adminRouter(
       try {
         const parsed = appSettingsPatchSchema.safeParse(req.body);
         if (!parsed.success) {
-          res
-            .status(400)
-            .json({ error: "Validation error", fields: parsed.error.issues });
+          res.status(400).json({ error: "Validation error", fields: parsed.error.issues });
           return;
         }
         const updated = await settingsService.updateSettings(parsed.data);
@@ -85,9 +77,7 @@ export function adminRouter(
         });
         const parsed = bodySchema.safeParse(req.body);
         if (!parsed.success) {
-          res
-            .status(400)
-            .json({ error: "Validation error", fields: parsed.error.issues });
+          res.status(400).json({ error: "Validation error", fields: parsed.error.issues });
           return;
         }
         await resetAll.execute(parsed.data.newSettings);

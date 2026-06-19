@@ -4,10 +4,7 @@ import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { PdfParser } from "./PdfParser";
 
-const ORIENT_EXPRESS_DIR = join(
-  __dirname,
-  "../../../tests/DOCUMENTS/Orient-Express",
-);
+const ORIENT_EXPRESS_DIR = join(__dirname, "../../../tests/DOCUMENTS/Orient-Express");
 
 let tmpDir: string;
 
@@ -34,10 +31,7 @@ describe("PdfParser", () => {
 
 // These tests document known defects of pdf-parse (expected failures).
 describe.skip("PdfParser - extracted text quality (Orient-Express PDFs)", () => {
-  const PDF = join(
-    ORIENT_EXPRESS_DIR,
-    "Luxe - VSOE par Discovery Trains-p3.pdf",
-  );
+  const PDF = join(ORIENT_EXPRESS_DIR, "Luxe - VSOE par Discovery Trains-p3.pdf");
   const DEBUG_FILE = PDF.replace(/\.pdf$/, ".debug.txt");
 
   let parsedText: string;

@@ -1,9 +1,6 @@
 export type MessageRole = "user" | "assistant";
 
-export type ResponseGroundingStrategy =
-  | "faithfulness"
-  | "counterfactual"
-  | "citation_forcing";
+export type ResponseGroundingStrategy = "faithfulness" | "counterfactual" | "citation_forcing";
 
 interface SourceCitationProps {
   chunkId: string;
@@ -17,7 +14,7 @@ interface SourceCitationProps {
 /** Value Object: reference to the source chunk backing a response, including the excerpt and relevance score. */
 export class SourceCitation {
   /** Nominal branding: prevents accidental assignment between Value Objects of the same shape. */
-  declare private readonly _brand: void;
+  private declare readonly _brand: void;
 
   readonly chunkId: string;
   readonly documentId: string;

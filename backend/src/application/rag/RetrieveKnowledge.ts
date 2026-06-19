@@ -1,9 +1,9 @@
+import type { IRetrieveKnowledge } from "../../app-ports/rag/IRetrieveKnowledge";
 import type { ChunkSearchResult } from "../../domain/entities/ChunkSearchResult";
-import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
-import type { ILogger } from "../../infra-ports/ILogger";
 import type { IRerankPort } from "../../infra-ports/ai/IRerankPort";
 import type { ITextEncoder } from "../../infra-ports/ai/ITextEncoder";
-import type { IRetrieveKnowledge } from "../../app-ports/rag/IRetrieveKnowledge";
+import type { ILogger } from "../../infra-ports/ILogger";
+import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
 
 /** Use case: retrieves the most relevant chunks by vector or hybrid search, with optional reranking. */
 export class RetrieveKnowledge implements IRetrieveKnowledge {
@@ -43,17 +43,8 @@ export class RetrieveKnowledge implements IRetrieveKnowledge {
 
     const candidates =
       effectiveMode === "hybrid"
-        ? await this.chunkRepo.searchHybrid(
-            query,
-            vector,
-            candidateLimit,
-            candidateMinScore,
-          )
-        : await this.chunkRepo.searchByVector(
-            vector,
-            candidateLimit,
-            candidateMinScore,
-          );
+        ? await this.chunkRepo.searchHybrid(query, vector, candidateLimit, candidateMinScore)
+        : await this.chunkRepo.searchByVector(vector, candidateLimit, candidateMinScore);
 
     if (candidates.length === 0) {
       this.logger.warn("No results found", {

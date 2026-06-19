@@ -1,7 +1,4 @@
-import type {
-  Conversation,
-  ConversationSummary,
-} from "../../src/domain/entities/Conversation";
+import type { Conversation, ConversationSummary } from "../../src/domain/entities/Conversation";
 import type { Message } from "../../src/domain/entities/Message";
 import type { IConversationRepository } from "../../src/infra-ports/persistence/IConversationRepository";
 
