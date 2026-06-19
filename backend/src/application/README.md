@@ -2,7 +2,7 @@
 
 Use cases orchestrating the `domain` via ports, with no infrastructure implementation details.
 
-Called by `../api`, depends on ports defined in `../infra-ports` (implemented by `../infrastructure`).
+Called by `../api`, depends on ports defined in `../infra-ports` (implemented by `../infra`).
 
 ---
 

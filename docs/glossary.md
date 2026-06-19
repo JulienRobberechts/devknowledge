@@ -56,7 +56,7 @@ Retrieves chunks by **cosine similarity** between the query vector and stored ch
 1 - (embedding <=> $1::vector) AS score
 ```
 
-**Key file:** `infrastructure/db/PgVectorChunkRepository.ts`
+**Key file:** `infra/db/PgVectorChunkRepository.ts`
 
 ---
 
@@ -135,7 +135,7 @@ An object attached to each assistant message, tracing the chunks used to generat
 The codebase is organized into three isolated layers:
 - **`domain/`** — pure entities and interfaces (ports), with no external dependencies.
 - **`application/`** — business use cases that orchestrate the domain through ports.
-- **`infrastructure/`** — concrete implementations of ports (PostgreSQL, Anthropic, Voyage AI, file storage).
+- **`infra/`** — concrete implementations of ports (PostgreSQL, Anthropic, Voyage AI, file storage).
 
 Ports (`ILLMPort`, `ITextEncoder`, `IRerankPort`, etc.) are TypeScript interfaces that infrastructure implements. This allows swapping an implementation (e.g. replacing Voyage with another provider) without touching business logic.
 

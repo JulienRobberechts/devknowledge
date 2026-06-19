@@ -119,7 +119,7 @@ Dans le dashboard Railway → service **argos-frontend** → **Settings** → **
 ```bash
 cd argos/backend
 npm run build
-railway run --service argos-api sh -c 'DATABASE_URL=$DATABASE_PUBLIC_URL node dist/infrastructure/db/migrate.js'
+railway run --service argos-api sh -c 'DATABASE_URL=$DATABASE_PUBLIC_URL node dist/infra/db/migrate.js'
 ```
 
 Vérifier :
@@ -175,7 +175,7 @@ railway up --service argos-frontend
 ```bash
 cd argos/backend
 npm run build
-railway run --service argos-api sh -c 'DATABASE_URL=$DATABASE_PUBLIC_URL node dist/infrastructure/db/migrate.js'
+railway run --service argos-api sh -c 'DATABASE_URL=$DATABASE_PUBLIC_URL node dist/infra/db/migrate.js'
 ```
 
 ### Tout redéployer d'un coup

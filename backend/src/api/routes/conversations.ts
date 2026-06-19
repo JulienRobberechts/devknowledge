@@ -4,8 +4,8 @@ import { z } from "zod";
 import type { AskQuestion } from "../../application/rag/AskQuestion";
 import config from "../../config";
 import { ConversationParams } from "../../domain/entities/Conversation";
+import { Logger } from "../../infra/logger/Logger";
 import type { IConversationRepository } from "../../infra-ports/persistence/IConversationRepository";
-import { Logger } from "../../infrastructure/logger/Logger";
 
 const logger = new Logger("conversations");
 

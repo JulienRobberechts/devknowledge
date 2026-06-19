@@ -15,9 +15,9 @@ infra/           → adapter implementations
 ```
 
 - `domain` has no imports from other layers.
-- `app` must not import from `infrastructure` or `api`.
-- Use cases must go through ports — never call infrastructure directly.
-- Infrastructure adapters must implement an `infra-ports` interface.
+- `app` must not import from `infra` or `api`.
+- Use cases must go through ports — never call infra directly.
+- Infra adapters must implement an `infra-ports` interface.
 
 ## Code Style
 
@@ -36,7 +36,7 @@ infra/           → adapter implementations
 - **Unit**: app/domain logic; in-memory fakes for repos, spy/mock functions for adapters. Next to source file.
 - **Integration**: real database. Excluded from CI.
 - **E2E**: quality checks. Excluded from CI.
-Factory functions (`makeXxx()`) for test data; app tests must not import from `infrastructure/`.
+Factory functions (`makeXxx()`) for test data; app tests must not import from `infra/`.
 
 ## Architecture Decisions
 

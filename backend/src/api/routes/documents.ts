@@ -1,7 +1,7 @@
 import path from "node:path";
 import { type NextFunction, type Request, type Response, Router } from "express";
 import multer from "multer";
-import { Logger } from "../../infrastructure/logger/Logger";
+import { Logger } from "../../infra/logger/Logger";
 
 const logger = new Logger("documents");
 

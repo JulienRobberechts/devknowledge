@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -p tsconfig.build.json && cp -r src/infrastructure/persistence/db/migrations dist/infrastructure/persistence/db/",
+    "build": "tsc -p tsconfig.build.json && cp -r src/infra/persistence/db/migrations dist/infra/persistence/db/",
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -11,8 +11,8 @@
     "format": "biome format --write src tests",
     "check": "biome check --write src tests",
     "typecheck": "tsc --noEmit",
-    "migrate": "tsx src/infrastructure/db/migrate.ts",
-    "migrate:prod": "node dist/infrastructure/persistence/db/migrate.js"
+    "migrate": "tsx src/infra/db/migrate.ts",
+    "migrate:prod": "node dist/infra/persistence/db/migrate.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

@@ -12,4 +12,4 @@ Interfaces (hexagonal architecture) defining contracts between the domain and in
 - `ILLMPort` — LLM call (streaming)
 - `IRerankPort` — reranking of search results
 
-Each port is implemented by one or more adapters in `../../infrastructure`.
+Each port is implemented by one or more adapters in `../../infra`.

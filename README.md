@@ -56,7 +56,7 @@ backend/src/
 │   ├── GenerateQuiz.ts
 │   └── responseChecks/      ← vérification de l'ancrage (faithfulness, citation_forcing, counterfactual)
 │
-├── infrastructure/          ← adaptateurs implémentant les ports du domaine
+├── infra/                   ← adaptateurs implémentant les ports du domaine
 │   ├── db/                  ← PgVectorChunkRepository, PgDocumentRepository… (PostgreSQL + pgvector)
 │   ├── llm/                 ← AnthropicLLMAdapter
 │   ├── embeddings/          ← VoyageEmbeddingAdapter
@@ -72,10 +72,10 @@ backend/src/
 ### Principe de dépendance
 
 ```
-api → application → domain ← infrastructure
+api → application → domain ← infra
 ```
 
-Les use cases (`application/`) ne connaissent que les interfaces définies dans `domain/ports/`. La couche `infrastructure/` implémente ces interfaces. La composition finale est réalisée dans `registry.ts` — un seul point de câblage, sans framework d'injection.
+Les use cases (`application/`) ne connaissent que les interfaces définies dans `domain/ports/`. La couche `infra/` implémente ces interfaces. La composition finale est réalisée dans `registry.ts` — un seul point de câblage, sans framework d'injection.
 
 ### Exemple : le port ILLMPort
 
@@ -86,7 +86,7 @@ export interface ILLMPort {
          signal?: AbortSignal, options?: LLMStreamOptions): Promise<string>;
 }
 
-// infrastructure/llm/AnthropicLLMAdapter.ts — implémentation concrète
+// infra/llm/AnthropicLLMAdapter.ts — implémentation concrète
 export class AnthropicLLMAdapter implements ILLMPort { ... }
 ```
 

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { Logger } from "../../infrastructure/logger/Logger";
+import { Logger } from "../../infra/logger/Logger";
 
 const logger = new Logger("errorHandler");
 

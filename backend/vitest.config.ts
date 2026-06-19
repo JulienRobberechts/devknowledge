@@ -18,11 +18,7 @@ export default defineConfig({
     fileParallelism: false,
     coverage: {
       reportOnFailure: true,
-      exclude: [
-        "src/index.ts",
-        "src/infrastructure/db/migrate.ts",
-        "src/infrastructure/db/pool.ts",
-      ],
+      exclude: ["src/index.ts", "src/infra/db/migrate.ts", "src/infra/db/pool.ts"],
     },
   },
 });
