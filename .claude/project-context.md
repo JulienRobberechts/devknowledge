@@ -1,8 +1,5 @@
 # Project Context: Argos
 
-<!-- SCOPE: Project-specific details only — stack, paths, commands, naming.
-     Generic engineering practices belong in coding-preferences.md. -->
-
 RAG application (Retrieval-Augmented Generation) for internal knowledge management.
 
 ## Stack
