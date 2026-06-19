@@ -19,7 +19,6 @@ infra-ports/     → infrastructure port interfaces
 infrastructure/  → adapter implementations
 ```
 
-Rules:
 - `domain` has no imports from other layers.
 - `app` must not import from `infrastructure` or `api`.
 - Use cases must go through ports — never call infrastructure directly.
@@ -36,7 +35,6 @@ Rules:
 - Isolate side effects and I/O at the edges; one abstraction level per function body.
 - Extract duplication only when the abstraction has a clear name and purpose.
 - Delete dead code — never comment it out.
-- **Consistent abstraction level**: a function body should operate at one level of abstraction.
 
 ## Tests
 
@@ -47,18 +45,12 @@ Factory functions (`makeXxx()`) for test data; app tests must not import from `i
 
 ## Architecture Decisions
 
-Before making a significant technical decision, read existing ADRs in `docs/decisions/` for context.
-Create or update an ADR for every significant technical decision.
+Read ADRs in `docs/decisions/` before significant decisions; create/update one for every significant decision.
 Format: `ADR-NNN-short-title.md` — sections: Context, Options Considered, Decision, Consequences.
 
 ## Bug Documentation
 
-Use the `/record-bug` skill to document a bug when all three conditions hold:
-- Non-trivial root cause (not an obvious typo or config mistake)
-- Worth remembering long-term (subtle, took real time to diagnose)
-- Likely to recur (systemic, library-level, or architectural)
-
-Read existing bug docs when investigating a recurring or unexplained issue.
+Use `/record-bug` when: non-trivial root cause, worth remembering long-term, likely to recur. Read existing bug docs for recurring issues.
 
 ## Domain Language
 

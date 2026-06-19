@@ -10,28 +10,22 @@ RAG application (Retrieval-Augmented Generation) for internal knowledge manageme
 - **Backend**: Node.js / TypeScript, Express 5, Vitest, Biome. Uses Hexagonal Architecture.
 - **Frontend**: React 19 / TypeScript, Vite, Tailwind CSS 4, Biome
 - **DB**: PostgreSQL
-- **Storage**: Cloudflare R2 (compatible AWS S3)
+- **Storage**: Cloudflare R2 (AWS S3-compatible)
 - **AI**: Anthropic SDK (`@anthropic-ai/sdk`)
-- **Infra**: Docker Compose in dev, Docker in prod on Railway
+- **Infra**: Docker Compose (dev), Docker on Railway (prod)
 
-## Domain Language
+## Paths
 
 - Glossary: `docs/glossary.md`
-
-## Architecture Decisions
-
 - ADRs: `docs/decisions/`
-
-## Bug Documentation
-
 - Bugs: `docs/bugs/`
 
 ## Tests
 
 Runner: Vitest.
 - Unit: `src/**/*.test.ts` — fakes in `tests/fakes/`
-- Integration: `tests/integration/` — against PostgreSQL; excluded from CI
-- E2E: `tests/retrieval/` — RAG quality checks; excluded from CI
+- Integration: `tests/integration/` — excluded from CI
+- E2E: `tests/retrieval/` — excluded from CI
 
 ## Common Commands
 
