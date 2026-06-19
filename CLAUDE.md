@@ -46,6 +46,18 @@ Rules:
 - Linting and formatting via **Biome** (not ESLint/Prettier).
 - No unused imports, variables, or dead code.
 
+## Clean Code
+
+- **Single responsibility**: each function/class does one thing. If you need "and" to describe it, split it.
+- **Small functions**: prefer functions under 20 lines. Extract when logic becomes nested or hard to name.
+- **Meaningful names**: names must reveal intent. Avoid abbreviations, `data`, `info`, `manager`, `handler` without context.
+- **No magic values**: extract constants with descriptive names.
+- **Avoid deep nesting**: use early returns and guard clauses instead of nested `if/else`.
+- **Pure functions preferred**: minimize side effects; isolate I/O and mutations at the edges.
+- **DRY but not over-abstracted**: extract duplication only when the abstraction has a clear name and single purpose. Three similar lines beat a premature abstraction.
+- **Delete dead code**: never comment out code — delete it. Git history preserves it.
+- **Consistent abstraction level**: a function body should operate at one level of abstraction (don't mix high-level orchestration with low-level string manipulation).
+
 ## Common Commands
 
 ### Backend (`/backend`)
