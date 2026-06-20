@@ -3,15 +3,18 @@ import type {
   AppSettingsPatch,
   ChunkingConfig,
   IAppSettingsService,
-  ProviderOption,
-  StorageOption,
 } from "../../app-ports/admin";
-import config from "../../config";
 import type { IAppSettingsRepository } from "../../infra-ports/persistence";
 
-export type { AppSettings, AppSettingsPatch, ChunkingConfig, ProviderOption, StorageOption };
+export type { AppSettings, AppSettingsPatch, ChunkingConfig };
 
-const EMBEDDING_PRESETS: Omit<ProviderOption, "available">[] = [
+interface EmbeddingPreset {
+  provider: string;
+  model: string;
+  label: string;
+}
+
+const EMBEDDING_PRESETS: EmbeddingPreset[] = [
   {
     provider: "voyage",
     model: "voyage-4-lite",
@@ -29,50 +32,30 @@ const EMBEDDING_PRESETS: Omit<ProviderOption, "available">[] = [
   },
 ];
 
-function r2Available(): boolean {
-  const { accountId, accessKeyId, secretAccessKey, bucketName } = config.storage.r2;
-  return !!(accountId && accessKeyId && secretAccessKey && bucketName);
+export interface SettingsDefaults {
+  storageBackend: "local" | "r2";
+  chunkingStrategy: "recursive" | "sentence";
+  chunkSize: number;
+  chunkOverlap: number;
 }
 
 /** Application service: reads and updates the runtime configuration (embedding provider, storage, chunking strategy) persisted in the database. */
 export class AppSettingsService implements IAppSettingsService {
-  constructor(private readonly repo: IAppSettingsRepository) {}
+  constructor(
+    private readonly repo: IAppSettingsRepository,
+    private readonly defaults: SettingsDefaults,
+  ) {}
 
   async getSettings(): Promise<AppSettings> {
     const stored = await this.repo.getAll();
-
-    const currentEmbeddingProvider = stored["embedding.provider"] ?? "voyage";
+    const currentProvider = stored["embedding.provider"] ?? "voyage";
     const preset =
-      EMBEDDING_PRESETS.find((p) => p.provider === currentEmbeddingProvider) ??
-      EMBEDDING_PRESETS[0];
-
-    const embeddingOptions: ProviderOption[] = EMBEDDING_PRESETS.map((p) => ({
-      ...p,
-      available: !!(p.provider === "voyage"
-        ? config.embeddings.voyage.apiKey
-        : p.provider === "openai"
-          ? process.env.OPENAI_API_KEY
-          : p.provider === "mistral"
-            ? process.env.MISTRAL_API_KEY
-            : false),
-    }));
-
-    const currentStorageProvider = stored["storage.provider"] ?? config.storage.backend;
-
-    const storageOptions: StorageOption[] = [
-      { provider: "r2", label: "Cloudflare R2", available: r2Available() },
-      { provider: "local", label: "Local disk", available: true },
-    ];
+      EMBEDDING_PRESETS.find((p) => p.provider === currentProvider) ?? EMBEDDING_PRESETS[0];
 
     return {
-      embedding: {
-        provider: preset.provider,
-        model: preset.model,
-        options: embeddingOptions,
-      },
+      embedding: { provider: preset.provider, model: preset.model },
       storage: {
-        provider: currentStorageProvider,
-        options: storageOptions,
+        provider: stored["storage.provider"] ?? this.defaults.storageBackend,
       },
     };
   }
@@ -80,13 +63,15 @@ export class AppSettingsService implements IAppSettingsService {
   async getChunkingConfig(): Promise<ChunkingConfig> {
     const stored = await this.repo.getAll();
     return {
-      strategy: (stored["rag.strategy"] ?? config.rag.chunkingStrategy) as "recursive" | "sentence",
+      strategy: (stored["rag.strategy"] ?? this.defaults.chunkingStrategy) as
+        | "recursive"
+        | "sentence",
       chunkSize: stored["rag.chunkSize"]
         ? parseInt(stored["rag.chunkSize"], 10)
-        : config.rag.chunkSize,
+        : this.defaults.chunkSize,
       chunkOverlap: stored["rag.chunkOverlap"]
         ? parseInt(stored["rag.chunkOverlap"], 10)
-        : config.rag.chunkOverlap,
+        : this.defaults.chunkOverlap,
     };
   }
 

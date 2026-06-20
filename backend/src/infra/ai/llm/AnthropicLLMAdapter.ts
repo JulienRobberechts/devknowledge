@@ -18,9 +18,9 @@ export class AnthropicLLMAdapter implements ILLMPort {
     signal?: AbortSignal,
     options?: LLMStreamOptions,
   ): Promise<string> {
-    const model = options?.model ?? config.llm.anthropic.model;
-    const maxTokens = options?.maxTokens ?? config.llm.anthropic.maxTokens;
-    const temperature = options?.temperature ?? config.llm.anthropic.temperature;
+    const model = options?.model ?? config.llm.defaults.model;
+    const maxTokens = options?.maxTokens ?? config.llm.defaults.maxTokens;
+    const temperature = options?.temperature ?? config.llm.defaults.temperature;
     let fullContent = "";
 
     logger.info("Anthropic LLM request", {

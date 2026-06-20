@@ -10,7 +10,7 @@ const envSchema = z
     ANTHROPIC_APP_API_KEY: z.string().min(1),
     VOYAGE_API_KEY: z.string().min(1),
     APP_PASSWORD: z.string().min(1),
-    STORAGE_BACKEND: z.enum(["local", "r2"]).default("local"),
+    DEFAULT_STORAGE_BACKEND: z.enum(["local", "r2"]).default("local"),
     R2_ACCOUNT_ID: z.string().optional(),
     R2_ACCESS_KEY_ID: z.string().optional(),
     R2_SECRET_ACCESS_KEY: z.string().optional(),
@@ -19,23 +19,23 @@ const envSchema = z
     NODE_ENV: z.string().default("development"),
     LOG_LEVEL: z.string().default("info"),
     ALLOWED_ORIGIN: z.string().optional(),
-    LLM_MODEL: z.string().default("claude-haiku-4-5-20251001"),
-    LLM_MAX_TOKENS: z.coerce.number().default(1024),
-    LLM_TEMPERATURE: z.coerce.number().default(0.1),
+    DEFAULT_LLM_MODEL: z.string().default("claude-haiku-4-5-20251001"),
+    DEFAULT_LLM_MAX_TOKENS: z.coerce.number().default(1024),
+    DEFAULT_LLM_TEMPERATURE: z.coerce.number().default(0.1),
     EMBEDDING_MODEL: z.string().default("voyage-4-lite"),
     UPLOAD_DIR: z.string().default("/app/uploads"),
-    CHUNKING_STRATEGY: z.enum(["recursive", "sentence"]).default("recursive"),
-    CHUNK_SIZE_TOKENS: z.coerce.number().default(512),
-    CHUNK_OVERLAP_TOKENS: z.coerce.number().default(128),
-    RETRIEVAL_LIMIT: z.coerce.number().default(8),
-    RETRIEVAL_MIN_SCORE: z.coerce.number().default(0.75),
+    DEFAULT_CHUNKING_STRATEGY: z.enum(["recursive", "sentence"]).default("recursive"),
+    DEFAULT_CHUNK_SIZE_TOKENS: z.coerce.number().default(512),
+    DEFAULT_CHUNK_OVERLAP_TOKENS: z.coerce.number().default(128),
+    DEFAULT_RETRIEVAL_LIMIT: z.coerce.number().default(8),
+    DEFAULT_RETRIEVAL_MIN_SCORE: z.coerce.number().default(0.75),
     SEARCH_MODE: z.enum(["vector", "hybrid"]).default("hybrid"),
     RERANK_ENABLED: z.string().default("true"),
-    RERANK_MODEL: z.string().default("rerank-2.5"),
-    RERANK_CANDIDATE_MULTIPLIER: z.coerce.number().default(3),
+    DEFAULT_RERANK_MODEL: z.string().default("rerank-2.5"),
+    DEFAULT_RERANK_CANDIDATE_MULTIPLIER: z.coerce.number().default(3),
   })
   .superRefine((env, ctx) => {
-    if (env.STORAGE_BACKEND === "r2") {
+    if (env.DEFAULT_STORAGE_BACKEND === "r2") {
       for (const key of [
         "R2_ACCOUNT_ID",
         "R2_ACCESS_KEY_ID",
@@ -45,7 +45,7 @@ const envSchema = z
         if (!env[key]) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: `${key} is required when STORAGE_BACKEND=r2`,
+            message: `${key} is required when DEFAULT_STORAGE_BACKEND=r2`,
             path: [key],
           });
         }
@@ -77,9 +77,11 @@ const config = {
   llm: {
     anthropic: {
       apiKey: env.ANTHROPIC_APP_API_KEY,
-      model: env.LLM_MODEL,
-      maxTokens: env.LLM_MAX_TOKENS,
-      temperature: env.LLM_TEMPERATURE,
+    },
+    defaults: {
+      model: env.DEFAULT_LLM_MODEL,
+      maxTokens: env.DEFAULT_LLM_MAX_TOKENS,
+      temperature: env.DEFAULT_LLM_TEMPERATURE,
     },
   },
   embeddings: {
@@ -93,7 +95,9 @@ const config = {
     uploadDir: env.UPLOAD_DIR,
   },
   storage: {
-    backend: env.STORAGE_BACKEND,
+    defaults: {
+      backend: env.DEFAULT_STORAGE_BACKEND,
+    },
     r2: {
       accountId: env.R2_ACCOUNT_ID ?? "",
       accessKeyId: env.R2_ACCESS_KEY_ID ?? "",
@@ -102,18 +106,22 @@ const config = {
     },
   },
   rag: {
-    chunkingStrategy: env.CHUNKING_STRATEGY,
-    chunkSize: env.CHUNK_SIZE_TOKENS,
-    chunkOverlap: env.CHUNK_OVERLAP_TOKENS,
-    retrievalLimit: env.RETRIEVAL_LIMIT,
-    retrievalMinScore: env.RETRIEVAL_MIN_SCORE,
+    defaults: {
+      chunkingStrategy: env.DEFAULT_CHUNKING_STRATEGY,
+      chunkSize: env.DEFAULT_CHUNK_SIZE_TOKENS,
+      chunkOverlap: env.DEFAULT_CHUNK_OVERLAP_TOKENS,
+      retrievalLimit: env.DEFAULT_RETRIEVAL_LIMIT,
+      retrievalMinScore: env.DEFAULT_RETRIEVAL_MIN_SCORE,
+    },
     searchMode: env.SEARCH_MODE,
     responseGroundingStrategies: [] as ("faithfulness" | "counterfactual" | "citation_forcing")[],
   },
   rerank: {
     enabled: env.RERANK_ENABLED !== "false",
-    model: env.RERANK_MODEL,
-    candidateMultiplier: env.RERANK_CANDIDATE_MULTIPLIER,
+    defaults: {
+      model: env.DEFAULT_RERANK_MODEL,
+      candidateMultiplier: env.DEFAULT_RERANK_CANDIDATE_MULTIPLIER,
+    },
   },
 };
 

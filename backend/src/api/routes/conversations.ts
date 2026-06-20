@@ -65,14 +65,15 @@ export function conversationsRouter(
       id: randomUUID(),
       title: "New conversation",
       params: ConversationParams.create({
-        retrievalLimit: p.retrievalLimit ?? config.rag.retrievalLimit,
-        retrievalMinScore: p.retrievalMinScore ?? config.rag.retrievalMinScore,
+        retrievalLimit: p.retrievalLimit ?? config.rag.defaults.retrievalLimit,
+        retrievalMinScore: p.retrievalMinScore ?? config.rag.defaults.retrievalMinScore,
         rerankEnabled: p.rerankEnabled ?? config.rerank.enabled,
-        rerankModel: p.rerankModel ?? config.rerank.model,
-        rerankCandidateMultiplier: p.rerankCandidateMultiplier ?? config.rerank.candidateMultiplier,
-        llmModel: p.llmModel ?? config.llm.anthropic.model,
-        llmTemperature: p.llmTemperature ?? config.llm.anthropic.temperature,
-        llmMaxTokens: p.llmMaxTokens ?? config.llm.anthropic.maxTokens,
+        rerankModel: p.rerankModel ?? config.rerank.defaults.model,
+        rerankCandidateMultiplier:
+          p.rerankCandidateMultiplier ?? config.rerank.defaults.candidateMultiplier,
+        llmModel: p.llmModel ?? config.llm.defaults.model,
+        llmTemperature: p.llmTemperature ?? config.llm.defaults.temperature,
+        llmMaxTokens: p.llmMaxTokens ?? config.llm.defaults.maxTokens,
         responseGroundingStrategies:
           p.responseGroundingStrategies ?? config.rag.responseGroundingStrategies,
         searchMode: p.searchMode ?? config.rag.searchMode,

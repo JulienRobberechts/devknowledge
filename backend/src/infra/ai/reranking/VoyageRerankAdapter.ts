@@ -18,7 +18,7 @@ export class VoyageRerankAdapter implements IRerankPort {
 
   constructor(
     private readonly apiKey: string = config.embeddings.voyage.apiKey,
-    private readonly model: string = config.rerank.model,
+    private readonly model: string = config.rerank.defaults.model,
   ) {}
 
   async rerank(query: string, documents: string[], model?: string): Promise<number[]> {

@@ -1,10 +1,12 @@
 import { type NextFunction, type Request, type Response, Router } from "express";
 import { z } from "zod";
 import type {
+  AppSettings,
   IAppSettingsService,
   ICheckStorageConsistency,
   IResetAll,
 } from "../../app-ports/admin";
+import config from "../../config";
 
 const appSettingsPatchSchema = z.object({
   embedding: z.object({ provider: z.string().min(1) }).optional(),
@@ -17,6 +19,53 @@ const appSettingsPatchSchema = z.object({
     })
     .optional(),
 });
+
+const EMBEDDING_PROVIDER_OPTIONS = [
+  {
+    provider: "voyage",
+    model: "voyage-4-lite",
+    label: "Voyage AI — voyage-4-lite",
+  },
+  {
+    provider: "openai",
+    model: "text-embedding-3-small",
+    label: "OpenAI — text-embedding-3-small",
+  },
+  {
+    provider: "mistral",
+    model: "mistral-embed",
+    label: "Mistral — mistral-embed",
+  },
+];
+
+function buildEmbeddingOptions() {
+  return EMBEDDING_PROVIDER_OPTIONS.map((p) => ({
+    ...p,
+    available: !!(p.provider === "voyage"
+      ? config.embeddings.voyage.apiKey
+      : p.provider === "openai"
+        ? process.env.OPENAI_API_KEY
+        : p.provider === "mistral"
+          ? process.env.MISTRAL_API_KEY
+          : false),
+  }));
+}
+
+function buildStorageOptions() {
+  const { accountId, accessKeyId, secretAccessKey, bucketName } = config.storage.r2;
+  const r2Available = !!(accountId && accessKeyId && secretAccessKey && bucketName);
+  return [
+    { provider: "r2", label: "Cloudflare R2", available: r2Available },
+    { provider: "local", label: "Local disk", available: true },
+  ];
+}
+
+function buildSettingsResponse(settings: AppSettings) {
+  return {
+    embedding: { ...settings.embedding, options: buildEmbeddingOptions() },
+    storage: { ...settings.storage, options: buildStorageOptions() },
+  };
+}
 
 export function adminRouter(
   checkConsistency: ICheckStorageConsistency,
@@ -43,7 +92,7 @@ export function adminRouter(
     async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         const settings = await settingsService.getSettings();
-        res.json(settings);
+        res.json(buildSettingsResponse(settings));
       } catch (err) {
         next(err);
       }
@@ -60,7 +109,7 @@ export function adminRouter(
           return;
         }
         const updated = await settingsService.updateSettings(parsed.data);
-        res.json(updated);
+        res.json(buildSettingsResponse(updated));
       } catch (err) {
         next(err);
       }

@@ -16,26 +16,26 @@ export function configRouter(settingsService: IAppSettingsService): Router {
           chunkingStrategy: chunking.strategy,
           chunkSize: chunking.chunkSize,
           chunkOverlap: chunking.chunkOverlap,
-          retrievalLimit: config.rag.retrievalLimit,
-          retrievalMinScore: config.rag.retrievalMinScore,
+          retrievalLimit: config.rag.defaults.retrievalLimit,
+          retrievalMinScore: config.rag.defaults.retrievalMinScore,
           searchMode: config.rag.searchMode,
           reranking: {
             enabled: config.rerank.enabled,
-            model: config.rerank.model,
+            model: config.rerank.defaults.model,
           },
         },
         llm: {
           provider: "anthropic",
-          model: config.llm.anthropic.model,
-          maxTokens: config.llm.anthropic.maxTokens,
-          temperature: config.llm.anthropic.temperature,
+          model: config.llm.defaults.model,
+          maxTokens: config.llm.defaults.maxTokens,
+          temperature: config.llm.defaults.temperature,
         },
         embeddings: {
           provider: "voyage",
           model: config.embeddings.voyage.model,
         },
         storage: {
-          backend: config.storage.backend,
+          backend: config.storage.defaults.backend,
         },
       });
     } catch (err) {

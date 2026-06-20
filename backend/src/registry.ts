@@ -34,14 +34,14 @@ export const documentRepo = new PgDocumentRepository();
 export const chunkRepo = new PgVectorChunkRepository();
 export const conversationRepo = new PgConversationRepository(
   ConversationParams.create({
-    retrievalLimit: config.rag.retrievalLimit,
-    retrievalMinScore: config.rag.retrievalMinScore,
+    retrievalLimit: config.rag.defaults.retrievalLimit,
+    retrievalMinScore: config.rag.defaults.retrievalMinScore,
     rerankEnabled: config.rerank.enabled,
-    rerankModel: config.rerank.model,
-    rerankCandidateMultiplier: config.rerank.candidateMultiplier,
-    llmModel: config.llm.anthropic.model,
-    llmTemperature: config.llm.anthropic.temperature,
-    llmMaxTokens: config.llm.anthropic.maxTokens,
+    rerankModel: config.rerank.defaults.model,
+    rerankCandidateMultiplier: config.rerank.defaults.candidateMultiplier,
+    llmModel: config.llm.defaults.model,
+    llmTemperature: config.llm.defaults.temperature,
+    llmMaxTokens: config.llm.defaults.maxTokens,
     responseGroundingStrategies: config.rag.responseGroundingStrategies,
     searchMode: config.rag.searchMode,
   }),
@@ -50,7 +50,12 @@ const embeddingAdapter = new VoyageEmbeddingAdapter();
 const llmAdapter = new AnthropicLLMAdapter();
 const fileParser = new MultiFileParser();
 const appSettingsRepo = new PgAppSettingsRepository();
-export const appSettingsService = new AppSettingsService(appSettingsRepo);
+export const appSettingsService = new AppSettingsService(appSettingsRepo, {
+  storageBackend: config.storage.defaults.backend,
+  chunkingStrategy: config.rag.defaults.chunkingStrategy,
+  chunkSize: config.rag.defaults.chunkSize,
+  chunkOverlap: config.rag.defaults.chunkOverlap,
+});
 const storageBackends = createStorageBackends();
 export const fileStorage = new DynamicFileStorage(
   () => appSettingsService.getSettings().then((s) => s.storage.provider),
@@ -72,7 +77,7 @@ export const retrieveKnowledge = new RetrieveKnowledge(
   embeddingAdapter,
   new Logger("RetrieveKnowledge"),
   reranker,
-  config.rerank.candidateMultiplier,
+  config.rerank.defaults.candidateMultiplier,
   config.rag.searchMode,
 );
 const responseGrounder = new CheckResponseGrounding(

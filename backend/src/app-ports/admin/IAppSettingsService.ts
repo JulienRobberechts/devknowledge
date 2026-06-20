@@ -1,19 +1,6 @@
-export interface ProviderOption {
-  provider: string;
-  model: string;
-  label: string;
-  available: boolean;
-}
-
-export interface StorageOption {
-  provider: string;
-  label: string;
-  available: boolean;
-}
-
 export interface AppSettings {
-  embedding: { provider: string; model: string; options: ProviderOption[] };
-  storage: { provider: string; options: StorageOption[] };
+  embedding: { provider: string; model: string };
+  storage: { provider: string };
 }
 
 export interface AppSettingsPatch {
