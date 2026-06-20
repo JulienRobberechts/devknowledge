@@ -2,6 +2,8 @@ import { AppSettingsService } from "./app/admin/AppSettingsService";
 import { CheckStorageConsistency } from "./app/admin/CheckStorageConsistency";
 import { ResetAll } from "./app/admin/ResetAll";
 import { CreateDocument } from "./app/knowledgeBase/CreateDocument";
+import { DeleteDocument } from "./app/knowledgeBase/DeleteDocument";
+import { DocumentQueries } from "./app/knowledgeBase/DocumentQueries";
 import { IngestDocument } from "./app/knowledgeBase/IngestDocument";
 import { SummarizeDocument } from "./app/knowledgeBase/SummarizeDocument";
 import { GenerateQuiz } from "./app/quiz/GenerateQuiz";
@@ -87,6 +89,13 @@ export const askQuestion = new AskQuestion(
 );
 export const generateQuiz = new GenerateQuiz(chunkRepo, llmAdapter, new Logger("GenerateQuiz"));
 export const summaryRepo = new PgDocumentSummaryRepository();
+export const deleteDocument = new DeleteDocument(documentRepo, chunkRepo, fileStorage);
+export const documentQueries = new DocumentQueries(
+  documentRepo,
+  chunkRepo,
+  summaryRepo,
+  fileStorage,
+);
 export const summarizeDocument = new SummarizeDocument(
   documentRepo,
   chunkRepo,

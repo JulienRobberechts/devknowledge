@@ -1,13 +1,13 @@
 import { type NextFunction, type Request, type Response, Router } from "express";
 import { z } from "zod";
-import type { GenerateQuiz } from "../../app/quiz/GenerateQuiz";
+import type { IGenerateQuiz } from "../../app-ports/quiz/IGenerateQuiz";
 
 const generateQuizSchema = z.object({
   documentIds: z.array(z.string().uuid()).min(1),
   questionCount: z.number().int().min(3).max(20).default(5),
 });
 
-export function quizzesRouter(generateQuiz: GenerateQuiz): Router {
+export function quizzesRouter(generateQuiz: IGenerateQuiz): Router {
   const router = Router();
 
   router.post(

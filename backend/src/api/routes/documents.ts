@@ -1,18 +1,11 @@
 import path from "node:path";
 import { type NextFunction, type Request, type Response, Router } from "express";
 import multer from "multer";
+import type { ArgosKnowledgeBase } from "../../app-ports/knowledgeBase";
 import { Logger } from "../../infra/logger/Logger";
+import { createDocumentSchema } from "../dto/document.dto";
 
 const logger = new Logger("documents");
-
-import type { CreateDocument } from "../../app/knowledgeBase/CreateDocument";
-import type { IngestDocument } from "../../app/knowledgeBase/IngestDocument";
-import type { SummarizeDocument } from "../../app/knowledgeBase/SummarizeDocument";
-import type { IChunkRepository } from "../../infra-ports/persistence/IChunkRepository";
-import type { IDocumentRepository } from "../../infra-ports/persistence/IDocumentRepository";
-import type { IDocumentSummaryRepository } from "../../infra-ports/persistence/IDocumentSummaryRepository";
-import type { IFileStoragePort } from "../../infra-ports/storage/IFileStoragePort";
-import { createDocumentSchema } from "../dto/document.dto";
 
 const ALLOWED_MIMETYPES = new Set([
   "application/pdf",
@@ -34,15 +27,7 @@ const upload = multer({
   },
 });
 
-export function documentsRouter(
-  documentRepo: IDocumentRepository,
-  chunkRepo: IChunkRepository,
-  fileStorage: IFileStoragePort,
-  createDocument: CreateDocument,
-  ingestDocument: IngestDocument,
-  summaryRepo: IDocumentSummaryRepository,
-  summarizeDocument: SummarizeDocument,
-): Router {
+export function documentsRouter(kb: ArgosKnowledgeBase): Router {
   const router = Router();
 
   router.post(
@@ -58,14 +43,14 @@ export function documentsRouter(
         const body = createDocumentSchema.parse(req.body);
         const originalName = Buffer.from(req.file.originalname, "latin1").toString("utf8");
 
-        const document = await createDocument.execute({
+        const document = await kb.createDocument.execute({
           buffer: req.file.buffer,
           originalName,
           mimetype: req.file.mimetype,
           title: body.title,
         });
 
-        ingestDocument.execute(document.id).catch((err: unknown) => {
+        kb.ingestDocument.execute(document.id).catch((err: unknown) => {
           logger.error(
             "Background ingestion failed",
             err instanceof Error ? err : new Error(String(err)),
@@ -81,7 +66,7 @@ export function documentsRouter(
 
   router.get("/", async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const docs = await documentRepo.findAll();
+      const docs = await kb.documentQueries.list();
       res.json(docs);
     } catch (err) {
       next(err);
@@ -90,7 +75,7 @@ export function documentsRouter(
 
   router.get("/:id", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const doc = await documentRepo.findById(String(req.params.id));
+      const doc = await kb.documentQueries.get(String(req.params.id));
       if (!doc) {
         res.status(404).json({ error: "Document not found" });
         return;
@@ -105,19 +90,13 @@ export function documentsRouter(
     "/:id/chunks",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await documentRepo.findById(String(req.params.id));
+        const doc = await kb.documentQueries.get(String(req.params.id));
         if (!doc) {
           res.status(404).json({ error: "Document not found" });
           return;
         }
-        const chunks = await chunkRepo.findByDocumentId(String(req.params.id));
-        res.json(
-          chunks.map((chunk) => ({
-            position: chunk.metadata.position,
-            contentLength: chunk.content.length,
-            preview: chunk.content.slice(0, 100),
-          })),
-        );
+        const chunks = await kb.documentQueries.getChunks(String(req.params.id));
+        res.json(chunks);
       } catch (err) {
         next(err);
       }
@@ -128,18 +107,17 @@ export function documentsRouter(
     "/:id/content",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await documentRepo.findById(String(req.params.id));
+        const doc = await kb.documentQueries.get(String(req.params.id));
         if (!doc) {
           res.status(404).json({ error: "Document not found" });
           return;
         }
-        const chunks = await chunkRepo.findByDocumentId(String(req.params.id));
-        if (chunks.length === 0) {
+        const content = await kb.documentQueries.getContent(String(req.params.id));
+        if (!content) {
           res.status(404).json({ error: "Content not available" });
           return;
         }
-        const content = chunks.map((c) => c.content).join("\n\n");
-        res.json({ content, sourceType: doc.sourceType });
+        res.json(content);
       } catch (err) {
         next(err);
       }
@@ -148,16 +126,16 @@ export function documentsRouter(
 
   router.get("/:id/raw", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const doc = await documentRepo.findById(String(req.params.id));
+      const doc = await kb.documentQueries.get(String(req.params.id));
       if (!doc) {
         res.status(404).json({ error: "Document not found" });
         return;
       }
-      if (doc.sourceType !== "pdf" || !doc.filePath) {
+      const buffer = await kb.documentQueries.getRawBuffer(String(req.params.id));
+      if (!buffer) {
         res.status(404).json({ error: "Raw file not available" });
         return;
       }
-      const buffer = await fileStorage.download(doc.filePath);
       res.setHeader("Content-Type", "application/pdf");
       res.send(buffer);
     } catch (err) {
@@ -169,12 +147,12 @@ export function documentsRouter(
     "/:id/summary",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await documentRepo.findById(String(req.params.id));
+        const doc = await kb.documentQueries.get(String(req.params.id));
         if (!doc) {
           res.status(404).json({ error: "Document not found" });
           return;
         }
-        const summary = await summaryRepo.findByDocumentId(String(req.params.id));
+        const summary = await kb.documentQueries.getSummary(String(req.params.id));
         if (!summary) {
           res.status(404).json({ error: "Summary not found" });
           return;
@@ -190,7 +168,7 @@ export function documentsRouter(
     "/:id/summary",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await documentRepo.findById(String(req.params.id));
+        const doc = await kb.documentQueries.get(String(req.params.id));
         if (!doc) {
           res.status(404).json({ error: "Document not found" });
           return;
@@ -199,7 +177,7 @@ export function documentsRouter(
           res.status(409).json({ error: "Document is not ready" });
           return;
         }
-        const content = await summarizeDocument.execute(String(req.params.id));
+        const content = await kb.summarizeDocument.execute(String(req.params.id));
         res.json({ content });
       } catch (err) {
         next(err);
@@ -209,16 +187,12 @@ export function documentsRouter(
 
   router.delete("/:id", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const doc = await documentRepo.findById(String(req.params.id));
+      const doc = await kb.documentQueries.get(String(req.params.id));
       if (!doc) {
         res.status(404).json({ error: "Document not found" });
         return;
       }
-      if (doc.filePath) {
-        await fileStorage.delete(doc.filePath).catch(() => {});
-      }
-      await chunkRepo.deleteByDocumentId(String(req.params.id));
-      await documentRepo.delete(String(req.params.id));
+      await kb.deleteDocument.execute(String(req.params.id));
       res.status(204).send();
     } catch (err) {
       next(err);

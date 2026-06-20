@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response, Router } from "express";
 import { z } from "zod";
-import type { AppSettingsPatch, AppSettingsService } from "../../app/admin/AppSettingsService";
-import type { CheckStorageConsistency } from "../../app/admin/CheckStorageConsistency";
-import type { ResetAll } from "../../app/admin/ResetAll";
+import type { IAppSettingsService } from "../../app-ports/admin/IAppSettingsService";
+import type { ICheckStorageConsistency } from "../../app-ports/admin/ICheckStorageConsistency";
+import type { IResetAll } from "../../app-ports/admin/IResetAll";
 
 const appSettingsPatchSchema = z.object({
   embedding: z.object({ provider: z.string().min(1) }).optional(),
@@ -17,9 +17,9 @@ const appSettingsPatchSchema = z.object({
 });
 
 export function adminRouter(
-  checkConsistency: CheckStorageConsistency,
-  settingsService: AppSettingsService,
-  resetAll: ResetAll,
+  checkConsistency: ICheckStorageConsistency,
+  settingsService: IAppSettingsService,
+  resetAll: IResetAll,
 ): Router {
   const router = Router();
 

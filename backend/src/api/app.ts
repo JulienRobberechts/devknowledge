@@ -7,17 +7,15 @@ import {
   appSettingsService,
   askQuestion,
   checkStorageConsistency,
-  chunkRepo,
   conversationRepo,
   createDocument,
-  documentRepo,
-  fileStorage,
+  deleteDocument,
+  documentQueries,
   generateQuiz,
   ingestDocument,
   resetAll,
   retrieveKnowledge,
   summarizeDocument,
-  summaryRepo,
 } from "../registry";
 import { apiKeyAuth } from "./middleware/apiKeyAuth";
 import { errorHandler } from "./middleware/errorHandler";
@@ -68,15 +66,13 @@ app.use("/api/config", configRouter(appSettingsService));
 app.use("/api/admin", adminRouter(checkStorageConsistency, appSettingsService, resetAll));
 app.use(
   "/api/documents",
-  documentsRouter(
-    documentRepo,
-    chunkRepo,
-    fileStorage,
+  documentsRouter({
     createDocument,
     ingestDocument,
-    summaryRepo,
     summarizeDocument,
-  ),
+    deleteDocument,
+    documentQueries,
+  }),
 );
 app.use("/api/conversations", conversationsRouter(conversationRepo, askQuestion));
 app.use("/api/search", searchRouter(retrieveKnowledge));

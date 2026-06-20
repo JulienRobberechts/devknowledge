@@ -5,6 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InMemoryChunkRepository } from "../../../tests/fakes/InMemoryChunkRepository";
 import { InMemoryDocumentRepository } from "../../../tests/fakes/InMemoryDocumentRepository";
 import { CreateDocument } from "../../app/knowledgeBase/CreateDocument";
+import { DeleteDocument } from "../../app/knowledgeBase/DeleteDocument";
+import { DocumentQueries } from "../../app/knowledgeBase/DocumentQueries";
 import type { Document } from "../../domain/entities/Document";
 import { documentsRouter } from "./documents";
 
@@ -39,21 +41,22 @@ function makeApp(
     findByDocumentId: vi.fn().mockResolvedValue(null),
     upsert: vi.fn().mockResolvedValue(undefined),
   };
-  const fakeSummarize = { execute: vi.fn().mockResolvedValue("summary") };
-  const createDocument = new CreateDocument(docRepo, fileStorage as never);
   const app = express();
   app.use(express.json());
   app.use(
     "/documents",
-    documentsRouter(
-      docRepo,
-      chunkRepo,
-      fileStorage as never,
-      createDocument,
-      ingest as never,
-      fakeSummaryRepo as never,
-      fakeSummarize as never,
-    ),
+    documentsRouter({
+      createDocument: new CreateDocument(docRepo, fileStorage as never),
+      ingestDocument: ingest as never,
+      summarizeDocument: { execute: vi.fn().mockResolvedValue("summary") },
+      deleteDocument: new DeleteDocument(docRepo, chunkRepo, fileStorage as never),
+      documentQueries: new DocumentQueries(
+        docRepo,
+        chunkRepo,
+        fakeSummaryRepo as never,
+        fileStorage as never,
+      ),
+    }),
   );
   return app;
 }

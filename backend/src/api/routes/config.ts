@@ -1,9 +1,9 @@
 import { Router } from "express";
 import pkg from "../../../package.json";
-import type { AppSettingsService } from "../../app/admin/AppSettingsService";
+import type { IAppSettingsService } from "../../app-ports/admin/IAppSettingsService";
 import config from "../../config";
 
-export function configRouter(settingsService: AppSettingsService): Router {
+export function configRouter(settingsService: IAppSettingsService): Router {
   const router = Router();
 
   router.get("/", async (_req, res, next) => {
