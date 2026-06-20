@@ -23,7 +23,8 @@ Three failed fixes (commits):
 
 ## Fix
 
-**Commit `d25e8fb`** — `frontend/src/components/chat/ChatInterface.tsx`
+**Commit `d25e8fb`** — frontend stopgap (guard ref + `history.replaceState`)
+**Commit `abfaf22`** — full fix (backend + frontend)
 
 Three changes applied together:
 
@@ -49,6 +50,18 @@ useEffect(() => {
   });
 }, [id, pendingMessage, queryClient]);
 ```
+
+**Commit `abfaf22`** — architectural fix eliminating `pendingMessage` navigation state entirely.
+
+Backend: `POST /conversations` now requires `firstMessage` and returns SSE instead of JSON:
+- `event: created` → `{ conversationId }`
+- `event: delta / sources / done` — same as `POST /:id/messages`
+
+Frontend (`sse.ts`): `createConversationAndStream()` — opens SSE to `POST /conversations`, parses the `created` event plus the message stream via a shared `parseSSEStream` helper.
+
+Frontend (`useSSEStream.ts`): `startNew(params, content, onComplete)` — wraps `createConversationAndStream`, tracks the `conversationId` from the `created` event, calls `onComplete(id)` on `done`.
+
+Frontend (`ChatInterface.tsx`): `submitNew` calls `stream.startNew`. The streaming text is shown on the `/conversations/new` page (user message + assistant stream). On `done`, navigates to `/conversations/:id`. No `pendingMessage` in navigation state, no guard ref, no `useEffect` timing issue.
 
 ## Lessons
 
