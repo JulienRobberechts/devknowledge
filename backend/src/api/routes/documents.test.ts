@@ -4,6 +4,7 @@ import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InMemoryChunkRepository } from "../../../tests/fakes/InMemoryChunkRepository";
 import { InMemoryDocumentRepository } from "../../../tests/fakes/InMemoryDocumentRepository";
+import { nullLogger } from "../../../tests/fakes/NullLogger";
 import { CreateDocument } from "../../app/knowledgeBase/CreateDocument";
 import { DeleteDocument } from "../../app/knowledgeBase/DeleteDocument";
 import { DocumentQueries } from "../../app/knowledgeBase/DocumentQueries";
@@ -45,18 +46,21 @@ function makeApp(
   app.use(express.json());
   app.use(
     "/documents",
-    documentsRouter({
-      createDocument: new CreateDocument(docRepo, fileStorage as never),
-      ingestDocument: ingest as never,
-      summarizeDocument: { execute: vi.fn().mockResolvedValue("summary") },
-      deleteDocument: new DeleteDocument(docRepo, chunkRepo, fileStorage as never),
-      documentQueries: new DocumentQueries(
-        docRepo,
-        chunkRepo,
-        fakeSummaryRepo as never,
-        fileStorage as never,
-      ),
-    }),
+    documentsRouter(
+      {
+        createDocument: new CreateDocument(docRepo, fileStorage as never),
+        ingestDocument: ingest as never,
+        summarizeDocument: { execute: vi.fn().mockResolvedValue("summary") },
+        deleteDocument: new DeleteDocument(docRepo, chunkRepo, fileStorage as never),
+        documentQueries: new DocumentQueries(
+          docRepo,
+          chunkRepo,
+          fakeSummaryRepo as never,
+          fileStorage as never,
+        ),
+      },
+      nullLogger,
+    ),
   );
   return app;
 }

@@ -1,15 +1,16 @@
 import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { nullLogger } from "../../../tests/fakes/NullLogger";
 import type { RetrieveKnowledge } from "../../app/rag/RetrieveKnowledge";
-import { errorHandler } from "../middleware/errorHandler";
+import { createErrorHandler } from "../middleware/errorHandler";
 import { searchRouter } from "./search";
 
 function makeApp(retrieveKnowledge: Partial<RetrieveKnowledge>) {
   const app = express();
   app.use(express.json());
   app.use("/search", searchRouter(retrieveKnowledge as RetrieveKnowledge));
-  app.use(errorHandler);
+  app.use(createErrorHandler(nullLogger));
   return app;
 }
 

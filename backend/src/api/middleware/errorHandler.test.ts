@@ -9,7 +9,10 @@ vi.mock("../../config", () => ({
   },
 }));
 
-import { errorHandler } from "./errorHandler";
+import { nullLogger } from "../../../tests/fakes/NullLogger";
+import { createErrorHandler } from "./errorHandler";
+
+const errorHandler = createErrorHandler(nullLogger);
 
 function makeRes() {
   const res = {

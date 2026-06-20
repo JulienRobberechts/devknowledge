@@ -2,10 +2,8 @@ import path from "node:path";
 import { type NextFunction, type Request, type Response, Router } from "express";
 import multer from "multer";
 import type { ArgosKnowledgeBase } from "../../app-ports/knowledgeBase";
-import { Logger } from "../../infra/logger/Logger";
+import type { ILogger } from "../../infra-ports/ILogger";
 import { createDocumentSchema } from "../dto/document.dto";
-
-const logger = new Logger("documents");
 
 const ALLOWED_MIMETYPES = new Set([
   "application/pdf",
@@ -27,7 +25,7 @@ const upload = multer({
   },
 });
 
-export function documentsRouter(kb: ArgosKnowledgeBase): Router {
+export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router {
   const router = Router();
 
   router.post(

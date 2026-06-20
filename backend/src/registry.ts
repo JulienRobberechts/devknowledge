@@ -27,6 +27,8 @@ import { createStorageBackends } from "./infra/storage/files/createFileStorage";
 import { DynamicFileStorage } from "./infra/storage/files/DynamicFileStorage";
 import { MultiFileParser } from "./infra/storage/parsers/MultiFileParser";
 
+export const apiLogger = new Logger("api");
+
 export const documentRepo = new PgDocumentRepository();
 export const chunkRepo = new PgVectorChunkRepository();
 export const conversationRepo = new PgConversationRepository(

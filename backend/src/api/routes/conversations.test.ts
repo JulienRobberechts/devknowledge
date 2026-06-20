@@ -3,6 +3,7 @@ import express from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { InMemoryConversationRepository } from "../../../tests/fakes/InMemoryConversationRepository";
+import { nullLogger } from "../../../tests/fakes/NullLogger";
 import { type Conversation, ConversationParams } from "../../domain/entities/Conversation";
 import type { Message } from "../../domain/entities/Message";
 import { conversationsRouter } from "./conversations";
@@ -50,7 +51,7 @@ function makeApp(
 ) {
   const app = express();
   app.use(express.json());
-  app.use("/conversations", conversationsRouter(convRepo, askQuestion as never));
+  app.use("/conversations", conversationsRouter(convRepo, askQuestion as never, nullLogger));
   return app;
 }
 

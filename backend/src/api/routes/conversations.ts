@@ -4,10 +4,8 @@ import { z } from "zod";
 import type { IAskQuestion } from "../../app-ports/rag/IAskQuestion";
 import config from "../../config";
 import { ConversationParams } from "../../domain/entities/Conversation";
-import { Logger } from "../../infra/logger/Logger";
+import type { ILogger } from "../../infra-ports/ILogger";
 import type { IConversationRepository } from "../../infra-ports/persistence/IConversationRepository";
-
-const logger = new Logger("conversations");
 
 const responseGroundingStrategySchema = z.enum([
   "faithfulness",
@@ -46,6 +44,7 @@ const PING_INTERVAL_MS = 15_000;
 export function conversationsRouter(
   conversationRepo: IConversationRepository,
   askQuestion: IAskQuestion,
+  logger: ILogger,
 ): Router {
   const router = Router();
 

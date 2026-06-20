@@ -4,6 +4,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import config from "../config";
 import {
+  apiLogger,
   appSettingsService,
   askQuestion,
   checkStorageConsistency,
@@ -18,7 +19,7 @@ import {
   summarizeDocument,
 } from "../registry";
 import { apiKeyAuth } from "./middleware/apiKeyAuth";
-import { errorHandler } from "./middleware/errorHandler";
+import { createErrorHandler } from "./middleware/errorHandler";
 import { adminRouter } from "./routes/admin";
 import { authRouter } from "./routes/auth";
 import { configRouter } from "./routes/config";
@@ -66,18 +67,21 @@ app.use("/api/config", configRouter(appSettingsService));
 app.use("/api/admin", adminRouter(checkStorageConsistency, appSettingsService, resetAll));
 app.use(
   "/api/documents",
-  documentsRouter({
-    createDocument,
-    ingestDocument,
-    summarizeDocument,
-    deleteDocument,
-    documentQueries,
-  }),
+  documentsRouter(
+    {
+      createDocument,
+      ingestDocument,
+      summarizeDocument,
+      deleteDocument,
+      documentQueries,
+    },
+    apiLogger,
+  ),
 );
-app.use("/api/conversations", conversationsRouter(conversationRepo, askQuestion));
+app.use("/api/conversations", conversationsRouter(conversationRepo, askQuestion, apiLogger));
 app.use("/api/search", searchRouter(retrieveKnowledge));
 app.use("/api/quizzes", quizzesRouter(generateQuiz));
 
-app.use(errorHandler);
+app.use(createErrorHandler(apiLogger));
 
 export default app;
