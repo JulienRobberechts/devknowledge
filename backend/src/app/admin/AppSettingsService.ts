@@ -5,32 +5,15 @@ import type {
   IAppSettingsService,
 } from "../../app-ports/admin";
 import type { IAppSettingsRepository } from "../../infra-ports/persistence";
+import ragConfig from "../../rag.config.json";
 
 export type { AppSettings, AppSettingsPatch, ChunkingConfig };
 
-interface EmbeddingPreset {
-  provider: string;
-  model: string;
-  label: string;
-}
-
-const EMBEDDING_PRESETS: EmbeddingPreset[] = [
-  {
-    provider: "voyage",
-    model: "voyage-4-lite",
-    label: "Voyage AI — voyage-4-lite",
-  },
-  {
-    provider: "openai",
-    model: "text-embedding-3-small",
-    label: "OpenAI — text-embedding-3-small",
-  },
-  {
-    provider: "mistral",
-    model: "mistral-embed",
-    label: "Mistral — mistral-embed",
-  },
-];
+const EMBEDDING_PRESETS = ragConfig.embeddings.models.map((m) => ({
+  provider: m.provider,
+  model: m.id,
+  label: m.label,
+}));
 
 export interface SettingsDefaults {
   storageBackend: "local" | "r2";

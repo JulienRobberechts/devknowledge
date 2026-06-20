@@ -1,0 +1,61 @@
+{
+  "llm": {
+    "models": [
+      {
+        "provider": "anthropic",
+        "id": "claude-haiku-4-5-20251001",
+        "label": "Claude Haiku 4.5",
+        "maxTokens": 1024,
+        "temperature": 0.1,
+        "default": true
+      },
+      {
+        "provider": "anthropic",
+        "id": "claude-sonnet-4-6",
+        "label": "Claude Sonnet 4.6",
+        "maxTokens": 2048,
+        "temperature": 0.1
+      },
+      {
+        "provider": "anthropic",
+        "id": "claude-opus-4-8",
+        "label": "Claude Opus 4.8",
+        "maxTokens": 4096,
+        "temperature": 0.1
+      }
+    ]
+  },
+  "embeddings": {
+    "models": [
+      {
+        "provider": "voyage",
+        "id": "voyage-4-lite",
+        "label": "Voyage AI — voyage-4-lite",
+        "default": true
+      },
+      {
+        "provider": "voyage",
+        "id": "voyage-4",
+        "label": "Voyage AI — voyage-4"
+      }
+    ]
+  },
+  "reranking": {
+    "models": [
+      {
+        "provider": "voyage",
+        "id": "rerank-2.5",
+        "label": "Voyage AI — rerank-2.5",
+        "candidateMultiplier": 3,
+        "default": true
+      }
+    ]
+  },
+  "rag": {
+    "chunkingStrategy": "sentence",
+    "chunkSize": 128,
+    "chunkOverlap": 32,
+    "retrievalLimit": 5,
+    "retrievalMinScore": 0.35
+  }
+}

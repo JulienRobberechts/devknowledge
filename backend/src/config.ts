@@ -1,8 +1,19 @@
 import path from "node:path";
 import dotenv from "dotenv";
 import { z } from "zod";
+import ragConfig from "./rag.config.json";
 
 dotenv.config({ path: path.join(__dirname, "../../.env") });
+
+function requireDefault<T extends { default?: boolean }>(items: T[], name: string): T {
+  const item = items.find((m) => m.default) ?? items[0];
+  if (!item) throw new Error(`rag.config.json: no ${name} defined`);
+  return item;
+}
+
+const defaultLlm = requireDefault(ragConfig.llm.models, "llm model");
+const defaultEmbedding = requireDefault(ragConfig.embeddings.models, "embedding model");
+const defaultRerank = requireDefault(ragConfig.reranking.models, "rerank model");
 
 const envSchema = z
   .object({
@@ -19,20 +30,9 @@ const envSchema = z
     NODE_ENV: z.string().default("development"),
     LOG_LEVEL: z.string().default("info"),
     ALLOWED_ORIGIN: z.string().optional(),
-    DEFAULT_LLM_MODEL: z.string().default("claude-haiku-4-5-20251001"),
-    DEFAULT_LLM_MAX_TOKENS: z.coerce.number().default(1024),
-    DEFAULT_LLM_TEMPERATURE: z.coerce.number().default(0.1),
-    EMBEDDING_MODEL: z.string().default("voyage-4-lite"),
     UPLOAD_DIR: z.string().default("/app/uploads"),
-    DEFAULT_CHUNKING_STRATEGY: z.enum(["recursive", "sentence"]).default("recursive"),
-    DEFAULT_CHUNK_SIZE_TOKENS: z.coerce.number().default(512),
-    DEFAULT_CHUNK_OVERLAP_TOKENS: z.coerce.number().default(128),
-    DEFAULT_RETRIEVAL_LIMIT: z.coerce.number().default(8),
-    DEFAULT_RETRIEVAL_MIN_SCORE: z.coerce.number().default(0.75),
     SEARCH_MODE: z.enum(["vector", "hybrid"]).default("hybrid"),
     RERANK_ENABLED: z.string().default("true"),
-    DEFAULT_RERANK_MODEL: z.string().default("rerank-2.5"),
-    DEFAULT_RERANK_CANDIDATE_MULTIPLIER: z.coerce.number().default(3),
   })
   .superRefine((env, ctx) => {
     if (env.DEFAULT_STORAGE_BACKEND === "r2") {
@@ -79,15 +79,15 @@ const config = {
       apiKey: env.ANTHROPIC_APP_API_KEY,
     },
     defaults: {
-      model: env.DEFAULT_LLM_MODEL,
-      maxTokens: env.DEFAULT_LLM_MAX_TOKENS,
-      temperature: env.DEFAULT_LLM_TEMPERATURE,
+      model: defaultLlm.id,
+      maxTokens: defaultLlm.maxTokens,
+      temperature: defaultLlm.temperature,
     },
   },
   embeddings: {
     voyage: {
       apiKey: env.VOYAGE_API_KEY,
-      model: env.EMBEDDING_MODEL,
+      model: defaultEmbedding.id,
     },
   },
   api: {
@@ -107,11 +107,11 @@ const config = {
   },
   rag: {
     defaults: {
-      chunkingStrategy: env.DEFAULT_CHUNKING_STRATEGY,
-      chunkSize: env.DEFAULT_CHUNK_SIZE_TOKENS,
-      chunkOverlap: env.DEFAULT_CHUNK_OVERLAP_TOKENS,
-      retrievalLimit: env.DEFAULT_RETRIEVAL_LIMIT,
-      retrievalMinScore: env.DEFAULT_RETRIEVAL_MIN_SCORE,
+      chunkingStrategy: ragConfig.rag.chunkingStrategy as "recursive" | "sentence",
+      chunkSize: ragConfig.rag.chunkSize,
+      chunkOverlap: ragConfig.rag.chunkOverlap,
+      retrievalLimit: ragConfig.rag.retrievalLimit,
+      retrievalMinScore: ragConfig.rag.retrievalMinScore,
     },
     searchMode: env.SEARCH_MODE,
     responseGroundingStrategies: [] as ("faithfulness" | "counterfactual" | "citation_forcing")[],
@@ -119,8 +119,8 @@ const config = {
   rerank: {
     enabled: env.RERANK_ENABLED !== "false",
     defaults: {
-      model: env.DEFAULT_RERANK_MODEL,
-      candidateMultiplier: env.DEFAULT_RERANK_CANDIDATE_MULTIPLIER,
+      model: defaultRerank.id,
+      candidateMultiplier: defaultRerank.candidateMultiplier,
     },
   },
 };
