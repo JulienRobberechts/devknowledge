@@ -41,10 +41,11 @@ import type { IAction } from "../../app-ports/dir/IAction";
 
 ## Tests
 
-- **Unit**: app/domain logic; in-memory fakes for repos, spies for adapters. Next to source file.
-- **Integration**: real database. Excluded from CI.
-- **E2E**: quality checks. Excluded from CI.
+Read `.claude/test-taxonomy.md` before writing any test — it defines the test levels, canonical names, when to use each type, and their Burden/Value/ROI/Volume scores.
+
 - Factory functions (`makeXxx()`) for test data; app tests must not import from `infra/`.
+- Prefer `u-core` and `1-core` (highest ROI); use integration and E2E levels sparingly.
+- Place unit tests next to the source file; integration and E2E tests under `tests/`.
 
 ## Architecture Decisions
 
