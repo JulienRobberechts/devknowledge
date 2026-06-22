@@ -7,7 +7,7 @@ Based on `.claude/test-taxonomy.md`.
 | Type | Taxonomy name | ROI | Status | Test files |
 |------|--------------|-----|--------|------------|
 | Unit — Core (B) | `u-core` | 17.0 | ✅ Present | `domain/services/ChunkingStrategies.test.ts`, `app/rag/responseGrounding/strategies/citationForcing.test.ts` |
-| Unit — Frontend (F) | `u-ui` | 5.0 | ❌ Missing | — |
+| Unit — Frontend (F) | `u-ui` | 5.0 | ✅ Present | `services/sse.test.ts` (8 tests), `hooks/useSSEStream.test.ts` (6 tests), `hooks/useDocuments.test.ts` (5 tests) |
 | Module — API (A) | `1-api` | 3.18 | ✅ Present | `api/routes/conversations.test.ts`, `documents.test.ts`, `search.test.ts`, `middleware/apiKeyAuth.test.ts`, `errorHandler.test.ts` |
 | Module — CLI (A) | `1-cli` | 3.18 | N/A | No CLI in project |
 | Module — Core + fakes (B) | `1-core` | 3.0 | ✅ Present | `app/knowledgeBase/IngestDocument.test.ts`, `app/rag/AskQuestion.test.ts`, `ConversationService.test.ts`, `RetrieveKnowledge.test.ts` |
@@ -25,5 +25,4 @@ Based on `.claude/test-taxonomy.md`.
 
 ## High-ROI Gaps (priority order)
 
-1. **`u-ui`** (ROI 5.0) — zero frontend tests; hooks and non-trivial component logic uncovered
-2. **`port-contract`** (ROI 2.02) — in-memory fakes (`InMemoryChunkRepository`, etc.) are never validated against real Pg implementations
+1. **`port-contract`** (ROI 2.02) — in-memory fakes (`InMemoryChunkRepository`, etc.) are never validated against real Pg implementations
