@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createConversationAndStream, streamMessage } from "./sse";
 
-function makeSSEBody(chunks: string[]): ReadableStream<Uint8Array> {
+function makeSSEBody(chunks: string[]): ReadableStream<Uint8Array<ArrayBuffer>> {
   const encoder = new TextEncoder();
-  return new ReadableStream({
+  return new ReadableStream<Uint8Array<ArrayBuffer>>({
     start(controller) {
       for (const chunk of chunks) {
         controller.enqueue(encoder.encode(chunk));
