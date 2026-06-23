@@ -1,8 +1,9 @@
 import express from "express";
 import request from "supertest";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { nullLogger } from "../../../tests/fakes/NullLogger";
 import type { IRetrieveKnowledge } from "../../app-ports/rag";
+import { ChunkMetadata } from "../../domain/entities";
 import { createErrorHandler } from "../middleware/errorHandler";
 import { searchRouter } from "./search";
 
@@ -13,7 +14,7 @@ function makeChunkSearchResult() {
       documentId: "d1",
       content: "relevant content",
       embedding: [],
-      metadata: { position: 0, startChar: 0, endChar: 16 },
+      metadata: ChunkMetadata.create(0, 0, 16),
     },
     score: 0.9,
   };
@@ -28,10 +29,12 @@ function makeApp(retrieveKnowledge: Partial<IRetrieveKnowledge>) {
 }
 
 describe("searchRouter", () => {
-  let mockRetrieveKnowledge: { execute: ReturnType<typeof vi.fn> };
+  let mockRetrieveKnowledge: { execute: Mock<IRetrieveKnowledge["execute"]> };
 
   beforeEach(() => {
-    mockRetrieveKnowledge = { execute: vi.fn().mockResolvedValue([]) };
+    mockRetrieveKnowledge = {
+      execute: vi.fn<IRetrieveKnowledge["execute"]>().mockResolvedValue([]),
+    };
   });
 
   describe("POST /search", () => {
