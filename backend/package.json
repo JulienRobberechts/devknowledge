@@ -13,7 +13,7 @@
     "format": "biome format --write src tests",
     "check": "biome check --write src tests",
     "typecheck": "tsc --noEmit",
-    "migrate": "tsx src/infra/db/migrate.ts",
+    "migrate": "tsx src/infra/persistence/db/migrate.ts",
     "migrate:prod": "node dist/infra/persistence/db/migrate.js"
   },
   "dependencies": {
