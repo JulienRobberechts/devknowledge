@@ -63,6 +63,34 @@ Frontend (`useSSEStream.ts`): `startNew(params, content, onComplete)` — wraps 
 
 Frontend (`ChatInterface.tsx`): `submitNew` calls `stream.startNew`. The streaming text is shown on the `/conversations/new` page (user message + assistant stream). On `done`, navigates to `/conversations/:id`. No `pendingMessage` in navigation state, no guard ref, no `useEffect` timing issue.
 
+---
+
+## Follow-up Bug — "New conversation" shows stale state (2026-06-24)
+
+### Symptom
+
+Clicking "New conversation" navigates to `/conversations/new` but displays the previous conversation's user message and the assistant's response, with the input field at the bottom instead of centered.
+
+### Root Cause
+
+React Router reuses the same `ChatInterface` instance when navigating between `/conversations/new` and `/conversations/:id` (same component type, no `key` prop). Two pieces of state from the previous stream survived the navigation:
+
+1. `pendingUserMessage` (local state in `ChatInterface`) — held the last user message typed on `/new`.
+2. `stream.text` (`useSSEStream`) — held the accumulated assistant response. The cleanup `useEffect` had `[]` as deps, so it only reset on unmount, never on `conversationId` change.
+
+The `/new` branch renders `MessageList + bottom input` when `stream.isStreaming || stream.text` is truthy, so stale `stream.text` from the previous session triggered that branch instead of the centered input.
+
+### Fix
+
+**`useSSEStream.ts`** — changed cleanup effect deps from `[]` to `[conversationId]`. State (`text`, `sources`, `isStreaming`) and the active SSE connection are now reset whenever `conversationId` changes, not only on unmount.
+
+**`ChatInterface.tsx`** — added `useEffect(() => { setPendingUserMessage(null); }, [id])` to clear the pending user message on every route change.
+
+### Lesson
+
+- React Router does not remount a component when switching between two routes that use the same element type without a `key` prop — all local state and hook state persist across navigations.
+- Cleanup effects with `[]` deps are unmount-only; use the relevant prop as a dep to reset on value change.
+
 ## Lessons
 
 - Never put `stream.send` or other potentially unstable callbacks in a `useEffect` deps array when the effect is a one-shot guard. Use a ref instead.

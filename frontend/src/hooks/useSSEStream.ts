@@ -11,6 +11,7 @@ export function useSSEStream(conversationId: string) {
   const [isStreaming, setIsStreaming] = useState(false);
   const closeRef = useRef<(() => void) | null>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: conversationId is an intentional trigger to reset state when switching conversations
   useEffect(() => {
     setText("");
     setSources([]);
@@ -20,7 +21,7 @@ export function useSSEStream(conversationId: string) {
       closeRef.current?.();
       closeRef.current = null;
     };
-  }, []);
+  }, [conversationId]);
 
   const send = useCallback(
     (content: string, onComplete?: () => void) => {

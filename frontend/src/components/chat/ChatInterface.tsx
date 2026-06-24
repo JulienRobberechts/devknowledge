@@ -40,6 +40,11 @@ export default function ChatInterface() {
     }
   }, [appConfig, pendingParams]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: id is an intentional trigger to reset state on navigation
+  useEffect(() => {
+    setPendingUserMessage(null);
+  }, [id]);
+
   function submitNew(content: string) {
     setPendingUserMessage(content);
     stream.startNew(pendingParams, content, (newId) => {
