@@ -275,6 +275,22 @@
 | **Volume** | 5 — cover only the consumer-facing endpoints most likely to break |
 | **When to use** | When the API has multiple consumers or before introducing breaking API changes. Requires a Pact broker and consumer-side test generation. |
 
+#### C4. Retrieval quality
+
+| | |
+|---|---|
+| **Scope** | B (real use cases) + partial C (real embedding adapter when API key available; in-memory repositories) |
+| **Name** | `retrieval-quality` |
+| **Suggested names** | `retrieval-quality`, `rag-quality`, `semantic-quality` |
+| **Description** | Validates retrieval accuracy — that the right chunks surface for realistic queries — using the real embedding model. Repositories stay in-memory to keep the test fast. Tests are skipped when the API key is absent. |
+| **Pros** | Catches embedding / chunking regressions that functional tests miss; no database required |
+| **Cons** | Requires an external API key; non-deterministic if the embedding model changes; slow per test |
+| **Burden** | 30 — no container, but external API key required; test data files must be committed |
+| **Value** | 70 — validates real retrieval quality; complements `1-core` which only tests logic |
+| **ROI** | 2.33 — good ratio for the coverage it provides; one suite per document/domain |
+| **Volume** | 5 — one suite per key document or domain; cover the critical retrieval scenarios |
+| **When to use** | When changing chunking strategy, embedding model, or retrieval parameters. Place in `tests/retrieval/`. Skip in CI via `describe.skipIf`. |
+
 #### C3. Architecture tests
 
 | | |
@@ -315,6 +331,7 @@
 | 3 — Int | `3-front-to-core`, `e2e-api` | 3 modules | 3 | ⚡ | near-system | ⚠️ optional |
 | 4 — E2E | `4-e2e` | 4 modules | 4 | 🐢🐢 | full system | ❌ excluded |
 | Contract | `port-contract`, `api-contract`, `arch` | interface | variable | ⚡⚡ | compatibility | ✅ |
+| Quality | `retrieval-quality` | B + partial C | variable | 🐢 | retrieval accuracy | ❌ excluded |
 
 Mock levels: `—` none · `fake` in-memory port implementation · `mock` stub/spy
 
@@ -337,6 +354,7 @@ Mock levels: `—` none · `fake` in-memory port implementation · `mock` stub/s
 | `port-contract` | Contract | B↔C | fake + real (C) | ⚡⚡ | 42 | 5 | 2.02 | 35 | ✅ |
 | `api-contract` | Contract | F↔A | — | ⚡⚡ | 58 | 80 | 1.38 | 5 | ✅ |
 | `arch` | Contract | all | — | ⚡⚡⚡ | 12 | 80 | 6.67 | 5 | ✅ |
+| `retrieval-quality` | Quality | B + partial C | — / fake (repos) | 🐢 | 30 | 70 | 2.33 | 5 | ❌ excluded |
 
 ---
 

@@ -28,7 +28,8 @@ Based on `.claude/test-taxonomy.md`.
 | Int — Core + Infra (B+C) | `2-core-X-infra` | 1.23 | — Volume=0 | Intentionally absent | 0 | 0 | — |
 | Int — Front + API (F+A) | `2-front-X-api` | 1.10 | — Volume=0 | Intentionally absent | 0 | 0 | — |
 | Int — Front→Core (F+A+B) | `3-front-to-core` | 1.00 | — Volume=0 | Intentionally absent | 0 | 0 | — |
-| Int — API→Infra (A+B+C) | `e2e-api` | 1.14 | ✅ Present | `tests/retrieval/venise-simplon-orient-express.retrieval.test.ts` (2) — suffix `.retrieval.` | 2 | ~8 | 25% |
+| Int — API→Infra (A+B+C) | `e2e-api` | 1.14 | — Volume=0 | Intentionally absent | 0 | ~8 | — |
+| Quality — Retrieval accuracy | `retrieval-quality` | 2.33 | ✅ Present | `tests/retrieval/venise-simplon-orient-express.retrieval-quality.test.ts` (2) | 2 | ~5 | 40% |
 | E2E full (F+A+B+C) | `e2e-ui` | 1.03 | ❌ Missing | — | 0 | ~4 | 0% |
 | Contract — Port interface | `port-contract` | 2.02 | ❌ Missing | — | 0 | ~20 | 0% |
 | Contract — External API | `api-contract` | 1.38 | ❌ Missing | — | 0 | ~5 | 0% |
@@ -109,31 +110,4 @@ The taxonomy specifies `1-core` = `fake (C)` (in-memory port implementations). U
 
 **Required change:** Replace `vi.fn()` stubs for C ports with dedicated in-memory fake classes (e.g., `InMemoryEmbeddingAdapter`, `InMemoryFileStorage`, `InMemoryFileParser`, `InMemoryLLMAdapter`) placed in `tests/fakes/`. This ensures fake/real parity and makes them eligible for `port-contract` validation.
 
----
 
-### ~~Summary Table — naming inconsistency~~ ✅ Resolved
-
-`e2e-api` is now the canonical name in `test-taxonomy.md` (was `3-api-to-infra`). Plan and taxonomy are aligned.
-
----
-
-### Retrieval test — wrong scope and non-taxonomy suffix
-
-`tests/retrieval/venise-simplon-orient-express.retrieval.test.ts` is mapped in the plan to `e2e-api` (A+B+C). Actual scope:
-
-- **A (API layer):** absent — no Express/HTTP involved.
-- **B (app):** `IngestDocument`, `RetrieveKnowledge` — real use-case code.
-- **C real:** `VoyageEmbeddingAdapter` (real HTTP when `VOYAGE_API_KEY` available), `MarkdownParser`.
-- **C fake:** `InMemoryDocumentRepository`, `InMemoryChunkRepository`.
-
-True scope is **B + partial C** → closest taxonomy level is `2-core-X-infra`, not A+B+C. The `.retrieval.` suffix is not defined in the taxonomy.
-
-**Required change:** Reclassify the test in the plan table from the `e2e-api` / `3-api-to-infra` row to `2-core-X-infra` (or a dedicated "retrieval quality" entry if kept separate). Rename the suffix from `.retrieval.` to `.2-core-X-infra.` if the naming convention is enforced, or document the exception explicitly.
-
----
-
-### `RetrieveKnowledge.1-core.test.ts` — French test description
-
-Line 270: `it("retourne les candidats bruts si le reranker retourne null", …)` — test description is in French. Project rule: all code, comments, and documentation must be in English.
-
-**Required change:** Translate to English, e.g. `it("returns raw candidates when reranker returns null", …)`.

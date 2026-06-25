@@ -18,7 +18,7 @@ const diskFileStorage = {
   deleteAll: async () => {},
 };
 
-import { RETRIEVAL_CASES } from "./venise-simplon-orient-express.retrieval.cases";
+import { RETRIEVAL_CASES } from "./venise-simplon-orient-express.retrieval-quality.cases";
 
 const CHUNK_SIZE = 512;
 const CHUNK_OVERLAP = 128;
