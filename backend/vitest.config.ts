@@ -67,6 +67,8 @@ export default defineConfig({
           ...shared,
           name: "1-infra",
           include: ["src/**/*.1-infra.test.ts", "tests/1-infra/**/*.1-infra.test.ts"],
+          globalSetup: ["./tests/globalSetup.pg.ts"],
+          setupFiles: ["./tests/setup.ts", "./tests/setup.infra.ts"],
         },
       },
       {
