@@ -131,6 +131,31 @@
 | **Volume** | 55 — one suite per adapter; cover each method and edge cases (nulls, pagination) |
 | **When to use** | When writing or modifying a repository, SQL query, or third-party client. One suite per adapter implementation. Run against a real DB via Testcontainers. Runs only on demand not at each commit in CI |
 
+##### How to write a `1-infra` test
+
+A `1-infra` test must be written **against the port interface**, not the concrete adapter class. The adapter is injected via a setup factory so the contract suite is reusable across implementations.
+
+**Structure — three-layer pattern:**
+
+```
+setupStorage factory       ← adapter-specific: creates the real adapter + cleanup + verifyOnMedium
+testXxxPort(setup)         ← shared contract: all tests use only the port interface
+describe("AdapterName")    ← one per implementation; calls testXxxPort with its factory
+```
+
+**Rules:**
+1. The shared contract function (`testXxxPort`) imports only the port interface type — never a concrete class.
+2. Every `it` block inside the contract calls port methods only. No `instanceof`, no adapter internals.
+3. The setup factory returns three things:
+   - `adapter` — the real implementation, typed as the port interface.
+   - `cleanup` — tears down the real resource (delete tmp dir, flush bucket, close connection…).
+   - `verifyOnMedium(key, expected)` — bypasses the port to assert the data landed on the real underlying system (filesystem, S3 API, DB query…). This is the one place where adapter internals are allowed, because the point is to prove the write reached the medium, not just that the port round-trips.
+4. The `describe("AdapterName")` block is the only place that imports the concrete class.
+5. When the real system requires credentials or a running service, fail loudly in `beforeAll` with a message listing the missing variables — do not skip silently.
+
+**What to keep in `u-infra` alongside `1-infra`:**
+The `1-infra` suite covers behavioral correctness (round-trips, error cases). Keep a `u-infra` test only for logic that cannot be exercised with a real system at reasonable cost: pagination driven by server-side flags, exact command/query parameters passed to a driver, encoding edge cases. Delete `u-infra` cases that duplicate `1-infra` coverage.
+
 ---
 
 ### Level 2 — Integration tests (2 modules)
