@@ -1,4 +1,10 @@
+import path from "node:path";
+import dotenv from "dotenv";
 import { defineConfig } from "vitest/config";
+
+// Load .env before building the env object so VSCode (which has no shell env)
+// gets the real keys — dotenv inside setupFiles runs too late (after env is injected).
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const shared = {
   globals: true,
