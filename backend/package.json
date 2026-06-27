@@ -7,6 +7,7 @@
     "start": "node dist/index.js",
     "test": "vitest run --project=u-core --project=u-api --project=u-infra --project=1-api --project=1-core --project=arch --project=port-contract",
     "test:infra": "vitest run --project=1-infra --project=e2e-api",
+    "test:e2e-api": "vitest run --project=e2e-api",
     "test:all": "vitest run",
     "test:coverage": "vitest run --coverage",
     "check:ci": "biome check --error-on-warnings src tests",

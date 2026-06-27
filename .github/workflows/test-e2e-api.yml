@@ -1,0 +1,29 @@
+name: Tests E2E API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-e2e-api:
+    name: Tests e2e-api
+    runs-on: ubuntu-latest
+    environment: infra-tests
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+        working-directory: backend
+      - run: npm run test:e2e-api
+        working-directory: backend
+        env:
+          VOYAGE_API_KEY: ${{ secrets.VOYAGE_API_KEY }}
+          ANTHROPIC_APP_API_KEY: ${{ secrets.ANTHROPIC_APP_API_KEY }}
+          DEFAULT_STORAGE_BACKEND: r2
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
