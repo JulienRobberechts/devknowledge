@@ -7,6 +7,7 @@ jobs:
   test-infra:
     name: Tests 1-infra
     runs-on: ubuntu-latest
+    environment: infra-tests
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
