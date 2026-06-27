@@ -28,6 +28,15 @@ const upload = multer({
 export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router {
   const router = Router();
 
+  async function requireDoc(req: Request, res: Response) {
+    const doc = await kb.documentQueries.get(String(req.params.id));
+    if (!doc) {
+      res.status(404).json({ error: "Document not found" });
+      return null;
+    }
+    return doc;
+  }
+
   router.post(
     "/",
     upload.single("file"),
@@ -73,11 +82,8 @@ export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router
 
   router.get("/:id", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const doc = await kb.documentQueries.get(String(req.params.id));
-      if (!doc) {
-        res.status(404).json({ error: "Document not found" });
-        return;
-      }
+      const doc = await requireDoc(req, res);
+      if (!doc) return;
       res.json(doc);
     } catch (err) {
       next(err);
@@ -88,11 +94,8 @@ export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router
     "/:id/chunks",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await kb.documentQueries.get(String(req.params.id));
-        if (!doc) {
-          res.status(404).json({ error: "Document not found" });
-          return;
-        }
+        const doc = await requireDoc(req, res);
+        if (!doc) return;
         const chunks = await kb.documentQueries.getChunks(String(req.params.id));
         res.json(chunks);
       } catch (err) {
@@ -105,11 +108,8 @@ export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router
     "/:id/content",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await kb.documentQueries.get(String(req.params.id));
-        if (!doc) {
-          res.status(404).json({ error: "Document not found" });
-          return;
-        }
+        const doc = await requireDoc(req, res);
+        if (!doc) return;
         const content = await kb.documentQueries.getContent(String(req.params.id));
         if (!content) {
           res.status(404).json({ error: "Content not available" });
@@ -124,11 +124,8 @@ export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router
 
   router.get("/:id/raw", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const doc = await kb.documentQueries.get(String(req.params.id));
-      if (!doc) {
-        res.status(404).json({ error: "Document not found" });
-        return;
-      }
+      const doc = await requireDoc(req, res);
+      if (!doc) return;
       const buffer = await kb.documentQueries.getRawBuffer(String(req.params.id));
       if (!buffer) {
         res.status(404).json({ error: "Raw file not available" });
@@ -145,11 +142,8 @@ export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router
     "/:id/summary",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await kb.documentQueries.get(String(req.params.id));
-        if (!doc) {
-          res.status(404).json({ error: "Document not found" });
-          return;
-        }
+        const doc = await requireDoc(req, res);
+        if (!doc) return;
         const summary = await kb.documentQueries.getSummary(String(req.params.id));
         if (!summary) {
           res.status(404).json({ error: "Summary not found" });
@@ -166,11 +160,8 @@ export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router
     "/:id/summary",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const doc = await kb.documentQueries.get(String(req.params.id));
-        if (!doc) {
-          res.status(404).json({ error: "Document not found" });
-          return;
-        }
+        const doc = await requireDoc(req, res);
+        if (!doc) return;
         if (doc.status !== "ready") {
           res.status(409).json({ error: "Document is not ready" });
           return;
@@ -185,11 +176,8 @@ export function documentsRouter(kb: ArgosKnowledgeBase, logger: ILogger): Router
 
   router.delete("/:id", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const doc = await kb.documentQueries.get(String(req.params.id));
-      if (!doc) {
-        res.status(404).json({ error: "Document not found" });
-        return;
-      }
+      const doc = await requireDoc(req, res);
+      if (!doc) return;
       await kb.deleteDocument.execute(String(req.params.id));
       res.status(204).send();
     } catch (err) {

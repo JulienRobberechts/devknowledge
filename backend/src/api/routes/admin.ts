@@ -20,6 +20,10 @@ const appSettingsPatchSchema = z.object({
     .optional(),
 });
 
+const resetBodySchema = z.object({
+  newSettings: appSettingsPatchSchema.optional(),
+});
+
 const EMBEDDING_PROVIDER_OPTIONS = [
   {
     provider: "voyage",
@@ -38,16 +42,16 @@ const EMBEDDING_PROVIDER_OPTIONS = [
   },
 ];
 
+const PROVIDER_KEY: Record<string, string | undefined> = {
+  voyage: config.embeddings.voyage.apiKey,
+  openai: process.env.OPENAI_API_KEY,
+  mistral: process.env.MISTRAL_API_KEY,
+};
+
 function buildEmbeddingOptions() {
   return EMBEDDING_PROVIDER_OPTIONS.map((p) => ({
     ...p,
-    available: !!(p.provider === "voyage"
-      ? config.embeddings.voyage.apiKey
-      : p.provider === "openai"
-        ? process.env.OPENAI_API_KEY
-        : p.provider === "mistral"
-          ? process.env.MISTRAL_API_KEY
-          : false),
+    available: !!PROVIDER_KEY[p.provider],
   }));
 }
 
@@ -120,10 +124,7 @@ export function adminRouter(
     "/reset",
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const bodySchema = z.object({
-          newSettings: appSettingsPatchSchema.optional(),
-        });
-        const parsed = bodySchema.safeParse(req.body);
+        const parsed = resetBodySchema.safeParse(req.body);
         if (!parsed.success) {
           res.status(400).json({ error: "Validation error", fields: parsed.error.issues });
           return;

@@ -2,6 +2,12 @@ import { timingSafeEqual } from "node:crypto";
 import { type Request, type Response, Router } from "express";
 import config from "../../config";
 
+function isValidKey(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export function authRouter(): Router {
   const router = Router();
 
@@ -19,9 +25,7 @@ export function authRouter(): Router {
       return;
     }
 
-    const provided = Buffer.from(password);
-    const expected = Buffer.from(expectedKey);
-    if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
+    if (!isValidKey(password, expectedKey)) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
@@ -45,13 +49,7 @@ export function authRouter(): Router {
     const key = fromCookie ?? fromHeader;
     const expectedKey = config.api.key;
 
-    if (
-      !key ||
-      !expectedKey ||
-      typeof key !== "string" ||
-      key.length !== expectedKey.length ||
-      !timingSafeEqual(Buffer.from(key), Buffer.from(expectedKey))
-    ) {
+    if (!key || !expectedKey || typeof key !== "string" || !isValidKey(key, expectedKey)) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }

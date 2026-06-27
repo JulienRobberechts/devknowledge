@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type NextFunction, type Request, type Response, Router } from "express";
-import { z } from "zod";
+import { type ZodError, z } from "zod";
 import type { IAskQuestion, IConversationService } from "../../app-ports/rag";
 import config from "../../config";
 import { ConversationParams } from "../../domain/entities";
@@ -40,6 +40,63 @@ const sendMessageSchema = z.object({
 
 const PING_INTERVAL_MS = 15_000;
 
+function formatZodError(error: ZodError) {
+  return {
+    error: "Validation error",
+    fields: error.issues.map((e) => ({
+      path: e.path.join("."),
+      message: e.message,
+    })),
+  };
+}
+
+async function streamAskResponse(
+  res: Response,
+  req: Request,
+  conversationId: string,
+  content: string,
+  askQuestion: IAskQuestion,
+  logger: ILogger,
+): Promise<void> {
+  const ping = setInterval(() => {
+    res.write("event: ping\ndata: {}\n\n");
+  }, PING_INTERVAL_MS);
+
+  const controller = new AbortController();
+  const cleanup = () => {
+    clearInterval(ping);
+    controller.abort();
+  };
+  req.on("close", cleanup);
+
+  try {
+    const assistantMessage = await askQuestion.execute(
+      conversationId,
+      content,
+      (token: string) => {
+        res.write(`event: delta\ndata: ${JSON.stringify({ token })}\n\n`);
+      },
+      controller.signal,
+    );
+
+    res.write(`event: sources\ndata: ${JSON.stringify({ sources: assistantMessage.sources })}\n\n`);
+    if (assistantMessage.responseGrounding?.length) {
+      res.write(
+        `event: response_grounding\ndata: ${JSON.stringify({ results: assistantMessage.responseGrounding })}\n\n`,
+      );
+    }
+    res.write(
+      `event: done\ndata: ${JSON.stringify({ messageId: assistantMessage.id, contentLength: assistantMessage.content.length })}\n\n`,
+    );
+  } catch (err) {
+    res.write(`event: error\ndata: ${JSON.stringify({ error: "Stream error" })}\n\n`);
+    logger.error("SSE stream error", err instanceof Error ? err : new Error(String(err)));
+  } finally {
+    cleanup();
+    res.end();
+  }
+}
+
 export function conversationsRouter(
   conversationService: IConversationService,
   askQuestion: IAskQuestion,
@@ -50,13 +107,7 @@ export function conversationsRouter(
   router.post("/", async (req: Request, res: Response): Promise<void> => {
     const body = createConversationSchema.safeParse(req.body);
     if (!body.success) {
-      res.status(400).json({
-        error: "Validation error",
-        fields: body.error.issues.map((e) => ({
-          path: e.path.join("."),
-          message: e.message,
-        })),
-      });
+      res.status(400).json(formatZodError(body.error));
       return;
     }
 
@@ -92,45 +143,7 @@ export function conversationsRouter(
 
     res.write(`event: created\ndata: ${JSON.stringify({ conversationId: conversation.id })}\n\n`);
 
-    const ping = setInterval(() => {
-      res.write("event: ping\ndata: {}\n\n");
-    }, PING_INTERVAL_MS);
-
-    const controller = new AbortController();
-    const cleanup = () => {
-      clearInterval(ping);
-      controller.abort();
-    };
-    req.on("close", cleanup);
-
-    try {
-      const assistantMessage = await askQuestion.execute(
-        conversation.id,
-        body.data.firstMessage,
-        (token: string) => {
-          res.write(`event: delta\ndata: ${JSON.stringify({ token })}\n\n`);
-        },
-        controller.signal,
-      );
-
-      res.write(
-        `event: sources\ndata: ${JSON.stringify({ sources: assistantMessage.sources })}\n\n`,
-      );
-      if (assistantMessage.responseGrounding?.length) {
-        res.write(
-          `event: response_grounding\ndata: ${JSON.stringify({ results: assistantMessage.responseGrounding })}\n\n`,
-        );
-      }
-      res.write(
-        `event: done\ndata: ${JSON.stringify({ messageId: assistantMessage.id, contentLength: assistantMessage.content.length })}\n\n`,
-      );
-    } catch (err) {
-      res.write(`event: error\ndata: ${JSON.stringify({ error: "Stream error" })}\n\n`);
-      logger.error("SSE stream error", err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      cleanup();
-      res.end();
-    }
+    await streamAskResponse(res, req, conversation.id, body.data.firstMessage, askQuestion, logger);
   });
 
   router.get("/", async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -159,7 +172,7 @@ export function conversationsRouter(
     try {
       const body = updateTitleSchema.safeParse(req.body);
       if (!body.success) {
-        res.status(400).json({ error: "Validation error" });
+        res.status(400).json(formatZodError(body.error));
         return;
       }
       const conversation = await conversationService.findById(String(req.params.id));
@@ -191,13 +204,7 @@ export function conversationsRouter(
   router.post("/:id/messages", async (req: Request, res: Response): Promise<void> => {
     const body = sendMessageSchema.safeParse(req.body);
     if (!body.success) {
-      res.status(400).json({
-        error: "Validation error",
-        fields: body.error.issues.map((e) => ({
-          path: e.path.join("."),
-          message: e.message,
-        })),
-      });
+      res.status(400).json(formatZodError(body.error));
       return;
     }
 
@@ -213,45 +220,14 @@ export function conversationsRouter(
       Connection: "keep-alive",
     });
 
-    const ping = setInterval(() => {
-      res.write("event: ping\ndata: {}\n\n");
-    }, PING_INTERVAL_MS);
-
-    const controller = new AbortController();
-    const cleanup = () => {
-      clearInterval(ping);
-      controller.abort();
-    };
-    req.on("close", cleanup);
-
-    try {
-      const assistantMessage = await askQuestion.execute(
-        String(req.params.id),
-        body.data.content,
-        (token: string) => {
-          res.write(`event: delta\ndata: ${JSON.stringify({ token })}\n\n`);
-        },
-        controller.signal,
-      );
-
-      res.write(
-        `event: sources\ndata: ${JSON.stringify({ sources: assistantMessage.sources })}\n\n`,
-      );
-      if (assistantMessage.responseGrounding?.length) {
-        res.write(
-          `event: response_grounding\ndata: ${JSON.stringify({ results: assistantMessage.responseGrounding })}\n\n`,
-        );
-      }
-      res.write(
-        `event: done\ndata: ${JSON.stringify({ messageId: assistantMessage.id, contentLength: assistantMessage.content.length })}\n\n`,
-      );
-    } catch (err) {
-      res.write(`event: error\ndata: ${JSON.stringify({ error: "Stream error" })}\n\n`);
-      logger.error("SSE stream error", err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      cleanup();
-      res.end();
-    }
+    await streamAskResponse(
+      res,
+      req,
+      String(req.params.id),
+      body.data.content,
+      askQuestion,
+      logger,
+    );
   });
 
   return router;

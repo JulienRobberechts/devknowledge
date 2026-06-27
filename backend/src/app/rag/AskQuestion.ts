@@ -82,14 +82,7 @@ export class AskQuestion implements IAskQuestion {
       this.logger.warn("No chunks found, returning no-info response", {
         conversationId,
       });
-      const noInfoMessage: Message = {
-        id: randomUUID(),
-        conversationId,
-        role: "assistant",
-        content: NO_INFO_RESPONSE,
-        sources: [],
-        createdAt: new Date(),
-      };
+      const noInfoMessage = this.makeAssistantMessage(conversationId, NO_INFO_RESPONSE);
       await this.conversationRepo.addMessage(conversationId, noInfoMessage);
       return noInfoMessage;
     }
@@ -107,13 +100,12 @@ export class AskQuestion implements IAskQuestion {
       prompt,
       onToken,
       signal,
-      params
-        ? LLMStreamOptions.create({
-            model: params.llmModel,
-            temperature: params.llmTemperature,
-            maxTokens: params.llmMaxTokens,
-          })
-        : undefined,
+      LLMStreamOptions.create({
+        model: params?.llmModel,
+        temperature: params?.llmTemperature,
+        maxTokens: params?.llmMaxTokens,
+        systemPrompt: "Always respond in the same language as the user's question.",
+      }),
     );
     if (!streamResult.ok) return streamResult.message;
 
@@ -132,20 +124,10 @@ export class AskQuestion implements IAskQuestion {
     prompt: string,
     onToken: (token: string) => void,
     signal: AbortSignal | undefined,
-    llmOptions: LLMStreamOptions | undefined,
+    llmOptions: LLMStreamOptions,
   ): Promise<{ ok: true; content: string } | { ok: false; message: Message }> {
     try {
-      const content = await this.llmAdapter.stream(
-        prompt,
-        onToken,
-        signal,
-        LLMStreamOptions.create({
-          model: llmOptions?.model,
-          temperature: llmOptions?.temperature,
-          maxTokens: llmOptions?.maxTokens,
-          systemPrompt: "Always respond in the same language as the user's question.",
-        }),
-      );
+      const content = await this.llmAdapter.stream(prompt, onToken, signal, llmOptions);
       this.logger.info("LLM response complete", { conversationId });
       return { ok: true, content };
     } catch (err) {
@@ -153,17 +135,21 @@ export class AskQuestion implements IAskQuestion {
         "LLM streaming failed",
         err instanceof Error ? err : new Error(String(err)),
       );
-      const errorMessage: Message = {
-        id: randomUUID(),
-        conversationId,
-        role: "assistant",
-        content: ERROR_RESPONSE,
-        sources: [],
-        createdAt: new Date(),
-      };
+      const errorMessage = this.makeAssistantMessage(conversationId, ERROR_RESPONSE);
       await this.conversationRepo.addMessage(conversationId, errorMessage);
       return { ok: false, message: errorMessage };
     }
+  }
+
+  private makeAssistantMessage(conversationId: string, content: string): Message {
+    return {
+      id: randomUUID(),
+      conversationId,
+      role: "assistant",
+      content,
+      sources: [],
+      createdAt: new Date(),
+    };
   }
 
   private async finalizeAssistantMessage(
@@ -199,12 +185,17 @@ export class AskQuestion implements IAskQuestion {
       responseGrounding: responseGrounding.length > 0 ? responseGrounding : undefined,
       createdAt: new Date(),
     };
-    await this.conversationRepo.addMessage(conversationId, assistantMessage);
-
+    const tasks: Promise<unknown>[] = [
+      this.conversationRepo.addMessage(conversationId, assistantMessage),
+    ];
     if (history.length === 0) {
-      const title = await this.titleGenerator.generate(userContent, assistantContent);
-      await this.conversationRepo.updateTitle(conversationId, title);
+      tasks.push(
+        this.titleGenerator
+          .generate(userContent, assistantContent)
+          .then((title) => this.conversationRepo.updateTitle(conversationId, title)),
+      );
     }
+    await Promise.all(tasks);
 
     return assistantMessage;
   }
