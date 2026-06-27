@@ -1,14 +1,7 @@
-import fs from "node:fs";
 import request from "supertest";
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+import app from "../../src/api/app";
 import pool from "../../src/infra/persistence/db/pool";
-import { makeTestApp } from "./helpers/makeTestApp";
-
-const { app, uploadDir } = makeTestApp();
-
-afterAll(async () => {
-  await fs.promises.rm(uploadDir, { recursive: true, force: true });
-});
 
 beforeEach(async () => {
   await pool.query("DELETE FROM document_summaries");
@@ -43,8 +36,6 @@ describe("Document lifecycle — e2e-api", () => {
     expect(getRes.status).toBe(200);
     expect(getRes.body.id).toBe(id);
     expect(getRes.body.sourceType).toBe("markdown");
-    // status may be "pending" or "ready" — InMemory fakes complete ingestion immediately
-    expect(["pending", "ready"]).toContain(getRes.body.status);
 
     // Delete
     const delRes = await request(app).delete(`/api/documents/${id}`).set("x-api-key", KEY);

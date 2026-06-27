@@ -259,6 +259,13 @@ The `1-infra` suite covers behavioral correctness (round-trips, error cases). Ke
 | **Volume** | 40 — one per critical backend flow; covers what 1-core + 1-infra cannot together |
 | **When to use** | When validating critical backend paths end-to-end before a release or after major backend changes. Covers the full REST → use case → DB chain. |
 
+**How to write an `e2e-api` test:**
+- Import the production `app` from `src/api/app.ts` directly — never use a custom wiring helper. The goal is to test the real production assembly.
+- Use `supertest` as the HTTP client; start a Testcontainers PostgreSQL in `globalSetup`.
+- DB cleanup in `beforeEach` via `pool.query("DELETE FROM …")` (respect FK order).
+- All C adapters are real, including AI adapters (embedding, LLM). Never inject InMemory fakes.
+- If required API keys are missing or equal the placeholder value `"test-key"`, throw in `beforeAll` with a clear error message — do not skip silently.
+
 ---
 
 ### Level 4 — E2E tests (4 modules)

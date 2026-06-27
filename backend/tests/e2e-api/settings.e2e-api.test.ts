@@ -1,9 +1,7 @@
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
+import app from "../../src/api/app";
 import pool from "../../src/infra/persistence/db/pool";
-import { makeTestApp } from "./helpers/makeTestApp";
-
-const { app } = makeTestApp();
 
 beforeEach(async () => {
   await pool.query("DELETE FROM app_settings");
@@ -13,16 +11,13 @@ const KEY = "test-password";
 
 describe("App settings persistence — e2e-api", () => {
   it("reads default chunking config, updates it, and verifies it persisted in the DB", async () => {
-    // Read initial config — chunking comes from rag.config.json defaults
     const cfg1 = await request(app).get("/api/config").set("x-api-key", KEY);
 
     expect(cfg1.status).toBe(200);
     const originalChunkSize = cfg1.body.rag.chunkSize as number;
 
-    // Choose a different value to guarantee the update is detectable
     const newChunkSize = originalChunkSize === 512 ? 256 : 512;
 
-    // Update via admin settings
     const putRes = await request(app)
       .put("/api/admin/settings")
       .set("x-api-key", KEY)
@@ -30,7 +25,7 @@ describe("App settings persistence — e2e-api", () => {
 
     expect(putRes.status).toBe(200);
 
-    // Verify persistence — fresh GET /api/config reads from DB
+    // Fresh GET must reflect the DB value, not the in-process default
     const cfg2 = await request(app).get("/api/config").set("x-api-key", KEY);
 
     expect(cfg2.status).toBe(200);
