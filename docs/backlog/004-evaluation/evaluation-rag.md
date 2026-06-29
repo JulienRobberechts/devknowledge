@@ -4,6 +4,24 @@
 **Livrable : `npm run eval` — tableau de scores sur 3 métriques pour 14 paires Q/R**
 **Prérequis : Phase 4** (pipeline RAG complet), **Phase 12** (hybrid search, recommandé)
 
+objectif : évaluer son système d’IA
+
+outils intérssants :
+- Ragas (Retrieval Augmented Generation Assessment)
+- Arize Phoenix https://arize.com/phoenix/
+- Braintrust
+- Galileo AI
+- Langfuse
+- Comet Opik
+- Helicone
+
+Le conseil du pro : Ne commencez pas par essayer de tout mesurer. Intégrez Ragas ou DeepEval sur un échantillon de 50 questions critiques, surveillez en priorité la Faithfulness (pour éviter les hallucinations) et la Context Precision (pour économiser des tokens de contexte inutiles).
+
+sources :
+
+https://lonestone.io/creer-saas-ia/evaluation
+
+
 ---
 
 ## Contexte
